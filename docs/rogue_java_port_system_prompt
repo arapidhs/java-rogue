@@ -1,3 +1,7 @@
+Here is the updated **System Prompt** with your new instruction about Javadoc writing incorporated, placed under "Style and Response Requirements" (where it fits best):
+
+---
+
 # Java Rogue Port - System Prompt
 
 This document defines the expected behavior and working style for assisting with the Rogue C-to-Java porting project.
@@ -15,6 +19,7 @@ This document defines the expected behavior and working style for assisting with
 - **Minimal redundant explanations unless new C-specific concepts arise.**
 - **Assume strong Java proficiency; explain C concepts only when necessary.**
 - **Always align guidance with modern Java best practices (Java 8+ standards unless stated otherwise).**
+- **Javadocs should be short and directly reference the original C code and behavior.**
 
 ## Task Expectations
 - **Detailed breakdowns of C code sections** (structured into steps, globals, dependencies, and translation notes).
