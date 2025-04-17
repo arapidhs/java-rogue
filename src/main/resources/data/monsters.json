@@ -1,0 +1,433 @@
+[
+  {
+    "id": 1,
+    "name": "aquator",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 20,
+      "level": 5,
+      "armor": 2,
+      "hitPoints": 1,
+      "damage": "0x0/0x0",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 2,
+    "name": "bat",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_FLYING"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 1,
+      "level": 1,
+      "armor": 3,
+      "hitPoints": 1,
+      "damage": "1x2",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 3,
+    "name": "centaur",
+    "dropProbability": 15,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 17,
+      "level": 4,
+      "armor": 4,
+      "hitPoints": 1,
+      "damage": "1x2/1x5/1x5",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 4,
+    "name": "dragon",
+    "dropProbability": 100,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 5000,
+      "level": 10,
+      "armor": -1,
+      "hitPoints": 1,
+      "damage": "1x8/1x8/3x10",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 5,
+    "name": "emu",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 2,
+      "level": 1,
+      "armor": 7,
+      "hitPoints": 1,
+      "damage": "1x2",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 6,
+    "name": "venus flytrap",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 80,
+      "level": 8,
+      "armor": 3,
+      "hitPoints": 1,
+      "damage": "%%%x0",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 7,
+    "name": "griffin",
+    "dropProbability": 20,
+    "statusEffects": [
+      "IS_MEAN",
+      "IS_FLYING",
+      "IS_REGENERATING"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 2000,
+      "level": 13,
+      "armor": 2,
+      "hitPoints": 1,
+      "damage": "4x3/3x5",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 8,
+    "name": "hobgoblin",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 3,
+      "level": 1,
+      "armor": 5,
+      "hitPoints": 1,
+      "damage": "1x8",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 9,
+    "name": "ice monster",
+    "dropProbability": 0,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 5,
+      "level": 1,
+      "armor": 9,
+      "hitPoints": 1,
+      "damage": "0x0",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 10,
+    "name": "jabberwock",
+    "dropProbability": 70,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 3000,
+      "level": 15,
+      "armor": 6,
+      "hitPoints": 1,
+      "damage": "2x12/2x4",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 11,
+    "name": "kestrel",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN",
+      "IS_FLYING"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 1,
+      "level": 1,
+      "armor": 7,
+      "hitPoints": 1,
+      "damage": "1x4",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 12,
+    "name": "leprechaun",
+    "dropProbability": 0,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 10,
+      "level": 3,
+      "armor": 8,
+      "hitPoints": 1,
+      "damage": "1x1",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 13,
+    "name": "medusa",
+    "dropProbability": 40,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 200,
+      "level": 8,
+      "armor": 2,
+      "hitPoints": 1,
+      "damage": "3x4/3x4/2x5",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 14,
+    "name": "nymph",
+    "dropProbability": 100,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 37,
+      "level": 3,
+      "armor": 9,
+      "hitPoints": 1,
+      "damage": "0x0",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 15,
+    "name": "orc",
+    "dropProbability": 15,
+    "statusEffects": [
+      "IS_GREEDY"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 5,
+      "level": 1,
+      "armor": 6,
+      "hitPoints": 1,
+      "damage": "1x8",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 16,
+    "name": "phantom",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_INVISIBLE"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 120,
+      "level": 8,
+      "armor": 3,
+      "hitPoints": 1,
+      "damage": "4x4",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 17,
+    "name": "quagga",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 15,
+      "level": 3,
+      "armor": 3,
+      "hitPoints": 1,
+      "damage": "1x5/1x5",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 18,
+    "name": "rattlesnake",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 9,
+      "level": 2,
+      "armor": 3,
+      "hitPoints": 1,
+      "damage": "1x6",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 19,
+    "name": "snake",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 2,
+      "level": 1,
+      "armor": 5,
+      "hitPoints": 1,
+      "damage": "1x3",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 20,
+    "name": "troll",
+    "dropProbability": 50,
+    "statusEffects": [
+      "IS_REGENERATING",
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 120,
+      "level": 6,
+      "armor": 4,
+      "hitPoints": 1,
+      "damage": "1x8/1x8/2x6",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 21,
+    "name": "black unicorn",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 190,
+      "level": 7,
+      "armor": -2,
+      "hitPoints": 1,
+      "damage": "1x9/1x9/2x9",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 22,
+    "name": "vampire",
+    "dropProbability": 20,
+    "statusEffects": [
+      "IS_REGENERATING",
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 350,
+      "level": 8,
+      "armor": 1,
+      "hitPoints": 1,
+      "damage": "1x10",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 23,
+    "name": "wraith",
+    "dropProbability": 0,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 55,
+      "level": 5,
+      "armor": 4,
+      "hitPoints": 1,
+      "damage": "1x6",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 24,
+    "name": "xeroc",
+    "dropProbability": 30,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 100,
+      "level": 7,
+      "armor": 7,
+      "hitPoints": 1,
+      "damage": "4x4",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 25,
+    "name": "yeti",
+    "dropProbability": 30,
+    "statusEffects": [],
+    "stats": {
+      "strength": 10,
+      "experience": 50,
+      "level": 4,
+      "armor": 6,
+      "hitPoints": 1,
+      "damage": "1x6/1x6",
+      "maxHitPoints": 1
+    }
+  },
+  {
+    "id": 26,
+    "name": "zombie",
+    "dropProbability": 0,
+    "statusEffects": [
+      "IS_MEAN"
+    ],
+    "stats": {
+      "strength": 10,
+      "experience": 6,
+      "level": 2,
+      "armor": 8,
+      "hitPoints": 1,
+      "damage": "1x8",
+      "maxHitPoints": 1
+    }
+  }
+]
