@@ -10,6 +10,7 @@ import picocli.CommandLine;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class Rogue {
 
@@ -28,7 +29,7 @@ public class Rogue {
 
         try {
 
-            final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory();
+            final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory( System.out, System.in, StandardCharsets.UTF_8);
             terminalFactory.setInitialTerminalSize(
                     new TerminalSize(config.getTerminalCols(), config.getTerminalRows()));
             terminalFactory.setTerminalEmulatorTitle(STRING_TERMINAL_TITLE);
