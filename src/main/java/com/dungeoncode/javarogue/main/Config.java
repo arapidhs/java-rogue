@@ -52,18 +52,17 @@ public class Config {
     private final int numScores;
     private final int userId;
     private boolean allowMultipleScores;
-    private final String killName;
+    private final String defaultKillName;
     private final int terminalRows;
     private final int terminalCols;
-
-    private final EnumSet<PlayerStatus> playerStatusFlags;
+    private final EnumSet<PlayerStatus> initialPlayerStatusFlags;
 
     public Config() {
         this.homeDirName = System.getProperty(SYSTEM_PROPERTY_USER_HOME);
         this.saveFileName = DEFAULT_SAVE_FILE_NAME;
         this.scoreFileName = DEFAULT_SCORE_FILE_NAME;
         this.favoriteFruit = DEFAULT_FAVORITE_FRUIT;
-        this.playerStatusFlags = EnumSet.noneOf(PlayerStatus.class);
+        this.initialPlayerStatusFlags = EnumSet.noneOf(PlayerStatus.class);
         this.dungeonSeed = (int) (System.currentTimeMillis() / 1000L);
         this.seed = this.dungeonSeed;
         this.encryptionKeyPrimary = DEFAULT_ENCRYPTION_KEY_PRIMARY;
@@ -71,7 +70,7 @@ public class Config {
         this.numScores = DEFAULT_NUM_SCORES;
         this.maxStringLength = DEFAULT_MAX_STRING_LENGTH;
         this.userId = (playerName + ":" + homeDirName).hashCode();
-        this.killName = DEFAULT_KILL_NAME;
+        this.defaultKillName = DEFAULT_KILL_NAME;
         this.terminalRows = DEFAULT_TERMINAL_ROWS;
         this.terminalCols = DEFAULT_TERMINAL_COLS;
         setPlayerName(System.getProperty(SYSTEM_PROPERTY_USER_NAME));
@@ -122,13 +121,13 @@ public class Config {
     public void setWizard(final boolean wizard) {
         this.wizard = wizard;
         if (this.wizard) {
-            playerStatusFlags.add(PlayerStatus.CAN_SEE_MONSTERS);
+            initialPlayerStatusFlags.add(PlayerStatus.CAN_SEE_MONSTERS);
             if (this.master && this.optionsSeed > 0) {
                 this.dungeonSeed = this.optionsSeed;
                 this.seed = this.dungeonSeed;
             }
         } else {
-            playerStatusFlags.remove(PlayerStatus.CAN_SEE_MONSTERS);
+            initialPlayerStatusFlags.remove(PlayerStatus.CAN_SEE_MONSTERS);
         }
     }
 
@@ -150,8 +149,8 @@ public class Config {
         return saveFileName;
     }
 
-    public EnumSet<PlayerStatus> getPlayerStatusFlags() {
-        return playerStatusFlags;
+    public EnumSet<PlayerStatus> getInitialPlayerStatusFlags() {
+        return initialPlayerStatusFlags;
     }
 
     public int getOptionsSeed() {
@@ -202,8 +201,8 @@ public class Config {
         return allowMultipleScores;
     }
 
-    public String getKillName() {
-        return killName;
+    public String getDefaultKillName() {
+        return defaultKillName;
     }
 
     public int getTerminalRows() {

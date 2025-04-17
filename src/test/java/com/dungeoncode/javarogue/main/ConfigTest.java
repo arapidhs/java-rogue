@@ -27,12 +27,12 @@ public class ConfigTest {
         assertFalse(config.isScoring());
 
         config.setWizard(true);
-        assertTrue(config.getPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
+        assertTrue(config.getInitialPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
         assertEquals(options.seed, config.getDungeonSeed());
         assertEquals(options.seed, config.getSeed());
 
         config.setWizard(false);
-        assertFalse(config.getPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
+        assertFalse(config.getInitialPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
     }
 
 }

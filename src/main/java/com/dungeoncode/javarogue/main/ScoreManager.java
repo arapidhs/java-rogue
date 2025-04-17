@@ -192,7 +192,7 @@ public class ScoreManager {
                 }
 
                 if (RogueUtils.isEmpty(killName)) {
-                    killName = getConfig().getKillName(); // fallback ("Wally the Wonder Badger", etc.)
+                    killName = getConfig().getDefaultKillName(); // fallback ("Wally the Wonder Badger", etc.)
                 }
 
                 base += " by " + RogueUtils.getIndefiniteArticleFor(killName) + " " + killName;
