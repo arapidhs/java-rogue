@@ -31,6 +31,12 @@ public class Options {
     )
     Boolean allowMultipleScores = true;
 
+    /**
+     * Simulates immediate player death, matching the original Rogue "-d" option (main.c).
+     */
+    @CommandLine.Option(names = "-simulateDeath", description = "Simulate immediate player death and exit (true/false)")
+    Boolean simulateDeath = false;
+
     @CommandLine.Option(names = "-name", description = "Player name")
     String name;
 

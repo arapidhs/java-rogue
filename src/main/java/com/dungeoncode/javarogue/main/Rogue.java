@@ -1,7 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ public class Rogue {
     public static void main(String[] args) {
 
         final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom( config.getSeed() );
 
         RogueScreen screen = null;
 
@@ -49,7 +49,7 @@ public class Rogue {
                     final String enteredPassword = screen.promptForPassword(PROMPT_WIZARD_PASSWORD);
                     final boolean wizard = !enteredPassword.isEmpty() &&
                             RogueUtils.crypt(enteredPassword, PASSWORD_SALT).equals(PASSWORD_HASH);
-                    config.setWizard(wizard);
+                    config.setWizard(wizard, rogueRandom);
                 } catch (IOException ex) {
                     throw new RuntimeException("Failed to create prompt for password. Exception: ", ex);
                 } finally {
@@ -60,15 +60,61 @@ public class Rogue {
             if (options.showScores) {
                 final ScoreManager scoreManager = new ScoreManager(screen);
                 scoreManager.score(null);
+            } else if (options.simulateDeath) {
 
-                // Wait for any key to exit
-                while (true) {
-                    KeyStroke key = screen.readInput();
-                    if (key != null) {
-                        break;
+                final GameState gameState = new GameState(config, rogueRandom, new DeathSimulationInitializer());
+                gameState.death();
+
+                if ( gameState.getConfig().isTombstone()) {
+                    final TombstoneRenderer tombstoneRenderer = new TombstoneRenderer(screen, gameState);
+                    tombstoneRenderer.renderTombstone();
+                } else {
+
+                    final StringBuilder deathLine = new StringBuilder();
+                    deathLine.append("Killed by ");
+
+                    final String killerName = gameState.getDeathSource().getName();
+
+                    final boolean isKillType = gameState.getDeathSource().isTemplate() &&
+                            gameState.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE);
+
+                    boolean isUseArticle = true;
+
+                    if ( isKillType ) {
+                        final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().getTemplateId());
+                        isUseArticle = killTypeTemplate != null ? killTypeTemplate.isUseArticle() : isUseArticle;
                     }
+
+                    if ( isUseArticle ) {
+                        final String article = RogueUtils.getIndefiniteArticleFor(killerName);
+                        deathLine.append(article).append(" ").append(killerName);
+                    } else {
+                        deathLine.append(killerName);
+                    }
+
+                    deathLine.append(" with ").append(gameState.getGoldAmount()).append(" gold");
+
+                    final TerminalSize size = screen.getTerminalSize();
+                    final int row = size.getRows() - 2;
+                    final int column = 0;
+                    screen.putString(column, row, deathLine.toString());
                 }
 
+                screen.refresh();
+
+                final ScoreManager scoreManager = new ScoreManager(screen);
+                scoreManager.score(gameState);
+
+            } else {
+                if ( config.isMaster() && config.isWizard() ) {
+                    screen.showBottomMessageAndWait(
+                            String.format("Hello %s, welcome to dungeon #%d", config.getPlayerName(), config.getDungeonSeed()),1
+                    );
+                } else {
+                    screen.showBottomMessageAndWait(
+                            String.format("Hello %s, just a moment while I dig the dungeon...", config.getPlayerName()),1
+                    );
+                }
             }
 
         } catch (Exception ex) {

@@ -2,6 +2,7 @@ package com.dungeoncode.javarogue.main;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -22,6 +23,7 @@ public class Config {
     private static final int DEFAULT_MAX_STRING_LENGTH = 1024;
     private static final String SYSTEM_PROPERTY_USER_NAME = "user.name";
     private static final String SYSTEM_PROPERTY_USER_HOME = "user.home";
+    private static final String DEFAULT_JAVAROGUE_DIR_NAME = ".java-rogue";
     private static final String DEFAULT_SAVE_FILE_NAME = "rogue.save";
     private static final String DEFAULT_SCORE_FILE_NAME = "rogue54.scr";
     private static final String DEFAULT_FAVORITE_FRUIT = "slime-mold";
@@ -41,6 +43,7 @@ public class Config {
     private String playerName;
     private String favoriteFruit;
     private String homeDirName;
+    private String javaRogueDirName;
     private String saveFileName;
     private final String scoreFileName;
     private int dungeonSeed;
@@ -60,6 +63,7 @@ public class Config {
     public Config() {
         this.homeDirName = System.getProperty(SYSTEM_PROPERTY_USER_HOME);
         this.saveFileName = DEFAULT_SAVE_FILE_NAME;
+        this.javaRogueDirName = this.homeDirName + File.separator + DEFAULT_JAVAROGUE_DIR_NAME;
         this.scoreFileName = DEFAULT_SCORE_FILE_NAME;
         this.favoriteFruit = DEFAULT_FAVORITE_FRUIT;
         this.initialPlayerStatusFlags = EnumSet.noneOf(PlayerStatus.class);
@@ -118,13 +122,29 @@ public class Config {
         return wizard;
     }
 
-    public void setWizard(final boolean wizard) {
+    /**
+     * Enables or disables wizard mode for the player.
+     * <p>
+     * When enabling wizard mode, the player gains the ability to see monsters immediately.
+     * If master mode is also active and an option seed was provided, the dungeon seed
+     * and random number generator seed are re-initialized accordingly.
+     * <p>
+     * This mirrors the behavior of Rogue's original C code in {@code main.c} during wizard setup.
+     *
+     * @param wizard       true to enable wizard mode, false to disable
+     * @param rogueRandom  the {@link RogueRandom} instance used for reseeding when needed
+     */
+    public void setWizard(final boolean wizard, @Nonnull final RogueRandom rogueRandom) {
+        Objects.requireNonNull(rogueRandom);
+
         this.wizard = wizard;
         if (this.wizard) {
             initialPlayerStatusFlags.add(PlayerStatus.CAN_SEE_MONSTERS);
             if (this.master && this.optionsSeed > 0) {
+                // In original Rogue C, when in wizard mode and SEED is set, dungeon seed is overridden
                 this.dungeonSeed = this.optionsSeed;
                 this.seed = this.dungeonSeed;
+                rogueRandom.reseed(this.seed); // Ensure RogueRandom internal seed matches new dungeon seed
             }
         } else {
             initialPlayerStatusFlags.remove(PlayerStatus.CAN_SEE_MONSTERS);
@@ -173,6 +193,10 @@ public class Config {
         return homeDirName;
     }
 
+    public String getJavaRogueDirName() {
+        return javaRogueDirName;
+    }
+
     public String getScoreFileName() {
         return scoreFileName;
     }
@@ -199,6 +223,10 @@ public class Config {
 
     public boolean isAllowMultipleScores() {
         return allowMultipleScores;
+    }
+
+    public boolean isTombstone() {
+        return tombstone;
     }
 
     public String getDefaultKillName() {

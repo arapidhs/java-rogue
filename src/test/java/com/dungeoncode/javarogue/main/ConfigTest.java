@@ -9,6 +9,7 @@ public class ConfigTest {
     @Test
     void testInit() {
         final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(123456L);
 
         final Options options = new Options();
         options.master = true;
@@ -26,12 +27,12 @@ public class ConfigTest {
         assertEquals(options.seed, config.getOptionsSeed());
         assertFalse(config.isScoring());
 
-        config.setWizard(true);
+        config.setWizard(true, rogueRandom);
         assertTrue(config.getInitialPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
         assertEquals(options.seed, config.getDungeonSeed());
         assertEquals(options.seed, config.getSeed());
 
-        config.setWizard(false);
+        config.setWizard(false, rogueRandom);
         assertFalse(config.getInitialPlayerStatusFlags().contains(PlayerStatus.CAN_SEE_MONSTERS));
     }
 

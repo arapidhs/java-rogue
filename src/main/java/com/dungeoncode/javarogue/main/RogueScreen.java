@@ -28,6 +28,7 @@ public class RogueScreen extends TerminalScreen {
         }
 
         textGraphics = newTextGraphics();
+        hideCursor();
     }
 
     public void hideCursor() {
@@ -48,7 +49,6 @@ public class RogueScreen extends TerminalScreen {
         final int inputStartX = promptX + prompt.length();
 
         clear();
-        hideCursor();
         textGraphics.putString(promptX, promptY, prompt);
         refresh();
 

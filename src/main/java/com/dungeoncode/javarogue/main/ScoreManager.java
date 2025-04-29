@@ -10,10 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ScoreManager {
@@ -60,7 +58,6 @@ public class ScoreManager {
         final GameEndReason gameEndReason = state == null ? null : state.getGameEndReason();
 
         int flag = 0; // This maps to the `prflags` in the C code: 1 = show real user ID, 2 = edit mode (deletion).
-        ScoreEntry newEntry = null;
 
         // Prompt for "[Press return to continue]" and optionally accept commands like "names" or "edit" (admin-only).
         String input;
@@ -77,82 +74,75 @@ public class ScoreManager {
         }
 
         // Load the existing score entries from disk (equivalent to rd_score())
-        final List<ScoreEntry> scoreEntries = readScoreFile();
+        List<ScoreEntry> scoreEntries = readScoreFile();
 
         // If a new score is available and scoring is enabled in config, we try to insert it
         if (state != null && getConfig().isScoring()) {
 
-            final int userId = getConfig().getUserId();
-            int insertIndex = -1;
+            final boolean isHighScore = scoreEntries.size() < getConfig().getNumScores()
+                    || state.getGoldAmount() > scoreEntries.get(scoreEntries.size() - 1).score;
 
-            // Try to find the insertion point: first score lower than ours
-            for (int i = 0; i < scoreEntries.size(); i++) {
-                final ScoreEntry entry = scoreEntries.get(i);
+            if ( isHighScore ) {
 
-                if (state.getScore() > entry.score) {
-                    insertIndex = i;
-                    break;
-                }
+                final int userId = getConfig().getUserId();
+                final long monsterId = state.getDeathSource().getType().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().getTemplateId() : 0;
+                final long killTypeId = state.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().getTemplateId() : 0;
 
-                /*
-                 * This condition enforces the rule from C:
-                 * If multiple scores per user are not allowed,
-                 * and this score isn't a WIN,
-                 * and the user already has a non-WIN score in the list,
-                 * disqualify this new entry.
-                 */
-                if (!getConfig().isAllowMultipleScores()
-                        && gameEndReason != GameEndReason.WIN
-                        && entry.userId == userId
-                        && entry.gameEndReason != GameEndReason.WIN) {
-                    break;
-                }
-            }
-
-            if (insertIndex >= 0) {
-                int replaceIndex = scoreEntries.size() - 1;
-
-                // Try to replace existing entry from the same user (if non-WIN and multi-entries not allowed)
-                if (gameEndReason != GameEndReason.WIN && !getConfig().isAllowMultipleScores()) {
-                    replaceIndex = IntStream.range(insertIndex, scoreEntries.size())
-                            .filter(i -> {
-                                ScoreEntry e = scoreEntries.get(i);
-                                return e.userId == userId && e.gameEndReason != GameEndReason.WIN;
-                            })
-                            .findFirst()
-                            .orElse(scoreEntries.size() - 1);
-                }
-
-                // Shift entries down to make room (mimics SCORE array shifting in C: sc2--)
-                for (int i = replaceIndex; i > insertIndex; i--) {
-                    scoreEntries.set(i, scoreEntries.get(i - 1));
-                }
-
-                // Resolve the killTypeId using template registry (modern alternative to C's char-based killname())
-                int killTypeId = 0;
-                if (state.getKillType() != null) {
-                    final KillTypeTemplate killTypeTemplate = Templates.getTemplates(KillTypeTemplate.class).stream()
-                            .filter(t -> t.getKillType() == state.getKillType())
-                            .findFirst()
-                            .orElse(null);
-                    if (killTypeTemplate != null) {
-                        killTypeId = (int) killTypeTemplate.getId();
-                    }
-                }
-
-                // Construct and insert the new score entry
-                newEntry = new ScoreEntry(
+                // Construct new score entry
+                final ScoreEntry newEntry = new ScoreEntry(
                         userId,
-                        state.getScore(),
+                        state.getGoldAmount(),
                         state.getGameEndReason(),
-                        state.getDeathMonsterId(),
+                        monsterId,
                         killTypeId,
                         state.getGameEndReason() == GameEndReason.WIN ? state.getMaxLevel() : state.getLevel(),
                         Instant.now().getEpochSecond(),
                         getConfig().getPlayerName()
                 );
                 newEntry.isNew = true; // This flag is used to highlight the entry (like standout in curses)
-                scoreEntries.set(insertIndex, newEntry);
+
+                // Always add WIN entries unconditionally, sort descending,
+                // and keep only the top scores
+                if (newEntry.gameEndReason == GameEndReason.WIN || getConfig().isAllowMultipleScores()) {
+                    scoreEntries.add(newEntry);
+                } else {
+
+                    final boolean hasConflictingNonWinEntry = scoreEntries.stream()
+                            .anyMatch(entry ->
+                                    entry.userId == userId
+                                            && !getConfig().isAllowMultipleScores()
+                                            && entry.gameEndReason != GameEndReason.WIN
+                                            && entry.score <= newEntry.score
+                            );
+
+                    if (hasConflictingNonWinEntry) {
+                        final List<ScoreEntry> scoreEntriesCopy = new ArrayList<>(scoreEntries);
+                        final OptionalInt conflictIndex = IntStream.range(0, scoreEntriesCopy.size())
+                                .filter(i -> scoreEntriesCopy.get(i).userId == userId
+                                        && scoreEntriesCopy.get(i).gameEndReason != GameEndReason.WIN
+                                        && scoreEntriesCopy.get(i).score <= newEntry.score)
+                                .findFirst();
+
+
+                        if (conflictIndex.isPresent()) {
+                            // Add newEntry at index, shifting elements from index to end down
+                            scoreEntries.add(conflictIndex.getAsInt(), newEntry);
+
+                            // Remove the last entry to maintain list size
+                            if (scoreEntries.size() > getConfig().getNumScores() ) {
+                                scoreEntries.remove(scoreEntries.size() - 1);
+                            }
+                        }
+
+                    }
+
+                }
+
+                scoreEntries = scoreEntries.stream()
+                        .sorted(Comparator.comparingInt(ScoreEntry::getScore).reversed())
+                        .limit(getConfig().getNumScores())
+                        .collect(Collectors.toList());
+
             }
         }
 
@@ -182,6 +172,7 @@ public class ScoreManager {
              */
             if (entry.gameEndReason == GameEndReason.KILLED || entry.gameEndReason == GameEndReason.KILLED_WITH_AMULET) {
                 String killName = null;
+                boolean isUseArticle = true;
 
                 if (entry.monsterId > 0) {
                     final MonsterTemplate monster = Templates.getTemplate(MonsterTemplate.class, entry.monsterId);
@@ -189,13 +180,18 @@ public class ScoreManager {
                 } else if (entry.killTypeId > 0) {
                     final KillTypeTemplate killType = Templates.getTemplate(KillTypeTemplate.class, entry.killTypeId);
                     killName = killType == null ? null : killType.getName();
+                    isUseArticle = killType != null ? killType.isUseArticle() : isUseArticle;
                 }
 
                 if (RogueUtils.isEmpty(killName)) {
                     killName = getConfig().getDefaultKillName(); // fallback ("Wally the Wonder Badger", etc.)
                 }
 
-                base += " by " + RogueUtils.getIndefiniteArticleFor(killName) + " " + killName;
+                base += " by ";
+                if ( isUseArticle ) {
+                    base += RogueUtils.getIndefiniteArticleFor(killName) + " ";
+                }
+                base += killName;
             }
 
             // Append user ID if master mode requested real name display
@@ -228,21 +224,26 @@ public class ScoreManager {
         // Remove any marked-for-deletion entries before saving
         final boolean entryDeleted = scoreEntries.removeIf(entry -> entry.isDeleted);
 
+        final boolean hasNewEntry = scoreEntries.stream()
+                .anyMatch(entry -> entry.isNew);
+
         /*
          * If a new score was inserted or any score was deleted, update the score file.
          * This maps to the final "wr_score(top_ten)" and lock/unlock logic in C.
          */
-        if (newEntry != null || entryDeleted) {
+        if (hasNewEntry || entryDeleted) {
             writeScoreFile(scoreEntries);
         }
 
         screen.refresh();
+
+        screen.showBottomMessageAndWait(STRING_RETURN_TO_CONTINUE, 0);
     }
 
 
     public List<ScoreEntry> readScoreFile() throws IOException {
         final List<ScoreEntry> entries = new ArrayList<>();
-        final File scoreFile = new File(getConfig().getHomeDirName(), getConfig().getScoreFileName());
+        final File scoreFile = new File(getConfig().getJavaRogueDirName(), getConfig().getScoreFileName());
 
         if (!scoreFile.exists()) {
             return entries;
@@ -292,10 +293,7 @@ public class ScoreManager {
         if (entries == null || entries.isEmpty())
             return;
 
-        final File scoreFile = new File(
-                getConfig().getHomeDirName(),
-                getConfig().getScoreFileName()
-        );
+        final File scoreFile = getFile();
 
         try (FileOutputStream fos = new FileOutputStream(scoreFile, false)) {
             for (ScoreEntry entry : entries) {
@@ -331,6 +329,28 @@ public class ScoreManager {
                 fos.write(scoreLineBytes);
             }
         }
+    }
+
+    private File getFile() throws IOException {
+        final File scoreFile = new File(
+                getConfig().getJavaRogueDirName(),
+                getConfig().getScoreFileName()
+        );
+
+        // Ensure parent directory exists
+        if (!scoreFile.getParentFile().exists()) {
+            if (!scoreFile.getParentFile().mkdirs()) {
+                throw new IOException(String.format("Failed to create directories: %s", scoreFile.getParent()));
+            }
+        }
+
+        // Ensure the score file exists
+        if (!scoreFile.exists()) {
+            if (!scoreFile.createNewFile()) {
+                throw new IOException(String.format("Failed to create score file: %s", scoreFile.getAbsolutePath()));
+            }
+        }
+        return scoreFile;
     }
 
 
@@ -387,7 +407,7 @@ public class ScoreManager {
          * Here we use long IDs from our {@link MonsterTemplate} registry.
          * </p>
          */
-        int monsterId;
+        long monsterId;
 
         /**
          * Kill type ID if death was not caused by a monster (e.g. dart, starvation).
@@ -396,7 +416,7 @@ public class ScoreManager {
          * In our design, we distinguish it explicitly for clarity and JSON template-based name resolution.
          * </p>
          */
-        int killTypeId;
+        long killTypeId;
 
         /**
          * The dungeon level the player reached. In case of a win, it's the max level visited.
@@ -452,7 +472,7 @@ public class ScoreManager {
          * @param name          Player name.
          */
         ScoreEntry(final int userId, final int score, final GameEndReason gameEndReason,
-                final int monsterId, final int killTypeId,
+                final long monsterId, final long killTypeId,
                 final int level, final long time,
                 final String name) {
             this.userId = userId;
@@ -463,6 +483,10 @@ public class ScoreManager {
             this.level = level;
             this.time = time;
             this.name = name;
+        }
+
+        public int getScore() {
+            return score;
         }
 
         @Override
