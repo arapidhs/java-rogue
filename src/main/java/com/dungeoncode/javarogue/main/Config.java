@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Random;
 
 public class Config {
 
@@ -39,6 +40,7 @@ public class Config {
     private boolean flush;
     private boolean seeFloor;
     private boolean passGo;
+    private boolean useLegacySeed;
     private boolean tombstone;
     private String playerName;
     private String favoriteFruit;
@@ -67,8 +69,15 @@ public class Config {
         this.scoreFileName = DEFAULT_SCORE_FILE_NAME;
         this.favoriteFruit = DEFAULT_FAVORITE_FRUIT;
         this.initialPlayerStatusFlags = EnumSet.noneOf(PlayerStatus.class);
-        this.dungeonSeed = (int) (System.currentTimeMillis() / 1000L);
+
+        if ( this.useLegacySeed ) {
+            this.dungeonSeed = (int) (System.currentTimeMillis() / 1000L);
+        } else {
+            final Random random = new Random();
+            this.dungeonSeed = random.nextInt();
+        }
         this.seed = this.dungeonSeed;
+
         this.encryptionKeyPrimary = DEFAULT_ENCRYPTION_KEY_PRIMARY;
         this.encryptionKeySecondary = DEFAULT_ENCRYPTION_KEY_SECONDARY;
         this.numScores = DEFAULT_NUM_SCORES;
@@ -105,6 +114,11 @@ public class Config {
         }
         if (options.file != null && !options.file.isBlank()) {
             this.saveFileName = options.file;
+        }
+        this.useLegacySeed = options.useLegacySeed;
+        if ( this.useLegacySeed ) {
+            this.dungeonSeed = (int) (System.currentTimeMillis() / 1000L);
+            this.seed = dungeonSeed;
         }
         if (options.seed != null && options.seed > 0) {
             this.optionsSeed = options.seed;

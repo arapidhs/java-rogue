@@ -37,6 +37,17 @@ public class Options {
     @CommandLine.Option(names = "-simulateDeath", description = "Simulate immediate player death and exit (true/false)")
     Boolean simulateDeath = false;
 
+    /**
+     * If true, initializes the dungeon seed using the original Rogue behavior,
+     * which is based on the system time in seconds. This can lead to similar seeds
+     * when launching the game in rapid succession. If false, a random seed is generated
+     * using Java's Random, improving entropy for varied dungeon generation.
+     *
+     * This flag replicates Rogue's historical seeding logic for archival or debugging purposes.
+     */
+    @CommandLine.Option(names = "-useLegacySeed", description = "Use original Rogue seed logic based on system time (true/false)")
+    Boolean useLegacySeed = false;
+
     @CommandLine.Option(names = "-name", description = "Player name")
     String name;
 
