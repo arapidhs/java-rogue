@@ -11,7 +11,16 @@ public class Templates {
 
     private static final Set<AbstractMap.SimpleEntry<String, Class<? extends Template>>> TEMPLATE_SOURCES = Set.of(
             new AbstractMap.SimpleEntry<>("/data/monsters.json", MonsterTemplate.class),
-            new AbstractMap.SimpleEntry<>("/data/killtypes.json", KillTypeTemplate.class));
+            new AbstractMap.SimpleEntry<>("/data/dragon-breath.json", DragonBreathTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/killtypes.json", KillTypeTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/objects-info.json", ObjectInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/armors-info.json", ArmorInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/potions-info.json", PotionInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/scrolls-info.json", ScrollInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/weapons-info.json", WeaponInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/rods-info.json", RodInfoTemplate.class),
+            new AbstractMap.SimpleEntry<>("/data/rings-info.json", RingInfoTemplate.class));
+
 
     private static final Set<Template> TEMPLATES_ALL = TEMPLATE_SOURCES.stream()
             .flatMap(entry -> loadTemplates(entry.getKey(), entry.getValue()).values().stream())
@@ -32,6 +41,21 @@ public class Templates {
         } catch (Exception e) {
             throw new RuntimeException(String.format("Failed to load templates from %s", resourcePath), e);
         }
+    }
+
+    static {
+        // Apply cumulative probability to ObjectInfoTemplate entries
+        List<Class<? extends ObjectInfoTemplate>> cumulativeTemplates = List.of(
+                ObjectInfoTemplate.class,
+                ArmorInfoTemplate.class,
+                PotionInfoTemplate.class,
+                ScrollInfoTemplate.class,
+                WeaponInfoTemplate.class,
+                RodInfoTemplate.class,
+                RingInfoTemplate.class
+        );
+
+        cumulativeTemplates.forEach(Templates::applyCumulativeProbability);
     }
 
     @SuppressWarnings("unchecked")
@@ -59,5 +83,53 @@ public class Templates {
         return (T) typedMap.get(id);
     }
 
+    private static void applyCumulativeProbability(final Class<? extends ObjectInfoTemplate> templateClass) {
+        final List<? extends ObjectInfoTemplate> sorted = getTemplates(templateClass).stream()
+                .sorted(Comparator.comparingLong(ObjectInfoTemplate::getId))
+                .toList();
+
+        double cumulative = 0;
+        for (ObjectInfoTemplate template : sorted) {
+            cumulative += template.getProbability();
+            template.setCumulativeProbability(cumulative);
+        }
+    }
+
+    public static Optional<BadTemplateInfo> verifyProbabilities() {
+        List<Class<? extends ObjectInfoTemplate>> cumulativeTemplates = List.of(
+                ObjectInfoTemplate.class,
+                ArmorInfoTemplate.class,
+                PotionInfoTemplate.class,
+                ScrollInfoTemplate.class,
+                WeaponInfoTemplate.class,
+                RodInfoTemplate.class,
+                RingInfoTemplate.class
+        );
+
+        for (Class<? extends ObjectInfoTemplate> templateClass : cumulativeTemplates) {
+            final Set<? extends ObjectInfoTemplate> templates = getTemplates(templateClass);
+            if (templates.isEmpty()) continue;
+
+            final List<? extends ObjectInfoTemplate> sorted = templates.stream()
+                    .sorted(Comparator.comparingLong(ObjectInfoTemplate::getId))
+                    .toList();
+
+            final double lastCumulative = sorted.get(sorted.size() - 1).getCumulativeProbability();
+
+            if (lastCumulative != 100.0) {
+                return Optional.of(new BadTemplateInfo(templateClass, sorted.size()));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    public record BadTemplateInfo(Class<? extends ObjectInfoTemplate> templateClass, int bound) {
+            public BadTemplateInfo(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass, int bound) {
+                Objects.requireNonNull(templateClass);
+                this.templateClass = templateClass;
+                this.bound = bound;
+            }
+        }
 
 }

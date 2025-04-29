@@ -1,0 +1,11 @@
+[
+  { "id": 1, "weaponType": "MACE",             "name": "mace",               "probability": 11, "worth": 8 },
+  { "id": 2, "weaponType": "LONG_SWORD",       "name": "long sword",         "probability": 11, "worth": 15 },
+  { "id": 3, "weaponType": "SHORT_BOW",        "name": "short bow",          "probability": 12, "worth": 15 },
+  { "id": 4, "weaponType": "ARROW",            "name": "arrow",              "probability": 12, "worth": 1 },
+  { "id": 5, "weaponType": "DAGGER",           "name": "dagger",             "probability": 8,  "worth": 3 },
+  { "id": 6, "weaponType": "TWO_HANDED_SWORD", "name": "two handed sword",   "probability": 10, "worth": 75 },
+  { "id": 7, "weaponType": "DART",             "name": "dart",               "probability": 12, "worth": 2 },
+  { "id": 8, "weaponType": "SHURIKEN",         "name": "shuriken",           "probability": 12, "worth": 5 },
+  { "id": 9, "weaponType": "SPEAR",            "name": "spear",              "probability": 12, "worth": 5 }
+]

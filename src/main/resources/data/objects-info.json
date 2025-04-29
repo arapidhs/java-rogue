@@ -1,0 +1,9 @@
+[
+  { "id": 1, "objectType": "POTION", "name": "potion", "probability": 26, "worth": 0 },
+  { "id": 2, "objectType": "SCROLL", "name": "scroll", "probability": 36, "worth": 0 },
+  { "id": 3, "objectType": "FOOD",   "name": "food",   "probability": 16, "worth": 0 },
+  { "id": 4, "objectType": "WEAPON", "name": "weapon", "probability": 7,  "worth": 0 },
+  { "id": 5, "objectType": "ARMOR",  "name": "armor",  "probability": 7,  "worth": 0 },
+  { "id": 6, "objectType": "RING",   "name": "ring",   "probability": 4,  "worth": 0 },
+  { "id": 7, "objectType": "ROD",    "name": "stick",  "probability": 4,  "worth": 0 }
+]

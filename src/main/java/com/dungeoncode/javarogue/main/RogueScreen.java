@@ -80,27 +80,42 @@ public class RogueScreen extends TerminalScreen {
         return password.toString();
     }
 
-    public String showBottomMessageAndWait(@Nonnull final String message, int column) throws IOException {
+    public void showMessageAndWait(@Nonnull final String message, final int column, final int row) throws IOException {
+        showMessageAndOptionallyWait(message, column, row, true);
+    }
+
+    public String showBottomMessageAndWait(@Nonnull final String message, final int column) throws IOException {
+        final TerminalSize size = getTerminalSize();
+        final int row = size.getRows() - 1;
+        return showMessageAndOptionallyWait(message, column, row, true);
+    }
+
+    public void showBottomMessage(@Nonnull final String message, final int column) throws IOException {
+        final TerminalSize size = getTerminalSize();
+        final int row = size.getRows() - 1;
+        showMessageAndOptionallyWait(message, column, row, false);
+    }
+
+    private String showMessageAndOptionallyWait(@Nonnull final String message, final int column, final int row, final boolean wait) throws IOException {
 
         Objects.requireNonNull(message);
 
         final StringBuilder input = new StringBuilder();
 
-        final TerminalSize size = getTerminalSize();
-        int row = size.getRows() - 1;
-
         textGraphics.putString(column, row, message);
         refresh();
 
-        while (true) {
-            KeyStroke key = readInput();
-            if (key.getKeyType() == KeyType.Enter) {
-                break;
-            }
-            if (key.getKeyType() == KeyType.Backspace && !input.isEmpty()) {
-                input.deleteCharAt(input.length() - 1);
-            } else if (key.getKeyType() == KeyType.Character) {
-                input.append(key.getCharacter());
+        if (wait) {
+            while (true) {
+                KeyStroke key = readInput();
+                if (key.getKeyType() == KeyType.Enter) {
+                    break;
+                }
+                if (key.getKeyType() == KeyType.Backspace && !input.isEmpty()) {
+                    input.deleteCharAt(input.length() - 1);
+                } else if (key.getKeyType() == KeyType.Character) {
+                    input.append(key.getCharacter());
+                }
             }
         }
 

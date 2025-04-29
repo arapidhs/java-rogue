@@ -1,0 +1,16 @@
+[
+  { "id": 1,  "potionType": "CONFUSION",         "name": "confusion",         "probability": 7,  "worth": 5 },
+  { "id": 2,  "potionType": "HALLUCINATION",     "name": "hallucination",     "probability": 8,  "worth": 5 },
+  { "id": 3,  "potionType": "POISON",            "name": "poison",            "probability": 8,  "worth": 5 },
+  { "id": 4,  "potionType": "GAIN_STRENGTH",     "name": "gain strength",     "probability": 13, "worth": 150 },
+  { "id": 5,  "potionType": "SEE_INVISIBLE",     "name": "see invisible",     "probability": 3,  "worth": 100 },
+  { "id": 6,  "potionType": "HEALING",           "name": "healing",           "probability": 13, "worth": 130 },
+  { "id": 7,  "potionType": "MONSTER_DETECTION", "name": "monster detection", "probability": 6,  "worth": 130 },
+  { "id": 8,  "potionType": "MAGIC_DETECTION",   "name": "magic detection",   "probability": 6,  "worth": 105 },
+  { "id": 9,  "potionType": "RAISE_LEVEL",       "name": "raise level",       "probability": 2,  "worth": 250 },
+  { "id": 10, "potionType": "EXTRA_HEALING",     "name": "extra healing",     "probability": 5,  "worth": 200 },
+  { "id": 11, "potionType": "HASTE_SELF",        "name": "haste self",        "probability": 5,  "worth": 190 },
+  { "id": 12, "potionType": "RESTORE_STRENGTH",  "name": "restore strength",  "probability": 13, "worth": 130 },
+  { "id": 13, "potionType": "BLINDNESS",         "name": "blindness",         "probability": 5,  "worth": 5 },
+  { "id": 14, "potionType": "LEVITATION",        "name": "levitation",        "probability": 6,  "worth": 75 }
+]

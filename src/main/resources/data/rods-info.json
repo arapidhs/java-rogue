@@ -1,0 +1,16 @@
+[
+  { "id": 1,  "rodType": "LIGHT",           "name": "light",           "probability": 12, "worth": 250 },
+  { "id": 2,  "rodType": "INVISIBILITY",    "name": "invisibility",    "probability": 6,  "worth": 5 },
+  { "id": 3,  "rodType": "LIGHTNING",       "name": "lightning",       "probability": 3,  "worth": 330 },
+  { "id": 4,  "rodType": "FIRE",            "name": "fire",            "probability": 3,  "worth": 330 },
+  { "id": 5,  "rodType": "COLD",            "name": "cold",            "probability": 3,  "worth": 330 },
+  { "id": 6,  "rodType": "POLYMORPH",       "name": "polymorph",       "probability": 15, "worth": 310 },
+  { "id": 7,  "rodType": "MAGIC_MISSILE",   "name": "magic missile",   "probability": 10, "worth": 170 },
+  { "id": 8,  "rodType": "HASTE_MONSTER",   "name": "haste monster",   "probability": 10, "worth": 5 },
+  { "id": 9,  "rodType": "SLOW_MONSTER",    "name": "slow monster",    "probability": 11, "worth": 350 },
+  { "id": 10, "rodType": "DRAIN_LIFE",      "name": "drain life",      "probability": 9,  "worth": 300 },
+  { "id": 11, "rodType": "NOTHING",         "name": "nothing",         "probability": 1,  "worth": 5 },
+  { "id": 12, "rodType": "TELEPORT_AWAY",   "name": "teleport away",   "probability": 6,  "worth": 340 },
+  { "id": 13, "rodType": "TELEPORT_TO",     "name": "teleport to",     "probability": 6,  "worth": 50 },
+  { "id": 14, "rodType": "CANCELLATION",    "name": "cancellation",    "probability": 5,  "worth": 280 }
+]

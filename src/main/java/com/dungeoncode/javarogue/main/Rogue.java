@@ -10,6 +10,9 @@ import picocli.CommandLine;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 
 public class Rogue {
 
@@ -107,14 +110,40 @@ public class Rogue {
 
             } else {
                 if ( config.isMaster() && config.isWizard() ) {
-                    screen.showBottomMessageAndWait(
+                    screen.showBottomMessage(
                             String.format("Hello %s, welcome to dungeon #%d", config.getPlayerName(), config.getDungeonSeed()),1
                     );
                 } else {
-                    screen.showBottomMessageAndWait(
+                    screen.showBottomMessage(
                             String.format("Hello %s, just a moment while I dig the dungeon...", config.getPlayerName()),1
                     );
                 }
+
+                if (config.isMaster()) {
+                    final Optional<Templates.BadTemplateInfo> badTemplateInfo = Templates.verifyProbabilities();
+                    if (badTemplateInfo.isPresent()) {
+                        final Templates.BadTemplateInfo info = badTemplateInfo.get();
+                        final List<? extends ObjectInfoTemplate> templates = Templates.getTemplates(info.templateClass()).stream()
+                                .sorted(Comparator.comparingLong(ObjectInfoTemplate::getId))
+                                .toList();
+
+                        final String label = templates.get(0).getTemplateName();
+                        final int bound = templates.size();
+
+                        int y =1;
+                        screen.putString(1,y, String.format("Bad percentages for %s (bound = %d):", label, bound) );;
+                        for (ObjectInfoTemplate template : templates) {
+                            screen.putString(1,++y, String.format("%3.0f%% %s", template.getCumulativeProbability(), template.getName()) );
+                        }
+
+                        screen.showMessageAndWait("[hit RETURN to continue]",1,y);
+                        screen.clearAndRefresh();
+
+                    }
+                }
+
+                screen.showBottomMessageAndWait("",1);
+
             }
 
         } catch (Exception ex) {
