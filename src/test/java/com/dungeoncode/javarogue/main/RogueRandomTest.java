@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for {@link RogueRandom}.
  */
-class RogueRandomTest {
+public class RogueRandomTest {
 
     @Test
     void testRndWithinRange() {

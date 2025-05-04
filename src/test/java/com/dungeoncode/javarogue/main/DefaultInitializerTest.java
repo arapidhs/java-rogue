@@ -1,24 +1,18 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
-public class DefaultInitializerTest {
-
-    @Mock
-    RogueScreen screen;
+public class DefaultInitializerTest extends RogueBaseTest {
 
     @Test
     void testPlayerInitialization() throws IOException {
-        final Config config = new Config();
+
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
         final DefaultInitializer initializer = new DefaultInitializer();

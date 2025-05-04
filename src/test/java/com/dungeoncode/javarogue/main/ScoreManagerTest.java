@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,19 +15,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@ExtendWith(MockitoExtension.class)
-public class ScoreManagerTest {
+public class ScoreManagerTest extends RogueBaseTest  {
 
     @TempDir
     Path tempDir;
 
-    @Mock
-    RogueScreen screen;
-
     @Test
     void testReadWrite() throws IOException {
-        final Config config = new Config(tempDir.toString());
-        assertEquals(tempDir.toString(), config.getHomeDirName());
 
         Mockito.when(screen.getConfig()).thenReturn(config);
         final ScoreManager scoreManager = new ScoreManager(screen);
