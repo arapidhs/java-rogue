@@ -21,7 +21,7 @@ public class Entity {
     }
 
     public void setPosition(final int x, final int y) {
-        this.position = new Position(x,y);
+        this.position = new Position(x, y);
     }
 
 }

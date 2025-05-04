@@ -15,8 +15,8 @@ public class LevelTest {
 
         final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
         final Food food = new Food();
-        final int foodX=10;
-        final int foodY=5;
+        final int foodX = 10;
+        final int foodY = 5;
         food.setPosition(foodX, foodY);
 
         level.addItem(food);
@@ -35,25 +35,25 @@ public class LevelTest {
     @Test
     void testPlace() {
         final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
-        final int placeX=2;
-        final int placeY=5;
-        final char placeSymbol='p';
-        final Place place = new Place(placeX,placeY,placeSymbol);
-        level.setPlaceAt(placeX,placeY,place);
+        final int placeX = 2;
+        final int placeY = 5;
+        final char placeSymbol = 'p';
+        final Place place = new Place(placeX, placeY, placeSymbol);
+        level.setPlaceAt(placeX, placeY, place);
 
         Place placeFound = level.getPlaceAt(placeX, placeY);
         assertNotNull(placeFound);
-        assertEquals(placeSymbol,placeFound.getSymbol());
+        assertEquals(placeSymbol, placeFound.getSymbol());
 
-        assertEquals(placeSymbol,level.getSymbol(placeX,placeY));
+        assertEquals(placeSymbol, level.getSymbol(placeX, placeY));
 
         // set place at max width and height
-        final int maxX = config.getLevelMaxWidth()-1;
-        final int maxY = config.getLevelMaxHeight()-1;
-        level.setPlaceAt(maxX,maxY, place);
-        placeFound = level.getPlaceAt(maxX,maxY);
+        final int maxX = config.getLevelMaxWidth() - 1;
+        final int maxY = config.getLevelMaxHeight() - 1;
+        level.setPlaceAt(maxX, maxY, place);
+        placeFound = level.getPlaceAt(maxX, maxY);
         assertNotNull(placeFound);
-        assertEquals(placeSymbol,placeFound.getSymbol());
+        assertEquals(placeSymbol, placeFound.getSymbol());
 
         // set place out of bounds
         final int outOfBoundsX = config.getLevelMaxWidth();
@@ -66,10 +66,10 @@ public class LevelTest {
     @Test
     void testRoom() {
         final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
-        final int roomX=5;
-        final int roomY=5;
-        final int roomSizeX=10;
-        final int roomSizeY=10;
+        final int roomX = 5;
+        final int roomY = 5;
+        final int roomSizeX = 10;
+        final int roomSizeY = 10;
         final Room room = new Room(
                 new Position(roomX, roomY),
                 new Position(roomSizeX, roomSizeY),
@@ -82,8 +82,8 @@ public class LevelTest {
         assertTrue(level.addRoom(room));
 
         assertNotNull(level.findRoomAt(roomX, roomY));
-        assertNotNull(level.findRoomAt(roomX+roomSizeX-1, roomY+roomSizeY-1));
-        assertNotNull(level.findRoomAt((roomX+roomSizeX)/2, (roomY+roomSizeY)/2));
+        assertNotNull(level.findRoomAt(roomX + roomSizeX - 1, roomY + roomSizeY - 1));
+        assertNotNull(level.findRoomAt((roomX + roomSizeX) / 2, (roomY + roomSizeY) / 2));
     }
 
 }

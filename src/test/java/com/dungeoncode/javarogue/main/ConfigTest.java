@@ -40,13 +40,13 @@ public class ConfigTest {
     void testInitPlayerStats() {
         final Config config = new Config();
         final Stats stats = config.getInitialPlayerStats();
-        assertEquals(16,stats.getStrength());
-        assertEquals(0,stats.getExperience());
-        assertEquals(1,stats.getLevel());
-        assertEquals(10,stats.getArmor());
-        assertEquals(12,stats.getHitPoints());
-        assertEquals("1x4",stats.getDamage());
-        assertEquals(12,stats.getMaxHitPoints());
+        assertEquals(16, stats.getStrength());
+        assertEquals(0, stats.getExperience());
+        assertEquals(1, stats.getLevel());
+        assertEquals(10, stats.getArmor());
+        assertEquals(12, stats.getHitPoints());
+        assertEquals("1x4", stats.getDamage());
+        assertEquals(12, stats.getMaxHitPoints());
     }
 
 }

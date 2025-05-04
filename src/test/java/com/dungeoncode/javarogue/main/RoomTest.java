@@ -20,7 +20,7 @@ public class RoomTest {
                 EnumSet.of(RoomFlag.CORRIDOR),
                 new ArrayList<>()
         );
-        assertEquals(corridorSymbol,corridor.getChar());
+        assertEquals(corridorSymbol, corridor.getChar());
 
         final char floorSymbol = SymbolMapper.getSymbol(RoomType.FLOOR);
         final Room room = new Room(
@@ -31,6 +31,6 @@ public class RoomTest {
                 null,
                 new ArrayList<>()
         );
-        assertEquals(floorSymbol,room.getChar());
+        assertEquals(floorSymbol, room.getChar());
     }
 }

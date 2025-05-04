@@ -2,7 +2,9 @@ package com.dungeoncode.javarogue.main;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -132,7 +134,7 @@ public class TemplatesTest {
         final long splintMailId = 6;
         final ArmorType splintMailArmorType = ArmorType.SPLINT_MAIL;
         final String splintMailName = "splint mail";
-        final int splintMailWorth=80;
+        final int splintMailWorth = 80;
         final double splitMailProbability = 10;
         final double splintMailCumulativeProbability = 85;
 

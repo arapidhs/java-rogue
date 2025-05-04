@@ -1,8 +1,6 @@
 package com.dungeoncode.javarogue.main.base;
 
 import com.dungeoncode.javarogue.main.Config;
-import com.dungeoncode.javarogue.main.GameStateTest;
-import com.dungeoncode.javarogue.main.Rogue;
 import com.dungeoncode.javarogue.main.RogueScreen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;

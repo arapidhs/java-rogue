@@ -17,12 +17,12 @@ public class DefaultInitializerTest extends RogueBaseTest {
         final MessageSystem messageSystem = new MessageSystem(screen);
         final DefaultInitializer initializer = new DefaultInitializer();
 
-        final GameState gameState = new GameState(config,rogueRandom, screen, initializer, messageSystem);
+        final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
 
-        assertEquals( config.getPlayerName(), gameState.getPlayer().getPlayerName());
-        assertEquals( config.getMaxPack(), gameState.getPlayer().getInventory().getMaxPack());
-        assertEquals( config.getFoodLeft(), gameState.getPlayer().getFoodLeft());
-        assertTrue( gameState.getPlayer().getPlayerFlags().isEmpty());
+        assertEquals(config.getPlayerName(), gameState.getPlayer().getPlayerName());
+        assertEquals(config.getMaxPack(), gameState.getPlayer().getInventory().getMaxPack());
+        assertEquals(config.getFoodLeft(), gameState.getPlayer().getFoodLeft());
+        assertTrue(gameState.getPlayer().getPlayerFlags().isEmpty());
     }
 
 }

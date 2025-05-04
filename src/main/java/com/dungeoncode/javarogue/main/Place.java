@@ -15,7 +15,7 @@ public class Place {
     private char symbol;
     private Monster monster;
 
-    public Place(final int x,final  int y,final  char symbol ) {
+    public Place(final int x, final int y, final char symbol) {
         this.symbol = symbol;
         this.flags = EnumSet.noneOf(PlaceFlag.class);
         this.monster = null;

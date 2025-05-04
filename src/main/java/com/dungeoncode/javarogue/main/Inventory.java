@@ -54,7 +54,7 @@ public class Inventory {
                 final Item existing = items.get(i);
                 if (existing.getObjectType() == item.getObjectType()) {
                     lastTypeMatchIndex = i;
-                    if (Objects.equals(existing.getItemSubType(),item.getItemSubType())) {
+                    if (Objects.equals(existing.getItemSubType(), item.getItemSubType())) {
                         matchIndex = i;
                     }
                 }

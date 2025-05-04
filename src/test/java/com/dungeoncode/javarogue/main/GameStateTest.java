@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class GameStateTest extends RogueBaseTest {
 
@@ -67,15 +66,15 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
 
         final Food food = new Food();
-        assertTrue(gameState.addToPack(food,silent));
+        assertTrue(gameState.addToPack(food, silent));
 
         final Inventory inventory = gameState.getPlayer().getInventory();
         // Test filling remaining inventory slots up to maxPack limit
         final int remainingSize = inventory.getMaxPack() - inventory.getPackSize();
         for (int i = 0; i < remainingSize; i++) {
-            assertTrue(gameState.addToPack(food,silent));
+            assertTrue(gameState.addToPack(food, silent));
         }
-        assertFalse(gameState.addToPack(food,silent));
+        assertFalse(gameState.addToPack(food, silent));
 
     }
 
