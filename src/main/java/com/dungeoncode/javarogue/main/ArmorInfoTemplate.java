@@ -21,7 +21,7 @@ public class ArmorInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.ARMOR, name, probability, worth);
+        super(id, ObjectType.ARMOR, name, probability, worth, null);
 
         Objects.requireNonNull(armorType);
 
@@ -30,7 +30,7 @@ public class ArmorInfoTemplate extends ObjectInfoTemplate {
 
     @Override
     public String getTemplateName() {
-        return "armor";
+        return Messages.MSG_TEMPLATE_ARMOR;
     }
 
     public ArmorType getArmorType() {

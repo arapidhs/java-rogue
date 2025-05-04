@@ -21,7 +21,7 @@ public class RingInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.RING, name, probability, worth);
+        super(id, ObjectType.RING, name, probability, worth, null);
 
         Objects.requireNonNull(ringType);
 
@@ -30,7 +30,7 @@ public class RingInfoTemplate extends ObjectInfoTemplate {
 
     @Override
     public String getTemplateName() {
-        return "rings";
+        return Messages.MSG_TEMPLATE_RING;
     }
 
     public RingType getRingType() {

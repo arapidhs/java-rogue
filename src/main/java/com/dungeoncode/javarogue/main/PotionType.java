@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of potions in the game, derived from original Rogue potion definitions.
  */
-public enum PotionType {
+public enum PotionType implements ItemSubtype {
     CONFUSION,
     HALLUCINATION,
     POISON,

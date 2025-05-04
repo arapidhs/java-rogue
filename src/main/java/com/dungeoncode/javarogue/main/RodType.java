@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of rods (wands/staves) in the game, based on original Rogue stick definitions.
  */
-public enum RodType {
+public enum RodType implements ItemSubtype {
     LIGHT,
     INVISIBILITY,
     LIGHTNING,

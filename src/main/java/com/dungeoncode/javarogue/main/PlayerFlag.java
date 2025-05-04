@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
-public enum PlayerStatus {
+public enum PlayerFlag {
 
     IS_LEVITATING,
     IS_HALLUCINATING,

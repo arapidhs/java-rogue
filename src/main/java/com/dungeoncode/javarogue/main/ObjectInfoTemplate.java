@@ -27,6 +27,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
     private final String name;
     private final double probability;
     private final int worth;
+    private final Boolean stackable;
     private double cumulativeProbability;
 
     @JsonCreator
@@ -35,7 +36,8 @@ public class ObjectInfoTemplate extends AbstractTemplate {
             @JsonProperty("objectType") @Nonnull final ObjectType objectType,
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("probability") final double probability,
-            @JsonProperty("worth") final int worth) {
+            @JsonProperty("worth") final int worth,
+            @JsonProperty("stackable") final Boolean stackable) {
 
         super(id);
 
@@ -47,6 +49,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
         this.name = name;
         this.probability = probability;
         this.worth = worth;
+        this.stackable = stackable;
     }
 
     @Override
@@ -55,7 +58,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
     }
 
     public String getTemplateName() {
-        return "things";
+        return Messages.MSG_TEMPLATE_THINGS;
     }
 
     public ObjectType getObjectType() {
@@ -78,6 +81,10 @@ public class ObjectInfoTemplate extends AbstractTemplate {
      */
     public int getWorth() {
         return worth;
+    }
+
+    public boolean isStackable() {
+        return stackable;
     }
 
     public double getCumulativeProbability() {

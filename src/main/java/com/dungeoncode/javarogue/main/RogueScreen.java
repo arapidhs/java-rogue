@@ -1,7 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -29,15 +28,49 @@ public class RogueScreen extends TerminalScreen {
 
         textGraphics = newTextGraphics();
         hideCursor();
+
     }
 
-    public void hideCursor() {
+    private void hideCursor() {
         setCursorPosition(null);
     }
 
     public void clearAndRefresh() throws IOException {
         clear();
         refresh();
+    }
+
+    public void clearLine(int row) {
+        putString(0, row, " ".repeat(getColumns() - 1));
+    }
+
+    public void putString(final int x, final int y, final String string) {
+        textGraphics.putString(x, y, string);
+    }
+
+    public int getColumns() {
+        return getTerminalSize().getColumns();
+    }
+
+    public int getRows() {
+        return getTerminalSize().getRows();
+    }
+
+    /**
+     * Waits for the user to input the specified character, or newline/carriage return if specified.
+     *
+     * @param ch The character to wait for (e.g., '\n' for newline, ' ' for space).
+     * @throws IOException If an I/O error occurs while reading input.
+     */
+    public void waitFor(char ch) throws IOException {
+        while (true) {
+            final KeyStroke key = readInput();
+            if ((ch == '\n' || ch == '\r') && key.getKeyType() == KeyType.Escape) {
+                return;
+            } else if (key.getCharacter() == ch) {
+                return;
+            }
+        }
     }
 
     public String promptForPassword(@Nonnull final String prompt) throws IOException {
@@ -80,49 +113,19 @@ public class RogueScreen extends TerminalScreen {
         return password.toString();
     }
 
-    public void showMessageAndWait(@Nonnull final String message, final int column, final int row) throws IOException {
-        showMessageAndOptionallyWait(message, column, row, true);
-    }
-
-    public String showBottomMessageAndWait(@Nonnull final String message, final int column) throws IOException {
-        final TerminalSize size = getTerminalSize();
-        final int row = size.getRows() - 1;
-        return showMessageAndOptionallyWait(message, column, row, true);
-    }
-
-    public void showBottomMessage(@Nonnull final String message, final int column) throws IOException {
-        final TerminalSize size = getTerminalSize();
-        final int row = size.getRows() - 1;
-        showMessageAndOptionallyWait(message, column, row, false);
-    }
-
-    private String showMessageAndOptionallyWait(@Nonnull final String message, final int column, final int row, final boolean wait) throws IOException {
-
-        Objects.requireNonNull(message);
-
+    public String readString() throws IOException {
         final StringBuilder input = new StringBuilder();
-
-        textGraphics.putString(column, row, message);
-        refresh();
-
-        if (wait) {
-            while (true) {
-                KeyStroke key = readInput();
-                if (key.getKeyType() == KeyType.Enter) {
-                    break;
-                }
-                if (key.getKeyType() == KeyType.Backspace && !input.isEmpty()) {
-                    input.deleteCharAt(input.length() - 1);
-                } else if (key.getKeyType() == KeyType.Character) {
-                    input.append(key.getCharacter());
-                }
+        while (true) {
+            KeyStroke key = readInput();
+            if (key.getKeyType() == KeyType.Enter) {
+                break;
+            }
+            if (key.getKeyType() == KeyType.Backspace && !input.isEmpty()) {
+                input.deleteCharAt(input.length() - 1);
+            } else if (key.getKeyType() == KeyType.Character) {
+                input.append(key.getCharacter());
             }
         }
-
-        // Overwrite the message with spaces to clear it
-        final String blank = " ".repeat(message.length());
-        textGraphics.putString(column, row, blank);
-
         return input.toString();
     }
 
@@ -130,8 +133,8 @@ public class RogueScreen extends TerminalScreen {
         return config;
     }
 
-    public void putString(final int x, final int y, final String string) {
-        textGraphics.putString(x, y, string);
+    public void putChar(final int x, final int y, final char symbol) {
+        textGraphics.putString(x, y, String.valueOf(symbol));
     }
 
     public void enableModifiers(@Nonnull final SGR sgr) {

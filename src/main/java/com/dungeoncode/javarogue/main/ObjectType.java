@@ -11,5 +11,6 @@ public enum ObjectType {
     FOOD,
     RING,
     WEAPON,
-    ROD
+    ROD,
+    AMULET
 }

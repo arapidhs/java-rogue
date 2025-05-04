@@ -1,0 +1,9 @@
+{
+  "strength": 16,
+  "experience": 0,
+  "level": 1,
+  "armor": 10,
+  "hitPoints": 12,
+  "damage": "1x4",
+  "maxHitPoints": 12
+}

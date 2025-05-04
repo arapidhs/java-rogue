@@ -1,7 +1,5 @@
 package com.dungeoncode.javarogue.main;
 
-import com.googlecode.lanterna.TerminalPosition;
-
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -42,38 +40,38 @@ public class TombstoneRenderer {
 
         // Print tombstone ASCII art starting at row 8
         for (int i = 0; i < TOMBSTONE_ART.size(); i++) {
-            screen.putString(0,8+i,TOMBSTONE_ART.get(i));
+            screen.putString(0, 8 + i, TOMBSTONE_ART.get(i));
         }
 
         final String killerName = gameState.getDeathSource().getName();
-        screen.putString(center(killerName),17,killerName);
+        screen.putString(center(killerName), 17, killerName);
 
         final boolean isKillType = gameState.getDeathSource().isTemplate() &&
                 gameState.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE);
 
         boolean isUseArticle = true;
 
-        if ( isKillType ) {
+        if (isKillType) {
             final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().getTemplateId());
             isUseArticle = killTypeTemplate != null ? killTypeTemplate.isUseArticle() : isUseArticle;
         }
 
-        if ( isUseArticle ) {
-            screen.putString(32,16," ");
+        if (isUseArticle) {
+            screen.putString(32, 16, " ");
         } else {
-            screen.putString(33,16,RogueUtils.getIndefiniteArticleFor(killerName));
+            screen.putString(33, 16, RogueUtils.getIndefiniteArticleFor(killerName));
         }
 
         final String playerName = gameState.getConfig().getPlayerName();
-        screen.putString(center(playerName),14,playerName);
+        screen.putString(center(playerName), 14, playerName);
 
         // Print gold (row 15, centered)
         final String goldText = String.format("%d Au", gameState.getGoldAmount());
-        screen.putString(center(goldText),15,goldText);
+        screen.putString(center(goldText), 15, goldText);
 
         // Print year (row 18, column 26)
         final String year = String.valueOf(LocalDate.now().getYear());
-        screen.putString(26,18,year);
+        screen.putString(26, 18, year);
 
         screen.refresh();
     }

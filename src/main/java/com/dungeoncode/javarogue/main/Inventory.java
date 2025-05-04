@@ -1,0 +1,173 @@
+package com.dungeoncode.javarogue.main;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * Manages the player's inventory, including item stacking, pack character assignment,
+ * and Rogue-compatible inventory display formatting.
+ *
+ * <p>Modeled after the original Rogue behavior with features such as object stacking,
+ * pack size limits, and type-based grouping.</p>
+ */
+public class Inventory {
+
+    private final int maxPack;
+    private final List<Item> items;
+    private int packSize;
+
+    /**
+     * Constructs a new inventory with the specified maximum pack size.
+     *
+     * @param maxPack The maximum number of items (or effective item units) allowed.
+     */
+    public Inventory(final int maxPack) {
+        this.items = new ArrayList<>();
+        this.maxPack = maxPack;
+    }
+
+    /**
+     * Attempts to add the given item to the inventory.
+     *
+     * <p>Follows Rogue rules: stackable items may merge, items are ordered by type,
+     * and pack characters are assigned from 'a' to 'z'.</p>
+     *
+     * @param item The item to add; must not be null.
+     * @return true if the item was added (or merged), false otherwise.
+     */
+    public boolean addToPack(@Nonnull Item item) {
+        Objects.requireNonNull(item);
+        boolean added = false;
+        if (items.isEmpty()) {
+            item.setPackChar(assignPackChar());
+            items.add(item);
+            packSize++;
+            added = true;
+        } else {
+            int lastTypeMatchIndex = -1;
+            int matchIndex = -1;
+
+            // Locate last index of a matching type and exact match of subtype
+            for (int i = 0; i < items.size(); i++) {
+                final Item existing = items.get(i);
+                if (existing.getObjectType() == item.getObjectType()) {
+                    lastTypeMatchIndex = i;
+                    if (existing.getItemSubType().equals(item.getItemSubType())) {
+                        matchIndex = i;
+                    }
+                }
+            }
+
+            if (matchIndex >= 0) {
+                final Item existing = items.get(matchIndex);
+
+                // Check stackability via template; fallback is false
+                boolean isStackable = Templates.getTemplates(ObjectInfoTemplate.class)
+                        .stream()
+                        .filter(template -> template.getObjectType() == item.getObjectType())
+                        .findFirst()
+                        .map(ObjectInfoTemplate::isStackable)
+                        .orElse(false);
+
+                // Stack if identical and allowed
+                if (isStackable && checkPackRoom()) {
+                    existing.setCount(existing.getCount() + item.getCount());
+                    packSize++;
+                    added = true;
+                } else if (item.getGroup() != 0 && existing.getGroup() == item.getGroup()) {
+                    // Handle grouped-but-not-stackable logic (e.g., arrows of same origin)
+                    existing.setCount(existing.getCount() + item.getCount());
+                    added = true;
+                } else if (checkPackRoom()) {
+                    // Insert directly after matching subtype
+                    item.setPackChar(assignPackChar());
+                    items.add(matchIndex + 1, item);
+                    packSize++;
+                    added = true;
+                }
+
+            } else if (checkPackRoom()) {
+                item.setPackChar(assignPackChar());
+                // Maintain relative order by inserting after last of same type
+                if (lastTypeMatchIndex >= 0) {
+                    items.add(lastTypeMatchIndex + 1, item);
+                } else {
+                    items.add(item);
+                }
+                packSize++;
+                added = true;
+            }
+        }
+
+        if (added) {
+            item.getItemFlags().add(ItemFlag.ISFOUND);
+        }
+
+        return added;
+    }
+
+    /**
+     * Assigns a unique pack character ('a' to 'z') for a new item.
+     *
+     * @return The next available pack character.
+     * @throws IllegalStateException if no pack characters are available.
+     */
+    private char assignPackChar() {
+        for (char c = 'a'; c <= 'z'; c++) {
+            final char currentChar = c;
+            boolean isUsed = items.stream().anyMatch(item -> item.getPackChar() != null && item.getPackChar() == currentChar);
+            if (!isUsed) {
+                return currentChar;
+            }
+        }
+        throw new IllegalStateException("No pack characters available");
+    }
+
+    /**
+     * Checks if there is room in the inventory without modifying packSize.
+     *
+     * @return true if packSize + 1 <= maxPack, false otherwise.
+     */
+    private boolean checkPackRoom() {
+        return packSize + 1 <= maxPack;
+    }
+
+    /**
+     * Returns the display name of the given inventory item.
+     *
+     * <p>This method is the Java equivalent of the original Rogue C function {@code inv_name()},
+     * and is responsible for producing the textual representation of an item as it appears
+     * in the player's inventory or during drop/pickup interactions.</p>
+     *
+     * @param item        the non-null item to describe
+     * @param dropCapital if {@code true}, the returned name will start with a lowercase letter
+     *                    (typically when dropping or referencing in a sentence); if {@code false},
+     *                    the name will start with an uppercase letter (e.g., in terse inventory lists)
+     * @return the string name of the item, formatted for display
+     */
+    public String getItemName(@Nonnull final Item item, boolean dropCapital) {
+        // TODO implement this
+        return String.valueOf(item.getPackChar());
+    }
+
+    /**
+     * Returns the list of items in the inventory.
+     *
+     * @return A copy of the items list to prevent external modification.
+     */
+    @Nonnull
+    public List<Item> getItems() {
+        return new ArrayList<>(items);
+    }
+
+    /**
+     * Returns the maximum number of items the inventory can hold.
+     *
+     * @return The maximum pack size.
+     */
+    public int getMaxPack() {
+        return maxPack;
+    }
+}

@@ -42,7 +42,7 @@ public class Options {
      * which is based on the system time in seconds. This can lead to similar seeds
      * when launching the game in rapid succession. If false, a random seed is generated
      * using Java's Random, improving entropy for varied dungeon generation.
-     *
+     * <p>
      * This flag replicates Rogue's historical seeding logic for archival or debugging purposes.
      */
     @CommandLine.Option(names = "-useLegacySeed", description = "Use original Rogue seed logic based on system time (true/false)")

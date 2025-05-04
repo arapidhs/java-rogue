@@ -30,19 +30,6 @@ public class Templates {
             Collectors.groupingBy(Template::getClass,
                     Collectors.toUnmodifiableMap(Template::getId, t -> t)));
 
-    private static <T extends Template> Map<Long, T> loadTemplates(String resourcePath, Class<T> type) {
-        try (InputStream in = Templates.class.getResourceAsStream(resourcePath)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            final List<T> list = mapper.readValue(
-                    in,
-                    mapper.getTypeFactory().constructCollectionType(List.class, type));
-
-            return list.stream().collect(Collectors.toMap(Template::getId, t -> t));
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("Failed to load templates from %s", resourcePath), e);
-        }
-    }
-
     static {
         // Apply cumulative probability to ObjectInfoTemplate entries
         List<Class<? extends ObjectInfoTemplate>> cumulativeTemplates = List.of(
@@ -58,19 +45,17 @@ public class Templates {
         cumulativeTemplates.forEach(Templates::applyCumulativeProbability);
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends Template> Set<T> getTemplates(@Nonnull final Class<T> type) {
+    private static <T extends Template> Map<Long, T> loadTemplates(String resourcePath, Class<T> type) {
+        try (InputStream in = Templates.class.getResourceAsStream(resourcePath)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final List<T> list = mapper.readValue(
+                    in,
+                    mapper.getTypeFactory().constructCollectionType(List.class, type));
 
-        Objects.requireNonNull(type);
-        final Map<Long, Template> map = TEMPLATES_BY_TYPE.get(type);
-        if (map == null) {
-            return Set.of();
+            return list.stream().collect(Collectors.toMap(Template::getId, t -> t));
+        } catch (Exception e) {
+            throw new RuntimeException(String.format("Failed to load templates from %s", resourcePath), e);
         }
-
-        return map.values().stream()
-                .map(t -> (T) t)
-                .collect(Collectors.toUnmodifiableSet());
-
     }
 
     @SuppressWarnings("unchecked")
@@ -93,6 +78,21 @@ public class Templates {
             cumulative += template.getProbability();
             template.setCumulativeProbability(cumulative);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Template> Set<T> getTemplates(@Nonnull final Class<T> type) {
+
+        Objects.requireNonNull(type);
+        final Map<Long, Template> map = TEMPLATES_BY_TYPE.get(type);
+        if (map == null) {
+            return Set.of();
+        }
+
+        return map.values().stream()
+                .map(t -> (T) t)
+                .collect(Collectors.toUnmodifiableSet());
+
     }
 
     public static Optional<BadTemplateInfo> verifyProbabilities() {
@@ -125,11 +125,11 @@ public class Templates {
     }
 
     public record BadTemplateInfo(Class<? extends ObjectInfoTemplate> templateClass, int bound) {
-            public BadTemplateInfo(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass, int bound) {
-                Objects.requireNonNull(templateClass);
-                this.templateClass = templateClass;
-                this.bound = bound;
-            }
+        public BadTemplateInfo(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass, int bound) {
+            Objects.requireNonNull(templateClass);
+            this.templateClass = templateClass;
+            this.bound = bound;
         }
+    }
 
 }

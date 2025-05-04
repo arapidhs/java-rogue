@@ -31,7 +31,32 @@ public class Stats {
         this.maxHitPoints = maxHitPoints;
     }
 
+    public int getStrength() {
+        return strength;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getArmor() {
+        return armor;
+    }
+
+    public int getHitPoints() {
+        return hitPoints;
+    }
+
+    public String getDamage() {
+        return damage;
+    }
+
+    public int getMaxHitPoints() {
+        return maxHitPoints;
+    }
+
     public int getExperience() {
         return experience;
     }
+
 }

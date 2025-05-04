@@ -1,6 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,12 +16,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.dungeoncode.javarogue.main.Messages.*;
+
 public class ScoreManager {
 
     private static final int FLAG_SHOW_NAMES = 1;
     private static final int FLAG_DELETE = 2;
 
-    private static final String STRING_RETURN_TO_CONTINUE = "[Press return to continue]";
     private static final String STRING_INPUT_NAMES = "names";
     private static final String STRING_INPUT_EDIT = "edit";
 
@@ -62,7 +65,9 @@ public class ScoreManager {
         // Prompt for "[Press return to continue]" and optionally accept commands like "names" or "edit" (admin-only).
         String input;
         if (gameEndReason != null || (getConfig().isMaster() && getConfig().isWizard())) {
-            input = screen.showBottomMessageAndWait(STRING_RETURN_TO_CONTINUE, 0);
+            screen.putString(0, screen.getRows() - 1, PROMPT_PRESS_RETURN_CONTINUE);
+            screen.refresh();
+            input = screen.readString();
             if (getConfig().isMaster() && getConfig().isWizard()) {
                 if (STRING_INPUT_NAMES.equalsIgnoreCase(input)) {
                     flag = FLAG_SHOW_NAMES;
@@ -82,7 +87,7 @@ public class ScoreManager {
             final boolean isHighScore = scoreEntries.size() < getConfig().getNumScores()
                     || state.getGoldAmount() > scoreEntries.get(scoreEntries.size() - 1).score;
 
-            if ( isHighScore ) {
+            if (isHighScore) {
 
                 final int userId = getConfig().getUserId();
                 final long monsterId = state.getDeathSource().getType().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().getTemplateId() : 0;
@@ -129,7 +134,7 @@ public class ScoreManager {
                             scoreEntries.add(conflictIndex.getAsInt(), newEntry);
 
                             // Remove the last entry to maintain list size
-                            if (scoreEntries.size() > getConfig().getNumScores() ) {
+                            if (scoreEntries.size() > getConfig().getNumScores()) {
                                 scoreEntries.remove(scoreEntries.size() - 1);
                             }
                         }
@@ -152,18 +157,18 @@ public class ScoreManager {
 
         // Display the title and table header
         int y = 0;
-        final String title = String.format("Top %s %s:",
+        final String title = String.format(MSG_TOP + " %s %s:",
                 RogueUtils.numberToWord(getConfig().getNumScores()),
-                getConfig().isAllowMultipleScores() ? "Scores" : "Rogueists");
+                getConfig().isAllowMultipleScores() ? MSG_SCORES : MSG_ROGUEISTS);
         screen.putString(0, y++, title);
-        screen.putString(0, y++, "   Score Name");
+        screen.putString(0, y++, "   " + MSG_SCORE_NAME);
         screen.refresh();
 
         int index = 1;
         for (ScoreEntry entry : scoreEntries) {
             if (entry.score == 0) break;
 
-            String base = String.format("%2d %5d %s: %s on level %d",
+            String base = String.format("%2d %5d %s: %s " + MSG_ON_LEVEL + " %d",
                     index++, entry.score, entry.name, entry.gameEndReason.getDisplayName(), entry.level);
 
             /*
@@ -187,8 +192,8 @@ public class ScoreManager {
                     killName = getConfig().getDefaultKillName(); // fallback ("Wally the Wonder Badger", etc.)
                 }
 
-                base += " by ";
-                if ( isUseArticle ) {
+                base += " " + MSG_BY + " ";
+                if (isUseArticle) {
                     base += RogueUtils.getIndefiniteArticleFor(killName) + " ";
                 }
                 base += killName;
@@ -214,8 +219,11 @@ public class ScoreManager {
 
             // Handle admin score deletion prompt (interactive; inspired by `fgets()` and `if (prbuf[0] == 'd')`)
             if (getConfig().isMaster() && flag == FLAG_DELETE) {
-                input = screen.showBottomMessageAndWait("[d=delete, anything else=skip]", 0);
-                if (input != null && input.startsWith("d")) {
+                screen.putString(0, screen.getRows() - 1, PROMPT_DELETE_OR_SKIP);
+                screen.refresh();
+
+                final KeyStroke key = screen.readInput();
+                if (key.getKeyType() == KeyType.Character && Character.toLowerCase(key.getCharacter()) == 'd') {
                     entry.isDeleted = true;
                 }
             }
@@ -235,11 +243,16 @@ public class ScoreManager {
             writeScoreFile(scoreEntries);
         }
 
+        screen.clearLine(screen.getRows() - 1);
+        screen.putString(0, screen.getRows() - 1, PROMPT_PRESS_RETURN_CONTINUE);
         screen.refresh();
+        screen.readInput();
 
-        screen.showBottomMessageAndWait(STRING_RETURN_TO_CONTINUE, 0);
     }
 
+    private Config getConfig() {
+        return screen.getConfig();
+    }
 
     public List<ScoreEntry> readScoreFile() throws IOException {
         final List<ScoreEntry> entries = new ArrayList<>();
@@ -340,22 +353,17 @@ public class ScoreManager {
         // Ensure parent directory exists
         if (!scoreFile.getParentFile().exists()) {
             if (!scoreFile.getParentFile().mkdirs()) {
-                throw new IOException(String.format("Failed to create directories: %s", scoreFile.getParent()));
+                throw new IOException(String.format(ERROR_FAILED_CREATE_DIRS, scoreFile.getParent()));
             }
         }
 
         // Ensure the score file exists
         if (!scoreFile.exists()) {
             if (!scoreFile.createNewFile()) {
-                throw new IOException(String.format("Failed to create score file: %s", scoreFile.getAbsolutePath()));
+                throw new IOException(String.format(ERROR_FAILED_CREATE_SCORE_FILE, scoreFile.getAbsolutePath()));
             }
         }
         return scoreFile;
-    }
-
-
-    private Config getConfig() {
-        return screen.getConfig();
     }
 
     /**
@@ -472,9 +480,9 @@ public class ScoreManager {
          * @param name          Player name.
          */
         ScoreEntry(final int userId, final int score, final GameEndReason gameEndReason,
-                final long monsterId, final long killTypeId,
-                final int level, final long time,
-                final String name) {
+                   final long monsterId, final long killTypeId,
+                   final int level, final long time,
+                   final String name) {
             this.userId = userId;
             this.score = score;
             this.gameEndReason = gameEndReason;
@@ -490,6 +498,11 @@ public class ScoreManager {
         }
 
         @Override
+        public int hashCode() {
+            return Objects.hash(userId, score, gameEndReason, monsterId, killTypeId, level, time, name);
+        }
+
+        @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (!(o instanceof ScoreEntry other)) return false;
@@ -501,11 +514,6 @@ public class ScoreManager {
                     level == other.level &&
                     time == other.time &&
                     Objects.equals(name, other.name);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(userId, score, gameEndReason, monsterId, killTypeId, level, time, name);
         }
 
     }

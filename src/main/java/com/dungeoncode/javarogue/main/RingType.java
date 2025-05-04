@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of rings in the game, derived from original Rogue ring definitions.
  */
-public enum RingType {
+public enum RingType implements ItemSubtype {
     PROTECTION,
     ADD_STRENGTH,
     SUSTAIN_STRENGTH,

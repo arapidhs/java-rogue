@@ -21,7 +21,7 @@ public class RodInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.ROD, name, probability, worth);
+        super(id, ObjectType.ROD, name, probability, worth, null);
 
         Objects.requireNonNull(rodType);
 
@@ -30,7 +30,7 @@ public class RodInfoTemplate extends ObjectInfoTemplate {
 
     @Override
     public String getTemplateName() {
-        return "sticks";
+        return Messages.MSG_TEMPLATE_ROD;
     }
 
     public RodType getRodType() {

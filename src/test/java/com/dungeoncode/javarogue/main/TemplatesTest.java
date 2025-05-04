@@ -103,6 +103,7 @@ public class TemplatesTest {
         assertEquals(scrollObjectType, scrollTemplate.getObjectType());
         assertEquals(scrollProbability, scrollTemplate.getProbability());
         assertEquals(scrollCumulativeProbability, scrollTemplate.getCumulativeProbability());
+        assertTrue(scrollTemplate.isStackable());
 
         // Verify rod template
         final long rodId = 7;
@@ -116,6 +117,7 @@ public class TemplatesTest {
         assertEquals(rodObjectType, rodTemplate.getObjectType());
         assertEquals(rodProbability, rodTemplate.getProbability());
         assertEquals(rodCumulativeProbability, rodTemplate.getCumulativeProbability());
+        assertFalse(rodTemplate.isStackable());
     }
 
     /**

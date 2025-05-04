@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of scrolls in the game, derived from original Rogue scroll definitions.
  */
-public enum ScrollType {
+public enum ScrollType implements ItemSubtype {
     MONSTER_CONFUSION,
     MAGIC_MAPPING,
     HOLD_MONSTER,

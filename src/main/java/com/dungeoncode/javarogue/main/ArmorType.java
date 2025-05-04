@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of armor in the game, derived from original Rogue armor definitions.
  */
-public enum ArmorType {
+public enum ArmorType implements ItemSubtype {
     LEATHER,
     RING_MAIL,
     STUDDED_LEATHER,

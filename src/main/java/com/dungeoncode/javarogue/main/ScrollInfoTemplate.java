@@ -21,7 +21,7 @@ public class ScrollInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.SCROLL, name, probability, worth);
+        super(id, ObjectType.SCROLL, name, probability, worth, null);
 
         Objects.requireNonNull(scrollType);
 
@@ -30,10 +30,11 @@ public class ScrollInfoTemplate extends ObjectInfoTemplate {
 
     @Override
     public String getTemplateName() {
-        return "scrolls";
+        return Messages.MSG_TEMPLATE_SCROLL;
     }
 
     public ScrollType getScrollType() {
         return scrollType;
     }
+
 }

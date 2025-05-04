@@ -21,7 +21,7 @@ public class PotionInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.POTION, name, probability, worth);
+        super(id, ObjectType.POTION, name, probability, worth, null);
 
         Objects.requireNonNull(potionType);
 
@@ -30,7 +30,7 @@ public class PotionInfoTemplate extends ObjectInfoTemplate {
 
     @Override
     public String getTemplateName() {
-        return "potions";
+        return Messages.MSG_TEMPLATE_POTION;
     }
 
     public PotionType getPotionType() {

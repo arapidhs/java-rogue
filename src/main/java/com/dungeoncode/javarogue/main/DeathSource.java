@@ -15,20 +15,14 @@ import java.util.Objects;
  */
 public final class DeathSource {
 
-    public enum Type {
-        MONSTER,
-        KILL_TYPE,
-        DEFAULT
-    }
-
     private final Type type;
     private final long templateId;
     private final String name;
 
     public DeathSource(final Type type, final long templateId, final String name) {
-        this.type = Objects.requireNonNull(type, "type cannot be null");
+        this.type = Objects.requireNonNull(type);
         this.templateId = templateId;
-        this.name = Objects.requireNonNull(name, "name cannot be null");
+        this.name = Objects.requireNonNull(name);
     }
 
     public Type getType() {
@@ -51,6 +45,12 @@ public final class DeathSource {
      */
     public boolean isTemplate() {
         return type == Type.MONSTER || type == Type.KILL_TYPE;
+    }
+
+    public enum Type {
+        MONSTER,
+        KILL_TYPE,
+        DEFAULT
     }
 }
 

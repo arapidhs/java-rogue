@@ -3,50 +3,60 @@ package com.dungeoncode.javarogue.main;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
+import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import javax.annotation.Nullable;
+import java.awt.*;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
+import static com.dungeoncode.javarogue.main.Messages.*;
+
+/**
+ * Main entry point for the Rogue game, responsible for initializing the terminal, processing command-line options,
+ * handling wizard mode authentication, displaying scores or death screens, and starting the game.
+ * Configures the game environment, including terminal size, font, and seed, and manages game state initialization.
+ */
 public class Rogue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Rogue.class);
 
-    private static final String STRING_TERMINAL_TITLE = "Rogue";
-    private static final String PROMPT_WIZARD_PASSWORD = "wizard's password: ";
     private static final String PASSWORD_SALT = "mT";
     private static final String PASSWORD_HASH = "62851374aa4abd12095d7246ae1e3c273ab5619e9967be902dc0847047d333ae";
 
     public static void main(String[] args) {
-
         final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom( config.getSeed() );
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final Font font = new Font("Monospaced", Font.PLAIN, 16);
 
         RogueScreen screen = null;
-
+        MessageSystem messageSystem = null;
         try {
-
-            final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory( System.out, System.in, StandardCharsets.UTF_8);
+            // Initialize terminal with configured size and font
+            final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory(System.out, System.in, StandardCharsets.UTF_8);
             terminalFactory.setInitialTerminalSize(
                     new TerminalSize(config.getTerminalCols(), config.getTerminalRows()));
-            terminalFactory.setTerminalEmulatorTitle(STRING_TERMINAL_TITLE);
+            terminalFactory.setTerminalEmulatorTitle(TERMINAL_TITLE);
+            terminalFactory.setTerminalEmulatorFontConfiguration(SwingTerminalFontConfiguration.newInstance(font));
 
             try {
                 screen = new RogueScreen(terminalFactory.createTerminal(), config);
+                messageSystem = new MessageSystem(screen);
                 screen.startScreen();
             } catch (IOException ex) {
-                throw new RuntimeException("Failed to create terminal screen. Exception: ", ex);
+                throw new RuntimeException(ERROR_FAILED_CREATE_TERMINAL, ex);
             }
 
             final Options options = getOptions(args);
             config.applyOptions(options);
 
+            // Handle wizard mode password prompt
             if (options.master) {
                 try {
                     final String enteredPassword = screen.promptForPassword(PROMPT_WIZARD_PASSWORD);
@@ -54,7 +64,7 @@ public class Rogue {
                             RogueUtils.crypt(enteredPassword, PASSWORD_SALT).equals(PASSWORD_HASH);
                     config.setWizard(wizard, rogueRandom);
                 } catch (IOException ex) {
-                    throw new RuntimeException("Failed to create prompt for password. Exception: ", ex);
+                    throw new RuntimeException(ERROR_FAILED_CREATE_PROMPT_PASSWORD, ex);
                 } finally {
                     screen.clearAndRefresh();
                 }
@@ -64,43 +74,38 @@ public class Rogue {
                 final ScoreManager scoreManager = new ScoreManager(screen);
                 scoreManager.score(null);
             } else if (options.simulateDeath) {
-
-                final GameState gameState = new GameState(config, rogueRandom, new DeathSimulationInitializer());
+                // Simulate death and display death screen or tombstone
+                final GameState gameState = new GameState(config, rogueRandom, screen, new DeathSimulationInitializer(), messageSystem);
                 gameState.death();
 
-                if ( gameState.getConfig().isTombstone()) {
+                if (gameState.getConfig().isTombstone()) {
                     final TombstoneRenderer tombstoneRenderer = new TombstoneRenderer(screen, gameState);
                     tombstoneRenderer.renderTombstone();
                 } else {
-
+                    // Build and display death message
                     final StringBuilder deathLine = new StringBuilder();
-                    deathLine.append("Killed by ");
+                    deathLine.append(MSG_KILLED_BY).append(' ');
 
                     final String killerName = gameState.getDeathSource().getName();
-
                     final boolean isKillType = gameState.getDeathSource().isTemplate() &&
                             gameState.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE);
-
                     boolean isUseArticle = true;
 
-                    if ( isKillType ) {
+                    if (isKillType) {
                         final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().getTemplateId());
                         isUseArticle = killTypeTemplate != null ? killTypeTemplate.isUseArticle() : isUseArticle;
                     }
 
-                    if ( isUseArticle ) {
+                    if (isUseArticle) {
                         final String article = RogueUtils.getIndefiniteArticleFor(killerName);
                         deathLine.append(article).append(" ").append(killerName);
                     } else {
                         deathLine.append(killerName);
                     }
 
-                    deathLine.append(" with ").append(gameState.getGoldAmount()).append(" gold");
+                    deathLine.append(' ').append(MSG_WITH).append(' ').append(gameState.getGoldAmount()).append(' ').append(MSG_GOLD);
 
-                    final TerminalSize size = screen.getTerminalSize();
-                    final int row = size.getRows() - 2;
-                    final int column = 0;
-                    screen.putString(column, row, deathLine.toString());
+                    screen.putString(0, screen.getRows() - 2, deathLine.toString());
                 }
 
                 screen.refresh();
@@ -109,16 +114,18 @@ public class Rogue {
                 scoreManager.score(gameState);
 
             } else {
-                if ( config.isMaster() && config.isWizard() ) {
-                    screen.showBottomMessage(
-                            String.format("Hello %s, welcome to dungeon #%d", config.getPlayerName(), config.getDungeonSeed()),1
+                // Display welcome message based on mode
+                if (config.isMaster() && config.isWizard()) {
+                    screen.putString(0, screen.getRows() - 1,
+                            String.format(MSG_HELLO_WELCOME_WIZARD, config.getPlayerName(), config.getDungeonSeed())
                     );
                 } else {
-                    screen.showBottomMessage(
-                            String.format("Hello %s, just a moment while I dig the dungeon...", config.getPlayerName()),1
+                    screen.putString(0, screen.getRows() - 1,
+                            String.format(MSG_HELLO_WELCOME, config.getPlayerName())
                     );
                 }
 
+                // Verify template probabilities in master mode
                 if (config.isMaster()) {
                     final Optional<Templates.BadTemplateInfo> badTemplateInfo = Templates.verifyProbabilities();
                     if (badTemplateInfo.isPresent()) {
@@ -130,20 +137,22 @@ public class Rogue {
                         final String label = templates.get(0).getTemplateName();
                         final int bound = templates.size();
 
-                        int y =1;
-                        screen.putString(1,y, String.format("Bad percentages for %s (bound = %d):", label, bound) );;
+                        int y = 0;
+                        screen.putString(0, y, String.format(ERROR_BAD_PROBABILITY_PERCENTAGES, label, bound));
                         for (ObjectInfoTemplate template : templates) {
-                            screen.putString(1,++y, String.format("%3.0f%% %s", template.getCumulativeProbability(), template.getName()) );
+                            screen.putString(0, ++y, String.format("%3.0f%% %s", template.getCumulativeProbability(), template.getName()));
                         }
 
-                        screen.showMessageAndWait("[hit RETURN to continue]",1,y);
+                        screen.putString(0, y, PROMPT_HIT_RETURN_CONTINUE);
                         screen.clearAndRefresh();
-
+                        screen.readInput();
                     }
                 }
 
-                screen.showBottomMessageAndWait("",1);
+                final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
 
+                screen.refresh();
+                screen.readInput();
             }
 
         } catch (Exception ex) {
@@ -152,31 +161,46 @@ public class Rogue {
         } finally {
             exit(screen);
         }
-
     }
 
-    private static void exit(@Nullable RogueScreen screen) {
-        closeScreen(screen);
-        System.exit(0);
-    }
-
+    /**
+     * Parses command-line arguments into Options.
+     *
+     * @param args The command-line arguments.
+     * @return The parsed Options object.
+     */
     private static Options getOptions(String[] args) {
         final Options options = new Options();
         try {
             new CommandLine(options).parseArgs(args);
         } catch (Exception ex) {
-            LOGGER.error("Failed to parse command line arguments. Exception: ", ex);
+            LOGGER.error(ERROR_FAILED_PARSE_CLI_ARGS, ex);
         }
         return options;
     }
 
+    /**
+     * Closes the screen and exits the application.
+     *
+     * @param screen The RogueScreen to close, may be null.
+     */
+    private static void exit(@Nullable RogueScreen screen) {
+        closeScreen(screen);
+        System.exit(0);
+    }
+
+    /**
+     * Closes the provided screen, handling any errors during closure.
+     *
+     * @param screen The Screen to close, may be null.
+     */
     private static void closeScreen(@Nullable Screen screen) {
         try {
             if (screen != null) {
                 screen.close();
             }
         } catch (IOException ex) {
-            LOGGER.error("Failed to stop screen. Exception: ", ex);
+            LOGGER.error(ERROR_FAILED_STOP_SCREEN, ex);
             System.exit(1);
         }
     }

@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 /**
  * Specific types of weapons in the game, derived from original Rogue weapon definitions.
  */
-public enum WeaponType {
+public enum WeaponType implements ItemSubtype {
     MACE,
     LONG_SWORD,
     SHORT_BOW,

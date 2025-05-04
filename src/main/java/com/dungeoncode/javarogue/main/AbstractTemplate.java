@@ -14,17 +14,16 @@ public abstract class AbstractTemplate implements Template {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || o.getClass() != this.getClass()) return false;
         AbstractTemplate other = (AbstractTemplate) o;
         return id == other.id;
-    }
-
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 
 }

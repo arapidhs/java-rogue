@@ -17,7 +17,9 @@ import java.util.List;
  */
 public class RogueRandom {
 
-    /** Internal mutable seed, updated on every random generation. */
+    /**
+     * Internal mutable seed, updated on every random generation.
+     */
     private long seed;
 
     /**
@@ -27,20 +29,6 @@ public class RogueRandom {
      */
     public RogueRandom(long seed) {
         this.seed = seed;
-    }
-
-    /**
-     * Generates a random integer in the range [0, range), replicating Rogue's {@code rnd(int range)} function.
-     * If the specified range is zero, returns zero.
-     *
-     * @param range the upper bound (exclusive) for the random number
-     * @return a random integer between 0 (inclusive) and {@code range} (exclusive)
-     */
-    public int rnd(int range) {
-        if (range == 0) {
-            return 0;
-        }
-        return Math.abs(nextRaw()) % range;
     }
 
     /**
@@ -77,10 +65,9 @@ public class RogueRandom {
      * @param defaultKillName the optional fallback name to include in selection; if {@code null}, it is ignored
      * @return a {@link DeathSource} representing the randomly selected death cause
      * @throws IllegalStateException if no death causes are available to select
-     *
      * @see Config#getDefaultKillName()
      */
-    public DeathSource selectRandomDeathSource(@Nullable final String defaultKillName) {
+    public DeathSource selectRandomDeathSource(@Nullable final String defaultKillName) throws IllegalStateException {
         final List<DeathSource> sources = new ArrayList<>();
 
         for (final MonsterTemplate monster : Templates.getTemplates(MonsterTemplate.class)) {
@@ -96,13 +83,26 @@ public class RogueRandom {
         }
 
         if (sources.isEmpty()) {
-            throw new IllegalStateException("No available death causes to select from.");
+            throw new IllegalStateException(Messages.ERROR_NO_DEATH_CAUSES);
         }
 
         final int index = rnd(sources.size());
         return sources.get(index);
     }
 
+    /**
+     * Generates a random integer in the range [0, range), replicating Rogue's {@code rnd(int range)} function.
+     * If the specified range is zero, returns zero.
+     *
+     * @param range the upper bound (exclusive) for the random number
+     * @return a random integer between 0 (inclusive) and {@code range} (exclusive)
+     */
+    public int rnd(int range) {
+        if (range == 0) {
+            return 0;
+        }
+        return Math.abs(nextRaw()) % range;
+    }
 
     /**
      * Advances the internal seed according to Rogue's original RNG formula,
