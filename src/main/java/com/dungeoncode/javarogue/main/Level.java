@@ -41,7 +41,7 @@ public class Level {
     private void validateCoordinates(final int x, final int y) {
         if (x < 0 || x >= maxWidth || y < 0 || y >= maxHeight) {
             throw new IllegalArgumentException(String.format(
-                    "Coordinates (%d, %d) out of bounds for level size %dx%d", x, y, maxWidth, maxHeight));
+                    Messages.ERROR_LEVEL_COORDS_OUT_OF_BOUNDS, x, y, maxWidth, maxHeight));
         }
     }
 
@@ -183,8 +183,19 @@ public class Level {
      *
      * @param room The room to add.
      */
-    public void addRoom(@Nonnull final Room room) {
+    public boolean addRoom(@Nonnull final Room room) {
         Objects.requireNonNull(room);
-        rooms.add(room);
+        return rooms.add(room);
     }
+
+    /**
+     * Adds a monster to the level's monster list.
+     *
+     * @param monster The monster to add.
+     */
+    public boolean addMonster(@Nonnull final Monster monster) {
+        Objects.requireNonNull(monster);
+        return monsters.add(monster);
+    }
+
 }

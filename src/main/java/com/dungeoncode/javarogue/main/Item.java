@@ -22,6 +22,10 @@ public class Item extends Entity {
         this.itemFlags = EnumSet.noneOf(ItemFlag.class);
     }
 
+    public boolean hasFlag(@Nonnull final ItemFlag itemFlag) {
+        return itemFlags.contains(itemFlag);
+    }
+
     public ObjectType getObjectType() {
         return objectType;
     }

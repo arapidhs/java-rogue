@@ -17,6 +17,7 @@ public class Messages {
     public static final String ERROR_FAILED_PARSE_CLI_ARGS = "Failed to parse command line arguments. Exception: ";
     public static final String ERROR_FAILED_STOP_SCREEN = "Failed to stop screen. Exception: ";
     public static final String ERROR_INVALID_SYMBOL_FOR_ELEMENT = "Invalid symbol for element: ";
+    public static final String ERROR_LEVEL_COORDS_OUT_OF_BOUNDS = "Coordinates (%d, %d) out of bounds for level size %dx%d";
     public static final String ERROR_NO_DEATH_CAUSES = "No available death causes to select from.";
     public static final String ERROR_NO_SYMBOL_FOR_TYPE = "No symbol mapped for type: ";
 

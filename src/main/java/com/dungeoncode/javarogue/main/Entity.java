@@ -6,11 +6,7 @@ package com.dungeoncode.javarogue.main;
  */
 public class Entity {
 
-    private final Position position;
-
-    public Entity() {
-        position = new Position();
-    }
+    private Position position;
 
     public int getX() {
         return position.getX();
@@ -22,6 +18,10 @@ public class Entity {
 
     public Position getPosition() {
         return position;
+    }
+
+    public void setPosition(final int x, final int y) {
+        this.position = new Position(x,y);
     }
 
 }

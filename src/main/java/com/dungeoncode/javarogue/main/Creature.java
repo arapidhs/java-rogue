@@ -26,6 +26,10 @@ public abstract class Creature extends Entity {
         return destination;
     }
 
+    public void setDestination(final int x, final int y) {
+        this.destination = new Position(x,y);
+    }
+
     public void setDestination(final Position destination) {
         this.destination = destination;
     }

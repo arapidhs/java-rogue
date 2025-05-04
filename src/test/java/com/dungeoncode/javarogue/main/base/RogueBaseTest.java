@@ -1,6 +1,8 @@
 package com.dungeoncode.javarogue.main.base;
 
 import com.dungeoncode.javarogue.main.Config;
+import com.dungeoncode.javarogue.main.GameStateTest;
+import com.dungeoncode.javarogue.main.Rogue;
 import com.dungeoncode.javarogue.main.RogueScreen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,8 +10,12 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
+
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 public abstract class RogueBaseTest {
@@ -24,8 +30,17 @@ public abstract class RogueBaseTest {
 
     @BeforeEach
     void setUp() {
+        final Logger logger = LoggerFactory.getLogger(this.getClass());
         config = new Config(tempDir.toString());
-        Mockito.when(screen.getConfig()).thenReturn(config);
+        lenient().when(screen.getConfig()).thenReturn(config);
+        lenient().when(screen.getColumns()).thenReturn(config.getTerminalCols());
+
+        // Mock putString to print to System.out
+        lenient().doAnswer(invocation -> {
+            String string = invocation.getArgument(2);
+            logger.info(string);
+            return null;
+        }).when(screen).putString(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyString());
     }
 
 }

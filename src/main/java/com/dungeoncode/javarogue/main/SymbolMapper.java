@@ -30,7 +30,7 @@ public class SymbolMapper {
                 RoomType.FLOOR, '.',
                 RoomType.EMPTY, ' '
         );
-        SYMBOL_REGISTRY.put(RoomType.class, obj -> roomTypeSymbols.get((ObjectType) obj));
+        SYMBOL_REGISTRY.put(RoomType.class, obj -> roomTypeSymbols.get((RoomType) obj));
     }
 
     /**

@@ -31,13 +31,12 @@ public class Room {
      */
     public Room(@Nonnull final Position position,
                 @Nonnull final Position size,
-                @Nonnull final Position goldPosition,
+                @Nullable final Position goldPosition,
                 final int goldValue,
                 @Nullable final EnumSet<RoomFlag> roomFlags,
                 @Nonnull final List<Position> exits) {
         Objects.requireNonNull(position);
         Objects.requireNonNull(size);
-        Objects.requireNonNull(goldPosition);
         Objects.requireNonNull(exits);
         this.position = position;
         this.size = size;

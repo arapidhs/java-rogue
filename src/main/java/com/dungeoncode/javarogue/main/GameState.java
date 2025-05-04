@@ -185,6 +185,7 @@ public class GameState {
                 if (!config.isTerse()) {
                     messageSystem.addmssg(" " + Messages.MSG_IN_YOUR_PACK);
                 }
+                messageSystem.endmsg();
             }
         }
         return itemAdded;
@@ -260,4 +261,11 @@ public class GameState {
         this.deathSource = deathSource;
     }
 
+    public Level getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(Level currentLevel) {
+        this.currentLevel = currentLevel;
+    }
 }

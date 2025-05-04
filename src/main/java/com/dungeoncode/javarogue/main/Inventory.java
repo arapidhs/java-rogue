@@ -54,7 +54,7 @@ public class Inventory {
                 final Item existing = items.get(i);
                 if (existing.getObjectType() == item.getObjectType()) {
                     lastTypeMatchIndex = i;
-                    if (existing.getItemSubType().equals(item.getItemSubType())) {
+                    if (Objects.equals(existing.getItemSubType(),item.getItemSubType())) {
                         matchIndex = i;
                     }
                 }
@@ -74,11 +74,13 @@ public class Inventory {
                 // Stack if identical and allowed
                 if (isStackable && checkPackRoom()) {
                     existing.setCount(existing.getCount() + item.getCount());
+                    item.setPackChar(existing.getPackChar());
                     packSize++;
                     added = true;
                 } else if (item.getGroup() != 0 && existing.getGroup() == item.getGroup()) {
                     // Handle grouped-but-not-stackable logic (e.g., arrows of same origin)
                     existing.setCount(existing.getCount() + item.getCount());
+                    item.setPackChar(existing.getPackChar());
                     added = true;
                 } else if (checkPackRoom()) {
                     // Insert directly after matching subtype
@@ -170,4 +172,9 @@ public class Inventory {
     public int getMaxPack() {
         return maxPack;
     }
+
+    public int getPackSize() {
+        return packSize;
+    }
+
 }

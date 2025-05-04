@@ -18,6 +18,7 @@ public class DefaultInitializer implements Initializer {
 
         final Food food = new Food();
 
+        //TODO complete DefaultInitializer
     }
 
 }
