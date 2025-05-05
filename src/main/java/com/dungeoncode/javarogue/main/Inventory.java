@@ -150,7 +150,7 @@ public class Inventory {
      * @return the string name of the item, formatted for display
      */
     public String getItemName(@Nonnull final Item item, boolean dropCapital) {
-        // TODO implement this
+        // TODO implement Inventory getItemName
         return String.valueOf(item.getPackChar());
     }
 

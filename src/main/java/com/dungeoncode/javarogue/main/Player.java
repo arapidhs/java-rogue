@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.EnumSet;
 import java.util.Objects;
 
@@ -14,6 +15,8 @@ public class Player extends Creature {
     private final EnumSet<PlayerFlag> playerFlags;
     private final int foodLeft;
     private final Inventory inventory;
+    private Armor currentArmor;
+    private Weapon currentWeapon;
 
     public Player(@Nonnull final Config config) {
         Objects.requireNonNull(config);
@@ -44,5 +47,18 @@ public class Player extends Creature {
     public int getFoodLeft() {
         return foodLeft;
     }
+
+    public Armor getCurrentArmor() {
+        return currentArmor;
+    }
+
+    public void setCurrentArmor(@Nullable final Armor currentArmor) {
+        this.currentArmor = currentArmor;
+    }
+
+    public void setCurrentWeapon(@Nullable final Weapon currentWeapon) {
+        this.currentWeapon = currentWeapon;
+    }
+
 }
 

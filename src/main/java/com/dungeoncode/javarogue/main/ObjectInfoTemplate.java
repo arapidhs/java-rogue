@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.EnumSet;
 import java.util.Objects;
 
 /**
@@ -15,6 +17,7 @@ import java.util.Objects;
  *     <li><b>probability</b> - Probability weight for object appearance</li>
  *     <li><b>worth</b> - Gold value of the object</li>
  *     <li><b>cumulativeProbability</b> - Cumulative Probability</li>
+ *     <li><b>itemFlags</b> - Miscellaneous flags for the object</li>
  * </ul>
  * </p>
  *
@@ -24,20 +27,24 @@ public class ObjectInfoTemplate extends AbstractTemplate {
 
     private final long id;
     private final ObjectType objectType;
+    private final Enum<? extends ItemSubtype> itemSubType;
     private final String name;
     private final double probability;
     private final int worth;
     private final Boolean stackable;
+    private final EnumSet<ItemFlag> itemFlags;
     private double cumulativeProbability;
 
     @JsonCreator
     public ObjectInfoTemplate(
             @JsonProperty("id") final long id,
             @JsonProperty("objectType") @Nonnull final ObjectType objectType,
+            @JsonProperty("itemSubType") @Nullable final Enum<? extends ItemSubtype> itemSubType,
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth,
-            @JsonProperty("stackable") final Boolean stackable) {
+            @JsonProperty("stackable") final Boolean stackable,
+            @JsonProperty("itemFlags") @Nullable final EnumSet<ItemFlag> itemFlags) {
 
         super(id);
 
@@ -46,10 +53,12 @@ public class ObjectInfoTemplate extends AbstractTemplate {
 
         this.id = id;
         this.objectType = objectType;
+        this.itemSubType = itemSubType;
         this.name = name;
         this.probability = probability;
         this.worth = worth;
         this.stackable = stackable;
+        this.itemFlags = itemFlags != null ? EnumSet.copyOf(itemFlags) : EnumSet.noneOf(ItemFlag.class);
     }
 
     @Override
@@ -65,19 +74,23 @@ public class ObjectInfoTemplate extends AbstractTemplate {
         return objectType;
     }
 
+    public Enum<? extends ItemSubtype> getItemSubType() {
+        return itemSubType;
+    }
+
     public String getName() {
         return name;
     }
 
     /**
-     * <p>Cumulative probability of this object appearing.</p>
+     * Returns the cumulative probability of this object appearing.
      */
     public double getProbability() {
         return probability;
     }
 
     /**
-     * <p>Monetary worth of the object for scoring and item valuation.</p>
+     * Returns the monetary worth of the object for scoring and item valuation.
      */
     public int getWorth() {
         return worth;
@@ -87,6 +100,16 @@ public class ObjectInfoTemplate extends AbstractTemplate {
         return stackable;
     }
 
+    /**
+     * Returns the set of flags associated with the object.
+     *
+     * @return A copy of the item's flags.
+     */
+    @Nonnull
+    public EnumSet<ItemFlag> getItemFlags() {
+        return EnumSet.copyOf(itemFlags);
+    }
+
     public double getCumulativeProbability() {
         return cumulativeProbability;
     }
@@ -94,5 +117,4 @@ public class ObjectInfoTemplate extends AbstractTemplate {
     public void setCumulativeProbability(double cumulativeProbability) {
         this.cumulativeProbability = cumulativeProbability;
     }
-
 }

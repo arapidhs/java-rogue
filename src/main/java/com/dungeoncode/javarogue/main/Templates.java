@@ -7,8 +7,13 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Manages template loading and retrieval for game objects, including monsters, items, and their properties.
+ * Loads templates from JSON resources and provides methods to access them by type, ID, or subtype.
+ */
 public class Templates {
 
+    // Defines JSON resource paths and their corresponding template classes
     private static final Set<AbstractMap.SimpleEntry<String, Class<? extends Template>>> TEMPLATE_SOURCES = Set.of(
             new AbstractMap.SimpleEntry<>("/data/monsters.json", MonsterTemplate.class),
             new AbstractMap.SimpleEntry<>("/data/dragon-breath.json", DragonBreathTemplate.class),
@@ -21,17 +26,18 @@ public class Templates {
             new AbstractMap.SimpleEntry<>("/data/rods-info.json", RodInfoTemplate.class),
             new AbstractMap.SimpleEntry<>("/data/rings-info.json", RingInfoTemplate.class));
 
-
+    // Stores all loaded templates from JSON resources
     private static final Set<Template> TEMPLATES_ALL = TEMPLATE_SOURCES.stream()
             .flatMap(entry -> loadTemplates(entry.getKey(), entry.getValue()).values().stream())
             .collect(Collectors.toUnmodifiableSet());
 
+    // Maps template classes to their instances, indexed by ID
     private static final Map<Class<?>, Map<Long, Template>> TEMPLATES_BY_TYPE = TEMPLATES_ALL.stream().collect(
             Collectors.groupingBy(Template::getClass,
                     Collectors.toUnmodifiableMap(Template::getId, t -> t)));
 
     static {
-        // Apply cumulative probability to ObjectInfoTemplate entries
+        // Apply cumulative probability to ObjectInfoTemplate subclasses
         List<Class<? extends ObjectInfoTemplate>> cumulativeTemplates = List.of(
                 ObjectInfoTemplate.class,
                 ArmorInfoTemplate.class,
@@ -45,6 +51,15 @@ public class Templates {
         cumulativeTemplates.forEach(Templates::applyCumulativeProbability);
     }
 
+    /**
+     * Loads templates from a JSON resource into a map indexed by ID.
+     *
+     * @param resourcePath The path to the JSON resource.
+     * @param type The template class to deserialize into.
+     * @param <T> The template type extending Template.
+     * @return A map of template IDs to template instances.
+     * @throws RuntimeException If loading fails.
+     */
     private static <T extends Template> Map<Long, T> loadTemplates(String resourcePath, Class<T> type) {
         try (InputStream in = Templates.class.getResourceAsStream(resourcePath)) {
             final ObjectMapper mapper = new ObjectMapper();
@@ -58,6 +73,14 @@ public class Templates {
         }
     }
 
+    /**
+     * Retrieves a template by its class and ID.
+     *
+     * @param type The template class.
+     * @param id The template ID.
+     * @param <T> The template type extending AbstractTemplate.
+     * @return The matching template, or null if not found.
+     */
     @SuppressWarnings("unchecked")
     public static <T extends AbstractTemplate> T getTemplate(@Nonnull final Class<T> type, final long id) {
         Objects.requireNonNull(type);
@@ -68,6 +91,34 @@ public class Templates {
         return (T) typedMap.get(id);
     }
 
+    /**
+     * Finds a template by its ItemSubType within the specified template class.
+     *
+     * @param templateClass The template class to search within.
+     * @param itemSubType The ItemSubType to match.
+     * @param <T> The template type extending ObjectInfoTemplate.
+     * @return The matching template.
+     * @throws IllegalStateException If no template is found for the given ItemSubType.
+     */
+    @Nonnull
+    @SuppressWarnings("unchecked")
+    public static <T extends ObjectInfoTemplate> T findTemplateBySubType(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass,
+                                                                         @Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(templateClass);
+        Objects.requireNonNull(itemSubType);
+        return (T) getTemplates(templateClass).stream()
+                .filter(t -> Objects.equals(t.getItemSubType(), itemSubType))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException(
+                        String.format(Messages.ERROR_NO_OBJECT_INFO_TEMPLATE_FOUND,
+                                templateClass.getSimpleName(), itemSubType)));
+    }
+
+    /**
+     * Applies cumulative probability to ObjectInfoTemplate entries for random selection.
+     *
+     * @param templateClass The template class to process.
+     */
     private static void applyCumulativeProbability(final Class<? extends ObjectInfoTemplate> templateClass) {
         final List<? extends ObjectInfoTemplate> sorted = getTemplates(templateClass).stream()
                 .sorted(Comparator.comparingLong(ObjectInfoTemplate::getId))
@@ -80,9 +131,15 @@ public class Templates {
         }
     }
 
+    /**
+     * Retrieves all templates of the specified class.
+     *
+     * @param type The template class.
+     * @param <T> The template type extending Template.
+     * @return An unmodifiable set of templates, or empty if none found.
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Template> Set<T> getTemplates(@Nonnull final Class<T> type) {
-
         Objects.requireNonNull(type);
         final Map<Long, Template> map = TEMPLATES_BY_TYPE.get(type);
         if (map == null) {
@@ -92,9 +149,13 @@ public class Templates {
         return map.values().stream()
                 .map(t -> (T) t)
                 .collect(Collectors.toUnmodifiableSet());
-
     }
 
+    /**
+     * Verifies that cumulative probabilities sum to 100 for ObjectInfoTemplate subclasses.
+     *
+     * @return An Optional containing BadTemplateInfo if any class fails verification, empty otherwise.
+     */
     public static Optional<BadTemplateInfo> verifyProbabilities() {
         List<Class<? extends ObjectInfoTemplate>> cumulativeTemplates = List.of(
                 ObjectInfoTemplate.class,
@@ -124,6 +185,9 @@ public class Templates {
         return Optional.empty();
     }
 
+    /**
+     * Record holding information about invalid template probability sets.
+     */
     public record BadTemplateInfo(Class<? extends ObjectInfoTemplate> templateClass, int bound) {
         public BadTemplateInfo(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass, int bound) {
             Objects.requireNonNull(templateClass);
@@ -131,5 +195,4 @@ public class Templates {
             this.bound = bound;
         }
     }
-
 }

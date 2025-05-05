@@ -22,6 +22,10 @@ public class Item extends Entity {
         this.itemFlags = EnumSet.noneOf(ItemFlag.class);
     }
 
+    public void addFlag(@Nonnull final ItemFlag itemFlag) {
+        itemFlags.add(itemFlag);
+    }
+
     public boolean hasFlag(@Nonnull final ItemFlag itemFlag) {
         return itemFlags.contains(itemFlag);
     }
@@ -56,5 +60,9 @@ public class Item extends Entity {
 
     public void setCount(int count) {
         this.count = count;
+    }
+
+    public void setGroup(int group) {
+        this.group = group;
     }
 }

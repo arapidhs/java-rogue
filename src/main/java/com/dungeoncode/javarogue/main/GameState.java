@@ -13,6 +13,7 @@ public class GameState {
     private final Initializer initializer;
     private final MessageSystem messageSystem;
     private final RogueScreen screen;
+    private final WeaponsFactory weaponsFactory;
     private Player player;
     private GameEndReason gameEndReason;
     private DeathSource deathSource;
@@ -32,6 +33,7 @@ public class GameState {
         this.initializer = initializer;
         this.messageSystem = messageSystem;
         this.screen = screen;
+        this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
         init();
     }
 
@@ -268,4 +270,9 @@ public class GameState {
     public void setCurrentLevel(Level currentLevel) {
         this.currentLevel = currentLevel;
     }
+
+    public WeaponsFactory getWeaponsFactory() {
+        return weaponsFactory;
+    }
+
 }

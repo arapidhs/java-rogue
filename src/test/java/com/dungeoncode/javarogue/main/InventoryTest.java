@@ -1,15 +1,24 @@
 package com.dungeoncode.javarogue.main;
 
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InventoryTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InventoryTest.class);
+
     final Config config = new Config();
 
     @Test
     void addToPackTest() {
+        // Initialize dependencies for test setup
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final WeaponsFactory weaponsFactory = new WeaponsFactory(rogueRandom);
+
         // Initialize inventory with max pack size from config
         final Inventory inventory = new Inventory(config.getMaxPack());
 
@@ -80,12 +89,42 @@ public class InventoryTest {
         assertEquals(8, inventory.getPackSize()); // Pack size increments
         assertEquals(6, inventory.getItems().size()); // Still six items due to stacking
 
+        // Test adding a Dagger (non-stackable but groupable)
+        final Weapon dagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
+        assertTrue(inventory.addToPack(dagger)); // Should add as new item
+        assertEquals('g', dagger.getPackChar()); // Gets next character 'g'
+        assertEquals(9, inventory.getPackSize()); // Pack size increments
+        assertEquals(7, inventory.getItems().size()); // Seven items in inventory
+
+        // Test grouping another Dagger with the same group
+        final Weapon additionalDagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
+        additionalDagger.setGroup(dagger.getGroup()); // Ensure same group for grouping
+        assertTrue(inventory.addToPack(additionalDagger)); // Should group with existing Dagger
+        assertEquals('g', additionalDagger.getPackChar()); // Shares 'g' with first Dagger
+        assertEquals(9, inventory.getPackSize()); // Pack size does not increment due to grouping
+        assertEquals(7, inventory.getItems().size()); // Still seven items due to grouping
+
+        // Test adding a Dagger with a different group
+        final Weapon separateGroupDagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
+        assertTrue(inventory.addToPack(separateGroupDagger)); // Should add as new item (different group)
+        assertEquals('h', separateGroupDagger.getPackChar()); // Gets next character 'h'
+        assertEquals(10, inventory.getPackSize()); // Pack size increments
+        assertEquals(8, inventory.getItems().size()); // Eight items in inventory
+
         // Test filling remaining inventory slots up to maxPack limit
         final int remainingSize = inventory.getMaxPack() - inventory.getPackSize();
         for (int i = 0; i < remainingSize; i++) {
-            assertTrue(inventory.addToPack(food));
+            assertTrue(inventory.addToPack(new Food())); // Add Food until inventory is full
         }
         // Verify adding beyond maxPack fails
-        assertFalse(inventory.addToPack(food));
+        assertFalse(inventory.addToPack(new Food()));
+
+        inventory.getItems().forEach(item ->
+                LOGGER.debug("Test Method: addToPackTest, Inventory Item - Index: {}, Type: {}, Count: {}, SubType: {}, PackChar: {}",
+                        inventory.getItems().indexOf(item),
+                        item.getClass().getSimpleName(),
+                        item.getCount(),
+                        item.getItemSubType(),
+                        item.getPackChar()));
     }
 }

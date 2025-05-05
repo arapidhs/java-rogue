@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public class PotionInfoTemplate extends ObjectInfoTemplate {
 
-    private final PotionType potionType;
-
     @JsonCreator
     public PotionInfoTemplate(
             @JsonProperty("id") final long id,
@@ -20,12 +18,7 @@ public class PotionInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
-
-        super(id, ObjectType.POTION, name, probability, worth, null);
-
-        Objects.requireNonNull(potionType);
-
-        this.potionType = potionType;
+        super(id, ObjectType.POTION, potionType, name, probability, worth, null, null);
     }
 
     @Override
@@ -34,7 +27,7 @@ public class PotionInfoTemplate extends ObjectInfoTemplate {
     }
 
     public PotionType getPotionType() {
-        return potionType;
+        return (PotionType) super.getItemSubType();
     }
 
 }

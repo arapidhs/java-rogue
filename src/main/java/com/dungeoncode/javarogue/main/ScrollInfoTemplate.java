@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public class ScrollInfoTemplate extends ObjectInfoTemplate {
 
-    private final ScrollType scrollType;
-
     @JsonCreator
     public ScrollInfoTemplate(
             @JsonProperty("id") final long id,
@@ -21,11 +19,7 @@ public class ScrollInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.SCROLL, name, probability, worth, null);
-
-        Objects.requireNonNull(scrollType);
-
-        this.scrollType = scrollType;
+        super(id, ObjectType.SCROLL, scrollType, name, probability, worth, null, null);
     }
 
     @Override
@@ -34,7 +28,7 @@ public class ScrollInfoTemplate extends ObjectInfoTemplate {
     }
 
     public ScrollType getScrollType() {
-        return scrollType;
+        return (ScrollType) super.getItemSubType();
     }
 
 }

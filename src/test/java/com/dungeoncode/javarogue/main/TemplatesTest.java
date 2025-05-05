@@ -135,6 +135,7 @@ public class TemplatesTest {
         final ArmorType splintMailArmorType = ArmorType.SPLINT_MAIL;
         final String splintMailName = "splint mail";
         final int splintMailWorth = 80;
+        final int splintMailArmorClass = 4;
         final double splitMailProbability = 10;
         final double splintMailCumulativeProbability = 85;
 
@@ -143,9 +144,13 @@ public class TemplatesTest {
         assertEquals(splintMailId, splintMailTemplate.getId());
         assertEquals(splintMailArmorType, splintMailTemplate.getArmorType());
         assertEquals(splintMailName, splintMailTemplate.getName());
+        assertEquals(splintMailArmorClass, splintMailTemplate.getArmorClass());
         assertEquals(splintMailWorth, splintMailTemplate.getWorth());
         assertEquals(splitMailProbability, splintMailTemplate.getProbability());
         assertEquals(splintMailCumulativeProbability, splintMailTemplate.getCumulativeProbability());
+
+        final Armor splintMail = new Armor(ArmorType.SPLINT_MAIL);
+        assertEquals(splintMailArmorClass,splintMail.getArmorClass());
     }
 
     /**
@@ -221,6 +226,22 @@ public class TemplatesTest {
         assertEquals(worth, template.getWorth());
         assertEquals(probability, template.getProbability());
         assertEquals(cumulative, template.getCumulativeProbability());
+
+        final Weapon twoHandedSword = new Weapon(WeaponType.TWO_HANDED_SWORD);
+        final String twoHandedSwordWieldDamage="4x4";
+        final String twoHandedSwordThrowDamage="1x2";
+        assertEquals(twoHandedSwordWieldDamage,twoHandedSword.getWieldDamage());
+        assertEquals(twoHandedSwordThrowDamage,twoHandedSword.getThrowDamage());
+
+        final Weapon arrow = new Weapon(WeaponType.ARROW);
+        final String arrowWieldDamage="1x1";
+        final String arrowThrowDamage="2x3";
+        final WeaponType arrowLaunchWeapon=WeaponType.SHORT_BOW;
+        final EnumSet<ItemFlag> arrowFlags = EnumSet.of(ItemFlag.ISMISL, ItemFlag.ISMANY);
+        assertEquals(arrowWieldDamage,arrow.getWieldDamage());
+        assertEquals(arrowThrowDamage,arrow.getThrowDamage());
+        assertEquals(arrowLaunchWeapon,arrow.getLaunchWeapon());
+        arrowFlags.forEach(flag -> assertTrue(arrow.getItemFlags().contains(flag)));
     }
 
     /**

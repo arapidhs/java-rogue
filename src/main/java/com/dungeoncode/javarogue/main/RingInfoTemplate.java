@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Template representing ring information, based on the original Rogue ring_info table.
  */
 public class RingInfoTemplate extends ObjectInfoTemplate {
-
-    private final RingType ringType;
 
     @JsonCreator
     public RingInfoTemplate(
@@ -21,11 +18,8 @@ public class RingInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.RING, name, probability, worth, null);
+        super(id, ObjectType.RING, ringType, name, probability, worth, null, null);
 
-        Objects.requireNonNull(ringType);
-
-        this.ringType = ringType;
     }
 
     @Override
@@ -34,6 +28,7 @@ public class RingInfoTemplate extends ObjectInfoTemplate {
     }
 
     public RingType getRingType() {
-        return ringType;
+        return (RingType) super.getItemSubType();
     }
+
 }

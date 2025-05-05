@@ -1,10 +1,10 @@
 [
-  { "id": 1, "armorType": "LEATHER",         "name": "leather armor",           "probability": 20, "worth": 20 },
-  { "id": 2, "armorType": "RING_MAIL",       "name": "ring mail",               "probability": 15, "worth": 25 },
-  { "id": 3, "armorType": "STUDDED_LEATHER", "name": "studded leather armor",   "probability": 15, "worth": 20 },
-  { "id": 4, "armorType": "SCALE_MAIL",      "name": "scale mail",              "probability": 13, "worth": 30 },
-  { "id": 5, "armorType": "CHAIN_MAIL",      "name": "chain mail",              "probability": 12, "worth": 75 },
-  { "id": 6, "armorType": "SPLINT_MAIL",     "name": "splint mail",             "probability": 10, "worth": 80 },
-  { "id": 7, "armorType": "BANDED_MAIL",     "name": "banded mail",             "probability": 10, "worth": 90 },
-  { "id": 8, "armorType": "PLATE_MAIL",      "name": "plate mail",              "probability": 5,  "worth": 150 }
+  { "id": 1, "armorType": "LEATHER",         "name": "leather armor",           "probability": 20, "worth": 20,  "armorClass": 8 },
+  { "id": 2, "armorType": "RING_MAIL",       "name": "ring mail",               "probability": 15, "worth": 25,  "armorClass": 7 },
+  { "id": 3, "armorType": "STUDDED_LEATHER", "name": "studded leather armor",   "probability": 15, "worth": 20,  "armorClass": 7 },
+  { "id": 4, "armorType": "SCALE_MAIL",      "name": "scale mail",              "probability": 13, "worth": 30,  "armorClass": 6 },
+  { "id": 5, "armorType": "CHAIN_MAIL",      "name": "chain mail",              "probability": 12, "worth": 75,  "armorClass": 5 },
+  { "id": 6, "armorType": "SPLINT_MAIL",     "name": "splint mail",             "probability": 10, "worth": 80,  "armorClass": 4 },
+  { "id": 7, "armorType": "BANDED_MAIL",     "name": "banded mail",             "probability": 10, "worth": 90,  "armorClass": 4 },
+  { "id": 8, "armorType": "PLATE_MAIL",      "name": "plate mail",              "probability": 5,  "worth": 150, "armorClass": 3 }
 ]

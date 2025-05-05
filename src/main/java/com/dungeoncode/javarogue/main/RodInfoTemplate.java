@@ -11,8 +11,6 @@ import java.util.Objects;
  */
 public class RodInfoTemplate extends ObjectInfoTemplate {
 
-    private final RodType rodType;
-
     @JsonCreator
     public RodInfoTemplate(
             @JsonProperty("id") final long id,
@@ -21,11 +19,8 @@ public class RodInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.ROD, name, probability, worth, null);
+        super(id, ObjectType.ROD, rodType, name, probability, worth, null, null);
 
-        Objects.requireNonNull(rodType);
-
-        this.rodType = rodType;
     }
 
     @Override
@@ -34,6 +29,6 @@ public class RodInfoTemplate extends ObjectInfoTemplate {
     }
 
     public RodType getRodType() {
-        return rodType;
+        return (RodType) super.getItemSubType();
     }
 }

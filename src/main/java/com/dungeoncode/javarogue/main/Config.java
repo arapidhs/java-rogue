@@ -37,7 +37,10 @@ public class Config {
     private static final int DEFAULT_TERMINAL_COLS = 80;
     private static final int DEFAULT_NUM_SCORES = 10;
     private static final int DEFAULT_PLAYER_MAX_PACK = 23;
+
+    /** The equivalent of HUNGERTIME	1300*/
     private static final int DEFAULT_PLAYER_STARTING_FOOD = 1300;
+
     private static final boolean DEFAULT_MESSAGE_SAVE = true;
     private static final boolean DEFAULT_MESSAGE_ALLOW_LOWERCASE = false;
     private static final boolean DEFAULT_MESSAGE_ALLOW_ESCAPE = false;

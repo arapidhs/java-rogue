@@ -1,11 +1,11 @@
 [
-  { "id": 1, "weaponType": "MACE",             "name": "mace",               "probability": 11, "worth": 8 },
-  { "id": 2, "weaponType": "LONG_SWORD",       "name": "long sword",         "probability": 11, "worth": 15 },
-  { "id": 3, "weaponType": "SHORT_BOW",        "name": "short bow",          "probability": 12, "worth": 15 },
-  { "id": 4, "weaponType": "ARROW",            "name": "arrow",              "probability": 12, "worth": 1 },
-  { "id": 5, "weaponType": "DAGGER",           "name": "dagger",             "probability": 8,  "worth": 3 },
-  { "id": 6, "weaponType": "TWO_HANDED_SWORD", "name": "two handed sword",   "probability": 10, "worth": 75 },
-  { "id": 7, "weaponType": "DART",             "name": "dart",               "probability": 12, "worth": 2 },
-  { "id": 8, "weaponType": "SHURIKEN",         "name": "shuriken",           "probability": 12, "worth": 5 },
-  { "id": 9, "weaponType": "SPEAR",            "name": "spear",              "probability": 12, "worth": 5 }
+  { "id": 1, "weaponType": "MACE",             "name": "mace",               "probability": 11, "worth": 8,  "wieldDamage": "2x4", "throwDamage": "1x3", "launchWeapon": null,       "itemFlags": [] },
+  { "id": 2, "weaponType": "LONG_SWORD",       "name": "long sword",         "probability": 11, "worth": 15, "wieldDamage": "3x4", "throwDamage": "1x2", "launchWeapon": null,       "itemFlags": [] },
+  { "id": 3, "weaponType": "SHORT_BOW",        "name": "short bow",          "probability": 12, "worth": 15, "wieldDamage": "1x1", "throwDamage": "1x1", "launchWeapon": null,       "itemFlags": [] },
+  { "id": 4, "weaponType": "ARROW",            "name": "arrow",              "probability": 12, "worth": 1,  "wieldDamage": "1x1", "throwDamage": "2x3", "launchWeapon": "SHORT_BOW", "itemFlags": ["ISMANY", "ISMISL"] },
+  { "id": 5, "weaponType": "DAGGER",           "name": "dagger",             "probability": 8,  "worth": 3,  "wieldDamage": "1x6", "throwDamage": "1x4", "launchWeapon": null,       "itemFlags": ["ISMISL"] },
+  { "id": 6, "weaponType": "TWO_HANDED_SWORD", "name": "two handed sword",   "probability": 10, "worth": 75, "wieldDamage": "4x4", "throwDamage": "1x2", "launchWeapon": null,       "itemFlags": [] },
+  { "id": 7, "weaponType": "DART",             "name": "dart",               "probability": 12, "worth": 2,  "wieldDamage": "1x1", "throwDamage": "1x3", "launchWeapon": null,       "itemFlags": ["ISMANY", "ISMISL"] },
+  { "id": 8, "weaponType": "SHURIKEN",         "name": "shuriken",           "probability": 12, "worth": 5,  "wieldDamage": "1x2", "throwDamage": "2x4", "launchWeapon": null,       "itemFlags": ["ISMANY", "ISMISL"] },
+  { "id": 9, "weaponType": "SPEAR",            "name": "spear",              "probability": 12, "worth": 5,  "wieldDamage": "2x3", "throwDamage": "1x6", "launchWeapon": null,       "itemFlags": ["ISMISL"] }
 ]
