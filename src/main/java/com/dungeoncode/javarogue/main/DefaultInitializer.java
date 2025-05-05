@@ -53,7 +53,7 @@ public class DefaultInitializer implements Initializer {
         final Weapon arrow = gameState.getWeaponsFactory().initializeWeapon(
                 WeaponType.ARROW);
         arrow.setCount(gameState.getRogueRandom().rnd(15)+25);
-        bow.addFlag(ItemFlag.ISKNOW);
+        arrow.addFlag(ItemFlag.ISKNOW);
         gameState.addToPack(arrow,silent);
     }
 
