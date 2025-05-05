@@ -12,7 +12,14 @@ public class DefaultInitializer implements Initializer {
     public void initialize(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         initializePlayer(gameState);
-        //TODO implement init_names();
+        initializeItemData(gameState);
+
+        final boolean isWizard=gameState.getConfig().isWizard();
+        gameState.getConfig().setScoring(!isWizard);
+    }
+
+    private void initializeItemData(@Nonnull final GameState gameState) {
+        gameState.getItemData().init();
     }
 
     private void initializePlayer(@Nonnull final GameState gameState) {

@@ -4,6 +4,7 @@ import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,6 +59,35 @@ public class DefaultInitializerTest extends RogueBaseTest {
         assertNotNull(initialRingMail); // Ensure Ring Mail is present
         final Armor ringMail = new Armor(ArmorType.RING_MAIL);
         assertTrue(initialRingMail.getArmorClass() < ringMail.getArmorClass());
+
+    }
+
+    @Test
+    void testItemDataInitialization() throws IOException {
+        // Set up game state with necessary dependencies
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final DefaultInitializer initializer = new DefaultInitializer();
+
+        final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
+        final ItemData itemData = gameState.getItemData();
+
+        Arrays.stream(ScrollType.values())
+                .forEach(scrollType -> assertNotNull(
+                        itemData.getName(scrollType)));
+
+        Arrays.stream(PotionType.values())
+                .forEach(potionType -> assertNotNull(
+                        itemData.getName(potionType)));
+
+        Arrays.stream(RingType.values())
+                .forEach(ringType -> assertNotNull(itemData.getName(ringType)));
+
+        Arrays.stream(RingType.values())
+                .forEach(ringType -> assertTrue(itemData.getRingWorth(ringType)>0));
+
+        Arrays.stream(RodType.values())
+                .forEach(rodType -> assertNotNull(itemData.getRodForm(rodType)));
 
     }
 

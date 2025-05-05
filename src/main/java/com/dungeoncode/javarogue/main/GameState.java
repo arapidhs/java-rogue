@@ -14,6 +14,7 @@ public class GameState {
     private final MessageSystem messageSystem;
     private final RogueScreen screen;
     private final WeaponsFactory weaponsFactory;
+    private final ItemData itemData;
     private Player player;
     private GameEndReason gameEndReason;
     private DeathSource deathSource;
@@ -34,6 +35,7 @@ public class GameState {
         this.messageSystem = messageSystem;
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
+        this.itemData = new ItemData(rogueRandom, config.getMaxScrollGeneratedNameLength());
         init();
     }
 
@@ -78,7 +80,7 @@ public class GameState {
                             messageSystem.addmssg(Messages.MSG_YOU + " ");
                         }
                         final boolean dropCapital = true;
-                        final String itemName = getPlayer().getInventory().getItemName(item, dropCapital);
+                        final String itemName = getItemName(item, dropCapital);
                         messageSystem.msg(String.format(Messages.MSG_MOVED_ONTO, itemName));
                     }
                 }
@@ -176,7 +178,7 @@ public class GameState {
                     messageSystem.addmssg(Messages.MSG_YOU_NOW_HAVE + " ");
                 }
                 final String itemName = String.format("%s (%c)",
-                        getPlayer().getInventory().getItemName(item, !config.isTerse()),
+                        getItemName(item, !config.isTerse()),
                         item.getPackChar());
                 messageSystem.msg(itemName);
             } else {
@@ -191,6 +193,24 @@ public class GameState {
             }
         }
         return itemAdded;
+    }
+
+    /**
+     * Returns the display name of the given inventory item.
+     *
+     * <p>This method is the Java equivalent of the original Rogue C function {@code inv_name()},
+     * and is responsible for producing the textual representation of an item as it appears
+     * in the player's inventory or during drop/pickup interactions.</p>
+     *
+     * @param item        the non-null item to describe
+     * @param dropCapital if {@code true}, the returned name will start with a lowercase letter
+     *                    (typically when dropping or referencing in a sentence); if {@code false},
+     *                    the name will start with an uppercase letter (e.g., in terse inventory lists)
+     * @return the string name of the item, formatted for display
+     */
+    public String getItemName(@Nonnull final Item item, boolean dropCapital) {
+        // TODO implement Inventory getItemName
+        return String.valueOf(item.getPackChar());
     }
 
     /**
@@ -273,6 +293,10 @@ public class GameState {
 
     public WeaponsFactory getWeaponsFactory() {
         return weaponsFactory;
+    }
+
+    public ItemData getItemData() {
+        return itemData;
     }
 
 }
