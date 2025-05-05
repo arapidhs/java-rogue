@@ -13,6 +13,9 @@ public class Item extends Entity {
     private int count;
     private Character packChar;
     private int group;
+    private String label;
+    private int armorClass;
+    private int goldValue;
 
     public Item(@Nonnull ObjectType objectType, @Nullable final Enum<? extends ItemSubtype> itemSubType, final int count) {
         Objects.requireNonNull(objectType);
@@ -64,5 +67,29 @@ public class Item extends Entity {
 
     public void setGroup(int group) {
         this.group = group;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public int getArmorClass() {
+        return armorClass;
+    }
+
+    public void setArmorClass(final int armorClass) {
+        this.armorClass = armorClass;
+    }
+
+    public int getGoldValue() {
+        return goldValue;
+    }
+
+    public void setGoldValue(int goldValue) {
+        this.goldValue = goldValue;
     }
 }

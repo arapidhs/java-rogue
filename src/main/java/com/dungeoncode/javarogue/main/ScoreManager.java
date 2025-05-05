@@ -157,18 +157,18 @@ public class ScoreManager {
 
         // Display the title and table header
         int y = 0;
-        final String title = String.format(MSG_TOP + " %s %s:",
+        final String title = String.format("Top %s %s:",
                 RogueUtils.numberToWord(getConfig().getNumScores()),
-                getConfig().isAllowMultipleScores() ? MSG_SCORES : MSG_ROGUEISTS);
+                getConfig().isAllowMultipleScores() ? "Scores" : "Rogueists");
         screen.putString(0, y++, title);
-        screen.putString(0, y++, "   " + MSG_SCORE_NAME);
+        screen.putString(0, y++, "   Score Name");
         screen.refresh();
 
         int index = 1;
         for (ScoreEntry entry : scoreEntries) {
             if (entry.score == 0) break;
 
-            String base = String.format("%2d %5d %s: %s " + MSG_ON_LEVEL + " %d",
+            String base = String.format("%2d %5d %s: %s on level %d",
                     index++, entry.score, entry.name, entry.gameEndReason.getDisplayName(), entry.level);
 
             /*
@@ -192,7 +192,7 @@ public class ScoreManager {
                     killName = getConfig().getDefaultKillName(); // fallback ("Wally the Wonder Badger", etc.)
                 }
 
-                base += " " + MSG_BY + " ";
+                base += " by ";
                 if (isUseArticle) {
                     base += RogueUtils.getIndefiniteArticleFor(killName) + " ";
                 }
@@ -246,7 +246,7 @@ public class ScoreManager {
         screen.clearLine(screen.getRows() - 1);
         screen.putString(0, screen.getRows() - 1, PROMPT_PRESS_RETURN_CONTINUE);
         screen.refresh();
-        screen.readInput();
+        screen.waitFor('\n');
 
     }
 

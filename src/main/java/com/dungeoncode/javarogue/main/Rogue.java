@@ -84,7 +84,7 @@ public class Rogue {
                 } else {
                     // Build and display death message
                     final StringBuilder deathLine = new StringBuilder();
-                    deathLine.append(MSG_KILLED_BY).append(' ');
+                    deathLine.append("Killed by ");
 
                     final String killerName = gameState.getDeathSource().getName();
                     final boolean isKillType = gameState.getDeathSource().isTemplate() &&
@@ -103,7 +103,7 @@ public class Rogue {
                         deathLine.append(killerName);
                     }
 
-                    deathLine.append(' ').append(MSG_WITH).append(' ').append(gameState.getGoldAmount()).append(' ').append(MSG_GOLD);
+                    deathLine.append(' ').append("with").append(' ').append(gameState.getGoldAmount()).append(' ').append("gold");
 
                     screen.putString(0, screen.getRows() - 2, deathLine.toString());
                 }
@@ -117,11 +117,11 @@ public class Rogue {
                 // Display welcome message based on mode
                 if (config.isMaster() && config.isWizard()) {
                     screen.putString(0, screen.getRows() - 1,
-                            String.format(MSG_HELLO_WELCOME_WIZARD, config.getPlayerName(), config.getDungeonSeed())
+                            String.format("Hello %s, welcome to dungeon #%d", config.getPlayerName(), config.getDungeonSeed())
                     );
                 } else {
                     screen.putString(0, screen.getRows() - 1,
-                            String.format(MSG_HELLO_WELCOME, config.getPlayerName())
+                            String.format("Hello %s, just a moment while I dig the dungeon...", config.getPlayerName())
                     );
                 }
 

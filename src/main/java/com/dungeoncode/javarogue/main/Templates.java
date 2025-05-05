@@ -3,6 +3,7 @@ package com.dungeoncode.javarogue.main;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -92,26 +93,21 @@ public class Templates {
     }
 
     /**
-     * Finds a template by its ItemSubType within the specified template class.
+     * Finds a template by its ItemSubType across all ObjectInfoTemplate subclasses.
      *
-     * @param templateClass The template class to search within.
      * @param itemSubType The ItemSubType to match.
-     * @param <T> The template type extending ObjectInfoTemplate.
      * @return The matching template.
      * @throws IllegalStateException If no template is found for the given ItemSubType.
      */
     @Nonnull
-    @SuppressWarnings("unchecked")
-    public static <T extends ObjectInfoTemplate> T findTemplateBySubType(@Nonnull final Class<? extends ObjectInfoTemplate> templateClass,
-                                                                         @Nonnull final Enum<? extends ItemSubtype> itemSubType) {
-        Objects.requireNonNull(templateClass);
+    public static ObjectInfoTemplate findTemplateBySubType(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
         Objects.requireNonNull(itemSubType);
-        return (T) getTemplates(templateClass).stream()
-                .filter(t -> Objects.equals(t.getItemSubType(), itemSubType))
+        return (ObjectInfoTemplate) TEMPLATES_ALL.stream()
+                .filter(t -> t instanceof ObjectInfoTemplate)
+                .filter(t -> Objects.equals(((ObjectInfoTemplate) t).getItemSubType(), itemSubType))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException(
-                        String.format(Messages.ERROR_NO_OBJECT_INFO_TEMPLATE_FOUND,
-                                templateClass.getSimpleName(), itemSubType)));
+                        String.format(Messages.ERROR_NO_OBJECT_INFO_TEMPLATE_FOUND, "ObjectInfoTemplate", itemSubType)));
     }
 
     /**
@@ -129,6 +125,22 @@ public class Templates {
             cumulative += template.getProbability();
             template.setCumulativeProbability(cumulative);
         }
+    }
+
+    /**
+     * Finds an ObjectInfoTemplate by its ObjectType.
+     *
+     * @param objectType The ObjectType to match.
+     * @return The matching ObjectInfoTemplate, or null if not found.
+     */
+    @Nullable
+    public static ObjectInfoTemplate findTemplateByObjectType(@Nonnull final ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        Set<ObjectInfoTemplate> templates = getTemplates(ObjectInfoTemplate.class);
+        return templates.stream()
+                .filter(t -> t.getObjectType() == objectType)
+                .findFirst()
+                .orElse(null);
     }
 
     /**

@@ -308,6 +308,13 @@ public class TemplatesTest {
         assertFalse(badTemplateInfo.isPresent());
     }
 
+    @Test
+    public void findTemplateByObjectTypeTest() {
+        final ObjectInfoTemplate templateByObjectType = Templates.findTemplateByObjectType(ObjectType.RING);
+        assert templateByObjectType != null;
+        assertEquals("ring",templateByObjectType.getName());
+    }
+
     /**
      * Simple concrete Template subclass for equality tests.
      */

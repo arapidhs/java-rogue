@@ -20,11 +20,21 @@ public class Weapon extends Item {
      */
     public Weapon(@Nonnull Enum<WeaponType> weaponType) {
         super(ObjectType.WEAPON, weaponType, 1);
-        final WeaponInfoTemplate weaponInfoTemplate = Templates.findTemplateBySubType(WeaponInfoTemplate.class, weaponType);
+        final WeaponInfoTemplate weaponInfoTemplate = (WeaponInfoTemplate) Templates.findTemplateBySubType(weaponType);
         this.wieldDamage = weaponInfoTemplate.getWieldDamage();
         this.throwDamage = weaponInfoTemplate.getThrowDamage();
         this.launchWeapon = weaponInfoTemplate.getLaunchWeapon();
         weaponInfoTemplate.getItemFlags().forEach(this::addFlag);
+    }
+
+    /**
+     * Formats the hit and damage bonuses for the weapon, e.g., "+1,+2" or "-1,+0".
+     *
+     * @return A string representing the hit and damage bonuses.
+     */
+    public String num() {
+        return (hitPlus < 0 ? hitPlus : "+" + hitPlus) +
+                (damagePlus < 0 ? "," + damagePlus : ",+" + damagePlus);
     }
 
     /**

@@ -38,6 +38,8 @@ public class Config {
     private static final int DEFAULT_TERMINAL_COLS = 80;
     private static final int DEFAULT_NUM_SCORES = 10;
     private static final int DEFAULT_PLAYER_MAX_PACK = 23;
+    private static final int DEFAULT_MIN_ARMOR_CLASS = 10;
+    private static final boolean DEFAULT_INVENTORY_DESCRIBE=true;
 
     /** The equivalent of HUNGERTIME	1300*/
     private static final int DEFAULT_PLAYER_STARTING_FOOD = 1300;
@@ -84,6 +86,8 @@ public class Config {
     private boolean scoring;
     private boolean allowMultipleScores;
     private final int maxScrollGeneratedNameLength;
+    private final int minArmorClass;
+    private final boolean inventoryDescribe;
 
     public Config() {
         this(null);
@@ -127,6 +131,8 @@ public class Config {
         this.levelMaxWidth = DEFAULT_LEVEL_MAX_WIDTH;
         this.levelMaxHeight = DEFAULT_LEVEL_MAX_HEIGHT;
         this.maxScrollGeneratedNameLength = DEFAULT_MAX_SCROLL_GENERATED_NAME_LENGTH;
+        this.minArmorClass=DEFAULT_MIN_ARMOR_CLASS;
+        this.inventoryDescribe=DEFAULT_INVENTORY_DESCRIBE;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -344,4 +350,11 @@ public class Config {
         this.scoring = scoring;
     }
 
+    public int getMinArmorClass() {
+        return minArmorClass;
+    }
+
+    public boolean isInventoryDescribe() {
+        return inventoryDescribe;
+    }
 }

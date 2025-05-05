@@ -12,5 +12,6 @@ public enum ObjectType {
     RING,
     WEAPON,
     ROD,
+    GOLD,
     AMULET
 }

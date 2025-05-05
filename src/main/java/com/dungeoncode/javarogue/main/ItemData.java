@@ -2,6 +2,8 @@ package com.dungeoncode.javarogue.main;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,6 +16,8 @@ import java.util.*;
  */
 public class ItemData {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItemData.class);
+
     private static final String FORM_WAND = "wand";
     private static final String FORM_STAFF = "staff";
 
@@ -23,34 +27,266 @@ public class ItemData {
     private static final String METALS_JSON_PATH = "/data/metals.json";
     private static final String WOODS_JSON_PATH = "/data/woods.json";
 
-    private final int maxScrollGeneratedNameLength;
+    private final Config config;
     private final RogueRandom random;
-    private final Map<ItemSubtype, String> itemSubTypeNames;
+    private final int maxScrollGeneratedNameLength;
+    private final Map<Enum<? extends ItemSubtype>, String> itemSubTypeNames;
     private final Map<RingType, Integer> ringWorthMap;
     private final Map<RodType, RodFormData> rodFormData;
+    private final Map<Enum<? extends ItemSubtype>, Boolean> itemSubTypeKnown;
+    private final Map<Enum<? extends ItemSubtype>, String> itemSubTypeGuessNames;
+
     /**
      * Constructs an ItemData instance with a random number generator for future name generation.
      *
-     * @param random                       The RogueRandom instance for random operations.
-     * @param maxScrollGeneratedNameLength The maximum String length of randomly generated scroll names.
+     * @param random   The RogueRandom instance for random operations.
+     * @param config The Config instance.
      */
-    public ItemData(@Nonnull final RogueRandom random, final int maxScrollGeneratedNameLength) {
+    public ItemData(@Nonnull final Config config, @Nonnull final RogueRandom random) {
+        Objects.requireNonNull(config);
         Objects.requireNonNull(random);
+        this.config=config;
         this.random = random;
-        this.maxScrollGeneratedNameLength = maxScrollGeneratedNameLength;
+        this.maxScrollGeneratedNameLength = config.getMaxScrollGeneratedNameLength();
         this.itemSubTypeNames = new HashMap<>();
         this.ringWorthMap = new HashMap<>();
         this.rodFormData = new HashMap<>();
+        this.itemSubTypeKnown = new HashMap<>();
+        this.itemSubTypeGuessNames = new HashMap<>();
     }
 
     public void init() {
         itemSubTypeNames.clear();
         ringWorthMap.clear();
         rodFormData.clear();
+        itemSubTypeKnown.clear();
+        itemSubTypeGuessNames.clear();
         initializeScrollNames();
         initializePotionNames();
         initializeRings();
         initializeRodMaterials();
+    }
+
+    /**
+     * Generates the display name for an inventory item, reflecting its type, count, known status, and usage state.
+     * Implements the Rogue C `inv_name` function, producing names like "A blue potion" or "2 staves of lightning (on left hand)".
+     */
+    @Nonnull
+    public String invName(@Nullable Player player, @Nonnull final Item item, boolean dropCapital) {
+        // Validate item
+        Objects.requireNonNull(item);
+
+        // Retrieve item metadata
+        final ObjectType objectType = item.getObjectType();
+        Objects.requireNonNull(objectType);
+
+        // Initialize buffer for building the name
+        final StringBuilder itemBuf = new StringBuilder();
+        final Enum<? extends ItemSubtype> itemSubtype = item.getItemSubType();
+        final int count = item.getCount();
+
+        // Generate name based on item type
+        switch (objectType) {
+            case POTION, ROD, RING -> {
+                // Delegate naming for potions, rods, and rings to nameIt for consistent formatting
+                itemBuf.append(nameIt(item));
+            }
+            case SCROLL -> {
+                // Format scroll name with count and known/guess status
+                if (count == 1) {
+                    itemBuf.append("A scroll ");
+                } else {
+                    itemBuf.append(String.format("%d scrolls ", count));
+                }
+                if (isKnown(item.getItemSubType())) {
+                    final String realName = Templates.findTemplateBySubType(itemSubtype).getName();
+                    itemBuf.append(String.format("of %s", realName));
+                } else if (getGuessName(itemSubtype) != null) {
+                    itemBuf.append(String.format("called %s", getGuessName(itemSubtype)));
+                } else {
+                    itemBuf.append(String.format("titled '%s'", getName(itemSubtype)));
+                }
+            }
+            case FOOD -> {
+                // Differentiate between favorite fruit and standard rations
+                if (((Food) item).isFruit()) {
+                    final String fruit = config.getFavoriteFruit();
+                    if (count == 1) {
+                        final String vowelString = RogueUtils.getIndefiniteArticleFor(fruit);
+                        final String vowelStringCapitalized = vowelString.substring(0, 1).toUpperCase() + vowelString.substring(1);
+                        itemBuf.append(String.format("%s %s", vowelStringCapitalized, fruit));
+                    } else {
+                        itemBuf.append(String.format("%d %ss", count, fruit));
+                    }
+                } else if (count == 1) {
+                    itemBuf.append("Some food");
+                } else {
+                    itemBuf.append(String.format("%d rations of food", count));
+                }
+            }
+            case WEAPON -> {
+                // Format weapon name with count, bonuses, and optional label
+                final String realName = Templates.findTemplateBySubType(itemSubtype).getName();
+                if (count > 1) {
+                    itemBuf.append(String.format("%d ", count));
+                } else {
+                    final String vowelString = RogueUtils.getIndefiniteArticleFor(realName);
+                    final String vowelStringCapitalized = vowelString.substring(0, 1).toUpperCase() + vowelString.substring(1);
+                    itemBuf.append(String.format("%s ", vowelStringCapitalized));
+                }
+                if (item.hasFlag(ItemFlag.ISKNOW)) {
+                    itemBuf.append(String.format("%s %s", ((Weapon) item).num(), realName));
+                } else {
+                    itemBuf.append(String.format("%s", realName));
+                }
+                if (count > 1) {
+                    itemBuf.append('s');
+                }
+                if (item.getLabel() != null) {
+                    itemBuf.append(String.format(" called %s", item.getLabel()));
+                }
+            }
+            case ARMOR -> {
+                // Format armor name with protection details if known
+                final String realName = Templates.findTemplateBySubType(itemSubtype).getName();
+                if (item.hasFlag(ItemFlag.ISKNOW)) {
+                    itemBuf.append(String.format("%s %s [", ((Armor) item).num(), realName));
+                    if (!config.isTerse()) {
+                        itemBuf.append("protection ");
+                    }
+                    itemBuf.append(String.format("%d]", config.getMinArmorClass() - item.getArmorClass()));
+                } else {
+                    itemBuf.append(String.format("%s", realName));
+                }
+                if (item.getLabel() != null) {
+                    itemBuf.append(String.format(" called %s", item.getLabel()));
+                }
+            }
+            case GOLD -> {
+                // Fixed name for gold based on quantity
+                itemBuf.append(String.format("%d Gold pieces", item.getGoldValue()));
+            }
+            case AMULET -> {
+                // Unique name for the Amulet of Yendor
+                itemBuf.append("The Amulet of Yendor");
+            }
+            default -> {
+                // Handle unknown types in master mode with debug logging
+                if (config.isMaster()) {
+                    LOGGER.debug("Picked up something funny {}", objectType);
+                    itemBuf.append(String.format("Something bizarre %s", objectType));
+                }
+            }
+        }
+
+        // Append usage indicators if enabled and player is provided
+        if (config.isInventoryDescribe() && player != null) {
+            if (item.equals(player.getCurrentArmor())) {
+                itemBuf.append(" (being worn)");
+            }
+            if (item.equals(player.getCurrentWeapon())) {
+                itemBuf.append(" (weapon in hand)");
+            }
+            if (item.equals(player.getLeftRing())) {
+                itemBuf.append(" (on left hand)");
+            }
+            if (item.equals(player.getRightRing())) {
+                itemBuf.append(" (on right hand)");
+            }
+        }
+
+        // Adjust capitalization based on dropCapital flag
+        if (dropCapital && !itemBuf.isEmpty() && Character.isUpperCase(itemBuf.charAt(0))) {
+            itemBuf.setCharAt(0, Character.toLowerCase(itemBuf.charAt(0)));
+        } else if (!dropCapital && !itemBuf.isEmpty() && Character.isLowerCase(itemBuf.charAt(0))) {
+            itemBuf.setCharAt(0, Character.toUpperCase(itemBuf.charAt(0)));
+        }
+
+        return itemBuf.toString();
+    }
+
+
+    /**
+     * Generates the display name for potions, rings, or rods, reflecting their known, guessed, or unknown state.
+     * Mimics the Rogue C `nameit` function, formatting names based on item count, type, material/color, and effect.
+     */
+    @Nonnull
+    private String nameIt(@Nonnull final Item item) {
+        // Ensure item is non-null
+        Objects.requireNonNull(item);
+
+        // Constant for empty string to avoid magic strings
+        final String emptyString = "";
+
+        // Retrieve item metadata
+        final ObjectType objectType = item.getObjectType();
+        final Enum<? extends ItemSubtype> itemSubType = item.getItemSubType();
+        final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(objectType);
+
+        // Validate subtype and template
+        Objects.requireNonNull(itemSubType);
+        Objects.requireNonNull(objectInfoTemplate);
+
+        // Return empty string for unsupported types to restrict naming to potions, rings, and rods
+        if (!objectType.equals(ObjectType.POTION) && !objectType.equals(ObjectType.RING) &&
+                !objectType.equals(ObjectType.ROD)) {
+            return emptyString;
+        }
+
+        // Initialize buffer for building the name
+        final StringBuilder nameBuf = new StringBuilder();
+
+        // Check if item is known or has a guess name
+        final boolean isKnown = isKnown(itemSubType);
+        final String guessName = getGuessName(itemSubType);
+        final int count = item.getCount();
+
+        // Variables for type, appearance, and effect
+        String type;
+        String which;
+        String effect;
+
+        // Determine type, appearance, and effect based on object type
+        if (objectType.equals(ObjectType.ROD)) {
+            type = getRodForm((RodType) itemSubType);
+            which = getRodMaterial((RodType) itemSubType);
+            effect = ((Rod) item).chargeStr(config.isTerse());
+        } else {
+            type = objectInfoTemplate.getName();
+            which = getName(itemSubType);
+            if (objectType.equals(ObjectType.RING)) {
+                effect = ((Ring) item).num();
+            } else {
+                effect = emptyString;
+            }
+        }
+
+        // Build name for known or guessed items
+        if (isKnown || guessName != null) {
+            if (count == 1) {
+                nameBuf.append(String.format("A %s ", type));
+            } else {
+                nameBuf.append(String.format("%d %ss ", count, type));
+            }
+            if (isKnown) {
+                // Use real name from template for known items
+                final String realName = Templates.findTemplateBySubType(itemSubType).getName();
+                nameBuf.append(String.format("of %s%s(%s)", realName, effect, which));
+            } else {
+                // Use player-assigned guess name for guessed items
+                nameBuf.append(String.format("called %s%s(%s)", getGuessName(itemSubType), effect, which));
+            }
+        } else if (count == 1) {
+            // Format single unknown item with indefinite article and appearance
+            final String vowelString = RogueUtils.getIndefiniteArticleFor(which);
+            final String vowelStringCapitalized = vowelString.substring(0, 1).toUpperCase() + vowelString.substring(1);
+            nameBuf.append(String.format("%s %s %s", vowelStringCapitalized, which, type));
+        } else {
+            // Format multiple unknown items with count and appearance
+            nameBuf.append(String.format("%d %s %ss", count, which, type));
+        }
+
+        return nameBuf.toString();
     }
 
     /**
@@ -140,7 +376,7 @@ public class ItemData {
                 int index = random.rnd(availableStones.size());
                 final Stone stone = availableStones.remove(index);
                 setName(ringType, stone.name);
-                final RingInfoTemplate template = Templates.findTemplateBySubType(RingInfoTemplate.class, ringType);
+                final RingInfoTemplate template = (RingInfoTemplate) Templates.findTemplateBySubType(ringType);
                 ringWorthMap.put(ringType, template.getWorth() + stone.value);
             }
         } catch (Exception e) {
@@ -195,13 +431,58 @@ public class ItemData {
      * @param name        The custom name to assign.
      * @throws IllegalArgumentException If the name is null or empty.
      */
-    public void setName(@Nonnull final ItemSubtype itemSubType, @Nonnull final String name) {
+    private void setName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nonnull final String name) {
         Objects.requireNonNull(itemSubType);
         Objects.requireNonNull(name);
         if (name.isEmpty()) {
             throw new IllegalArgumentException(Messages.ERROR_EMPTY_NAME);
         }
         itemSubTypeNames.put(itemSubType, name);
+    }
+
+    /**
+     * Sets whether an item subtype is known.
+     *
+     * @param itemSubType The item subtype to mark as known or unknown.
+     * @param isKnown     True if the subtype is known, false otherwise.
+     */
+    public void setKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType, boolean isKnown) {
+        Objects.requireNonNull(itemSubType);
+        itemSubTypeKnown.put(itemSubType, isKnown);
+    }
+
+    /**
+     * Checks if an item subtype is known.
+     *
+     * @param itemSubType The item subtype to check.
+     * @return True if the subtype is known, false otherwise.
+     */
+    public boolean isKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(itemSubType);
+        return itemSubTypeKnown.getOrDefault(itemSubType, false);
+    }
+
+    /**
+     * Assigns a guess name to an item subtype.
+     *
+     * @param itemSubType The item subtype to assign a guess name to.
+     * @param guessName   The guess name to assign, or null to clear.
+     */
+    public void setGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nullable final String guessName) {
+        Objects.requireNonNull(itemSubType);
+        itemSubTypeGuessNames.put(itemSubType, guessName);
+    }
+
+    /**
+     * Retrieves the guess name for an item subtype.
+     *
+     * @param itemSubType The item subtype to query.
+     * @return The guess name, or null if not set.
+     */
+    @Nullable
+    public String getGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(itemSubType);
+        return itemSubTypeGuessNames.get(itemSubType);
     }
 
     /**
@@ -239,7 +520,7 @@ public class ItemData {
      * @return The name, or null if not set.
      */
     @Nullable
-    public String getName(@Nonnull final ItemSubtype itemSubType) {
+    public String getName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
         Objects.requireNonNull(itemSubType);
         return itemSubTypeNames.get(itemSubType);
     }
@@ -255,14 +536,7 @@ public class ItemData {
         int value;
     }
 
-    private static class RodFormData {
-        final RodForm form;
-        final String material;
-
-        RodFormData(RodForm form, String material) {
-            this.form = form;
-            this.material = material;
-        }
+    private record RodFormData(RodForm form, String material) {
     }
 
 }

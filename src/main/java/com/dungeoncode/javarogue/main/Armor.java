@@ -5,27 +5,29 @@ import java.util.Objects;
 
 public class Armor extends Item {
 
-    private int armorClass;
-
     public Armor(@Nonnull final Enum<ArmorType> armorType) {
         super(ObjectType.ARMOR, armorType, 1);
         Objects.requireNonNull(armorType);
 
-        final ArmorInfoTemplate armorInfoTemplate = Templates.findTemplateBySubType(ArmorInfoTemplate.class, armorType);
-        this.armorClass = armorInfoTemplate.getArmorClass();
+        final ArmorInfoTemplate armorInfoTemplate = (ArmorInfoTemplate) Templates.findTemplateBySubType(armorType);
+        setArmorClass(armorInfoTemplate.getArmorClass());
+    }
+
+    /**
+     * Formats the armor class bonus, e.g., "+1" or "-2".
+     *
+     * @return A string representing the armor class bonus relative to the base class.
+     */
+    public String num() {
+        final ArmorInfoTemplate armorTemplate = (ArmorInfoTemplate) Templates.findTemplateBySubType(getItemSubType());
+        final int baseClass=armorTemplate.getArmorClass();
+        final int bonus = baseClass - getArmorClass();
+        return bonus < 0 ? Integer.toString(bonus) : "+" + bonus;
     }
 
     @Override
     public ArmorType getItemSubType() {
         return (ArmorType) super.getItemSubType();
-    }
-
-    public int getArmorClass() {
-        return armorClass;
-    }
-
-    public void setArmorClass(final int armorClass) {
-        this.armorClass = armorClass;
     }
 
 }

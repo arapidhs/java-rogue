@@ -35,7 +35,7 @@ public class GameState {
         this.messageSystem = messageSystem;
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
-        this.itemData = new ItemData(rogueRandom, config.getMaxScrollGeneratedNameLength());
+        this.itemData = new ItemData(config,rogueRandom);
         init();
     }
 
@@ -77,11 +77,11 @@ public class GameState {
                     } else {
                         // Notify player if item cannot be picked up
                         if (!config.isTerse()) {
-                            messageSystem.addmssg(Messages.MSG_YOU + " ");
+                            messageSystem.addmssg("you ");
                         }
                         final boolean dropCapital = true;
-                        final String itemName = getItemName(item, dropCapital);
-                        messageSystem.msg(String.format(Messages.MSG_MOVED_ONTO, itemName));
+                        final String itemName = getItemName(getPlayer(),item, dropCapital);
+                        messageSystem.msg(String.format("moved onto %s", itemName));
                     }
                 }
             }
@@ -175,19 +175,19 @@ public class GameState {
         if (!silent) {
             if (itemAdded) {
                 if (!config.isTerse()) {
-                    messageSystem.addmssg(Messages.MSG_YOU_NOW_HAVE + " ");
+                    messageSystem.addmssg("you now have ");
                 }
                 final String itemName = String.format("%s (%c)",
-                        getItemName(item, !config.isTerse()),
+                        getItemName(getPlayer(),item, !config.isTerse()),
                         item.getPackChar());
                 messageSystem.msg(itemName);
             } else {
                 if (!config.isTerse()) {
-                    messageSystem.addmssg(Messages.MSG_THERES + " ");
+                    messageSystem.addmssg("there's ");
                 }
-                messageSystem.addmssg(Messages.MSG_NO_ROOM);
+                messageSystem.addmssg("no room");
                 if (!config.isTerse()) {
-                    messageSystem.addmssg(" " + Messages.MSG_IN_YOUR_PACK);
+                    messageSystem.addmssg(" in your pack");
                 }
                 messageSystem.endmsg();
             }
@@ -202,15 +202,15 @@ public class GameState {
      * and is responsible for producing the textual representation of an item as it appears
      * in the player's inventory or during drop/pickup interactions.</p>
      *
+     * @param player      the player
      * @param item        the non-null item to describe
      * @param dropCapital if {@code true}, the returned name will start with a lowercase letter
      *                    (typically when dropping or referencing in a sentence); if {@code false},
      *                    the name will start with an uppercase letter (e.g., in terse inventory lists)
      * @return the string name of the item, formatted for display
      */
-    public String getItemName(@Nonnull final Item item, boolean dropCapital) {
-        // TODO implement Inventory getItemName
-        return String.valueOf(item.getPackChar());
+    public String getItemName(@Nonnull Player player, @Nonnull final Item item, boolean dropCapital) {
+        return itemData.invName(player,item,dropCapital);
     }
 
     /**

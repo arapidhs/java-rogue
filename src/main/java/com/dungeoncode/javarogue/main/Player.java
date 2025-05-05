@@ -17,6 +17,8 @@ public class Player extends Creature {
     private final Inventory inventory;
     private Armor currentArmor;
     private Weapon currentWeapon;
+    private Ring leftRing;
+    private Ring rightRing;
 
     public Player(@Nonnull final Config config) {
         Objects.requireNonNull(config);
@@ -56,9 +58,28 @@ public class Player extends Creature {
         this.currentArmor = currentArmor;
     }
 
+    public Ring getRightRing() {
+        return rightRing;
+    }
+
+    public void setRightRing(final Ring rightRing) {
+        this.rightRing = rightRing;
+    }
+
+    public Ring getLeftRing() {
+        return leftRing;
+    }
+
+    public void setLeftRing(final Ring leftRing) {
+        this.leftRing = leftRing;
+    }
+
+    public Weapon getCurrentWeapon() {
+        return currentWeapon;
+    }
+
     public void setCurrentWeapon(@Nullable final Weapon currentWeapon) {
         this.currentWeapon = currentWeapon;
     }
-
 }
 
