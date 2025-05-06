@@ -10,10 +10,8 @@ public class InventoryTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InventoryTest.class);
 
-    final Config config = new Config();
-
     @Test
-    void addToPackTest() {
+    void testAddToPack() {
         // Initialize dependencies for test setup
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());

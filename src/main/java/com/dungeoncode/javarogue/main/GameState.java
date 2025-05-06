@@ -19,7 +19,7 @@ public class GameState {
     private GameEndReason gameEndReason;
     private DeathSource deathSource;
     private int maxLevel;
-    private int level;
+    private int levelNum;
     private int goldAmount;
     private Level currentLevel;
 
@@ -35,7 +35,7 @@ public class GameState {
         this.messageSystem = messageSystem;
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
-        this.itemData = new ItemData(config,rogueRandom);
+        this.itemData = new ItemData(config, rogueRandom);
         init();
     }
 
@@ -44,6 +44,17 @@ public class GameState {
         if (this.initializer != null) {
             this.initializer.initialize(this);
         }
+    }
+
+    public void newLevel(final int levelNum) {
+        player.removeFlag(CreatureFlag.ISHELD);
+        this.levelNum = levelNum;
+        if (levelNum > maxLevel) {
+            maxLevel = levelNum;
+        }
+        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final Level level = levelGenerator.newLevel(levelNum);
+        setCurrentLevel(level);
     }
 
     /**
@@ -80,7 +91,7 @@ public class GameState {
                             messageSystem.addmssg("you ");
                         }
                         final boolean dropCapital = true;
-                        final String itemName = getItemName(getPlayer(),item, dropCapital);
+                        final String itemName = getItemName(getPlayer(), item, dropCapital);
                         messageSystem.msg(String.format("moved onto %s", itemName));
                     }
                 }
@@ -127,7 +138,7 @@ public class GameState {
      */
     private char getFloorChar() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
-        if (room != null && (room.hasFlag(RoomFlag.CORRIDOR) || showFloor())) {
+        if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
             return room.getChar();
         } else {
             return SymbolMapper.getSymbol(RoomType.EMPTY);
@@ -178,7 +189,7 @@ public class GameState {
                     messageSystem.addmssg("you now have ");
                 }
                 final String itemName = String.format("%s (%c)",
-                        getItemName(getPlayer(),item, !config.isTerse()),
+                        getItemName(getPlayer(), item, !config.isTerse()),
                         item.getPackChar());
                 messageSystem.msg(itemName);
             } else {
@@ -210,7 +221,7 @@ public class GameState {
      * @return the string name of the item, formatted for display
      */
     public String getItemName(@Nonnull Player player, @Nonnull final Item item, boolean dropCapital) {
-        return itemData.invName(player,item,dropCapital);
+        return itemData.invName(player, item, dropCapital);
     }
 
     /**
@@ -224,7 +235,7 @@ public class GameState {
     private boolean showFloor() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
         if (room != null && room.hasFlag(RoomFlag.DARk) &&
-                !room.hasFlag(RoomFlag.CORRIDOR) &&
+                !room.hasFlag(RoomFlag.GONE) &&
                 !player.hasFlag(CreatureFlag.ISBLIND)) {
             return config.isSeeFloor();
         }
@@ -259,12 +270,12 @@ public class GameState {
         return maxLevel;
     }
 
-    public int getLevel() {
-        return level;
+    public int getLevelNum() {
+        return levelNum;
     }
 
-    public void setLevel(final int level) {
-        this.level = level;
+    public void setLevelNum(final int levelNum) {
+        this.levelNum = levelNum;
     }
 
     public int getGoldAmount() {
@@ -298,5 +309,4 @@ public class GameState {
     public ItemData getItemData() {
         return itemData;
     }
-
 }

@@ -13,28 +13,12 @@ import java.util.Objects;
  * Provides type information, template ID if applicable, and the display name.
  * </p>
  */
-public final class DeathSource {
-
-    private final Type type;
-    private final long templateId;
-    private final String name;
+public record DeathSource(Type type, long templateId, String name) {
 
     public DeathSource(final Type type, final long templateId, final String name) {
         this.type = Objects.requireNonNull(type);
         this.templateId = templateId;
         this.name = Objects.requireNonNull(name);
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public long getTemplateId() {
-        return templateId;
-    }
-
-    public String getName() {
-        return name;
     }
 
     /**

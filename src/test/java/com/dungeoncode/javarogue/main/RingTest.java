@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class RingTest {
 
     @Test
-    void numTest(){
+    void testNum() {
         final Ring ring = new Ring(RingType.PROTECTION);
         ring.setArmorClass(3);
 

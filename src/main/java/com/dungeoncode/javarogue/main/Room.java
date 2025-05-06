@@ -1,67 +1,33 @@
 package com.dungeoncode.javarogue.main;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Represents a room in the game, storing its position, size, gold, exits, and flags.
  */
-public class Room {
+public class Room extends Entity {
 
-    private final Position position;
-    private final Position size;
-    private final Position goldPosition;
-    private final int goldValue;
     private final EnumSet<RoomFlag> roomFlags;
     private final List<Position> exits;
+    private Position size;
+    private Position goldPosition;
+    private int goldValue;
 
-    /**
-     * Constructs a new Room with the specified properties.
-     *
-     * @param position     The upper left corner of the room.
-     * @param size         The dimensions of the room (width and height).
-     * @param goldPosition The position where the gold is located.
-     * @param goldValue    The worth of the gold in the room.
-     * @param roomFlags    The properties of the room (e.g., dark, corridor).
-     * @param exits        The list of exit locations from the room.
-     */
-    public Room(@Nonnull final Position position,
-                @Nonnull final Position size,
-                @Nullable final Position goldPosition,
-                final int goldValue,
-                @Nullable final EnumSet<RoomFlag> roomFlags,
-                @Nonnull final List<Position> exits) {
-        Objects.requireNonNull(position);
-        Objects.requireNonNull(size);
-        Objects.requireNonNull(exits);
-        this.position = position;
-        this.size = size;
-        this.goldPosition = goldPosition;
-        this.goldValue = goldValue;
-        if (roomFlags != null) {
-            this.roomFlags = EnumSet.copyOf(roomFlags);
-        } else {
-            this.roomFlags = EnumSet.noneOf(RoomFlag.class);
-        }
-        this.exits = new ArrayList<>(exits);
+    public Room() {
+        super();
+        this.exits = new ArrayList<>();
+        this.roomFlags = EnumSet.noneOf(RoomFlag.class);
     }
 
     public boolean hasFlag(@Nonnull final RoomFlag roomFlag) {
         return roomFlags.contains(roomFlag);
     }
 
-    /**
-     * Returns the upper left corner position of the room.
-     *
-     * @return The room's position.
-     */
-    @Nonnull
-    public Position getPosition() {
-        return position;
+    public void addFlag(@Nonnull final RoomFlag roomFlag) {
+        roomFlags.add(roomFlag);
     }
 
     /**
@@ -75,7 +41,7 @@ public class Room {
     }
 
     public char getChar() {
-        if (roomFlags.contains(RoomFlag.CORRIDOR))
+        if (roomFlags.contains(RoomFlag.GONE))
             return SymbolMapper.getSymbol(RoomType.PASSAGE);
         else {
             return SymbolMapper.getSymbol(RoomType.FLOOR);
@@ -121,4 +87,12 @@ public class Room {
         return exits;
     }
 
+    public void setSize(int roomSizeX, int roomSizeY) {
+        if (this.size == null) {
+            this.size = new Position(roomSizeX, roomSizeY);
+        } else {
+            this.size.setX(roomSizeX);
+            this.size.setY(roomSizeY);
+        }
+    }
 }

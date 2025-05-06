@@ -2,20 +2,15 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScoreManagerTest extends RogueBaseTest {
-
-    @TempDir
-    Path tempDir;
 
     @Test
     void testReadWrite() throws IOException {

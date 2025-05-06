@@ -36,7 +36,7 @@ public class Rogue {
         final Font font = new Font("Monospaced", Font.PLAIN, 16);
 
         RogueScreen screen = null;
-        MessageSystem messageSystem = null;
+        MessageSystem messageSystem;
         try {
             // Initialize terminal with configured size and font
             final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory(System.out, System.in, StandardCharsets.UTF_8);
@@ -86,13 +86,13 @@ public class Rogue {
                     final StringBuilder deathLine = new StringBuilder();
                     deathLine.append("Killed by ");
 
-                    final String killerName = gameState.getDeathSource().getName();
+                    final String killerName = gameState.getDeathSource().name();
                     final boolean isKillType = gameState.getDeathSource().isTemplate() &&
-                            gameState.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE);
+                            gameState.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE);
                     boolean isUseArticle = true;
 
                     if (isKillType) {
-                        final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().getTemplateId());
+                        final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().templateId());
                         isUseArticle = killTypeTemplate != null ? killTypeTemplate.isUseArticle() : isUseArticle;
                     }
 

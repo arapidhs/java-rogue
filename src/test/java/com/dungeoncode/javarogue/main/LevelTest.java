@@ -2,8 +2,6 @@ package com.dungeoncode.javarogue.main;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class LevelTest {
@@ -38,7 +36,7 @@ public class LevelTest {
         final int placeX = 2;
         final int placeY = 5;
         final char placeSymbol = 'p';
-        final Place place = new Place(placeX, placeY, placeSymbol);
+        final Place place = new Place(placeSymbol);
         level.setPlaceAt(placeX, placeY, place);
 
         Place placeFound = level.getPlaceAt(placeX, placeY);
@@ -61,6 +59,17 @@ public class LevelTest {
         assertThrows(IllegalArgumentException.class, () ->
                 level.setPlaceAt(outOfBoundsX, outOfBoundsY, place));
 
+        int symbolX = 3;
+        int symbolY = 6;
+        char symbol = SymbolMapper.getSymbol(RoomType.FLOOR);
+        level.setPlaceSymbol(symbolX, symbolY, symbol);
+        assertNull(level.getSymbol(symbolX, symbolY));
+
+        symbolX = placeX;
+        symbolY = placeY;
+        level.setPlaceSymbol(symbolX, symbolY, symbol);
+        assertEquals(symbol, level.getSymbol(symbolX, symbolY));
+
     }
 
     @Test
@@ -70,14 +79,9 @@ public class LevelTest {
         final int roomY = 5;
         final int roomSizeX = 10;
         final int roomSizeY = 10;
-        final Room room = new Room(
-                new Position(roomX, roomY),
-                new Position(roomSizeX, roomSizeY),
-                null,
-                0,
-                null,
-                new ArrayList<>()
-        );
+        final Room room = new Room();
+        room.setPosition(roomX, roomY);
+        room.setSize(roomSizeX, roomSizeY);
 
         assertTrue(level.addRoom(room));
 

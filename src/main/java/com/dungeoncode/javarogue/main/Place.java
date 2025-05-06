@@ -8,31 +8,43 @@ import java.util.EnumSet;
  * Represents a single tile on the level map, storing its display character,
  * flags, position, and occupying monster.
  */
-public class Place {
+public class Place extends Entity {
 
-    private final EnumSet<PlaceFlag> flags;
-    private final Position position;
-    private char symbol;
+    private final EnumSet<PlaceFlag> placeFlags;
+    private Character symbol;
     private Monster monster;
+    private int passageNumber;
 
-    public Place(final int x, final int y, final char symbol) {
-        this.symbol = symbol;
-        this.flags = EnumSet.noneOf(PlaceFlag.class);
-        this.monster = null;
-        this.position = new Position(x, y);
+    public Place() {
+        this(null);
     }
 
-    public char getSymbol() {
+    public Place(final Character symbol) {
+        super();
+        this.symbol = symbol;
+        this.placeFlags = EnumSet.noneOf(PlaceFlag.class);
+        this.monster = null;
+        this.addFlag(PlaceFlag.REAL);
+    }
+
+    public void addFlag(@Nonnull final PlaceFlag placeFlag) {
+        placeFlags.add(placeFlag);
+    }
+
+    public void removeFlag(@Nonnull final PlaceFlag placeFlag) {
+        placeFlags.remove(placeFlag);
+    }
+
+    public boolean hasFlag(@Nonnull final PlaceFlag placeFlag) {
+        return placeFlags.contains(placeFlag);
+    }
+
+    public Character getSymbol() {
         return symbol;
     }
 
-    public void setSymbol(final char symbol) {
+    public void setSymbol(final Character symbol) {
         this.symbol = symbol;
-    }
-
-    @Nonnull
-    public EnumSet<PlaceFlag> getFlags() {
-        return flags;
     }
 
     @Nullable
@@ -44,8 +56,11 @@ public class Place {
         this.monster = monster;
     }
 
-    @Nonnull
-    public Position getPosition() {
-        return position;
+    public int getPassageNumber() {
+        return passageNumber;
+    }
+
+    public void setPassageNumber(int passageNumber) {
+        this.passageNumber = passageNumber;
     }
 }

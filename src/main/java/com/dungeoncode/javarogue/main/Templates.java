@@ -56,8 +56,8 @@ public class Templates {
      * Loads templates from a JSON resource into a map indexed by ID.
      *
      * @param resourcePath The path to the JSON resource.
-     * @param type The template class to deserialize into.
-     * @param <T> The template type extending Template.
+     * @param type         The template class to deserialize into.
+     * @param <T>          The template type extending Template.
      * @return A map of template IDs to template instances.
      * @throws RuntimeException If loading fails.
      */
@@ -78,8 +78,8 @@ public class Templates {
      * Retrieves a template by its class and ID.
      *
      * @param type The template class.
-     * @param id The template ID.
-     * @param <T> The template type extending AbstractTemplate.
+     * @param id   The template ID.
+     * @param <T>  The template type extending AbstractTemplate.
      * @return The matching template, or null if not found.
      */
     @SuppressWarnings("unchecked")
@@ -128,26 +128,10 @@ public class Templates {
     }
 
     /**
-     * Finds an ObjectInfoTemplate by its ObjectType.
-     *
-     * @param objectType The ObjectType to match.
-     * @return The matching ObjectInfoTemplate, or null if not found.
-     */
-    @Nullable
-    public static ObjectInfoTemplate findTemplateByObjectType(@Nonnull final ObjectType objectType) {
-        Objects.requireNonNull(objectType);
-        Set<ObjectInfoTemplate> templates = getTemplates(ObjectInfoTemplate.class);
-        return templates.stream()
-                .filter(t -> t.getObjectType() == objectType)
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
      * Retrieves all templates of the specified class.
      *
      * @param type The template class.
-     * @param <T> The template type extending Template.
+     * @param <T>  The template type extending Template.
      * @return An unmodifiable set of templates, or empty if none found.
      */
     @SuppressWarnings("unchecked")
@@ -161,6 +145,22 @@ public class Templates {
         return map.values().stream()
                 .map(t -> (T) t)
                 .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
+     * Finds an ObjectInfoTemplate by its ObjectType.
+     *
+     * @param objectType The ObjectType to match.
+     * @return The matching ObjectInfoTemplate, or null if not found.
+     */
+    @Nullable
+    public static ObjectInfoTemplate findTemplateByObjectType(@Nonnull final ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        Set<ObjectInfoTemplate> templates = getTemplates(ObjectInfoTemplate.class);
+        return templates.stream()
+                .filter(t -> t.getObjectType() == objectType)
+                .findFirst()
+                .orElse(null);
     }
 
     /**

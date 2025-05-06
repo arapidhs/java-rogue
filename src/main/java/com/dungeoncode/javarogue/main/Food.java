@@ -13,7 +13,7 @@ public class Food extends Item {
     }
 
     public void setFruit(final boolean fruit) {
-         this.fruit = fruit;
+        this.fruit = fruit;
     }
 
 }

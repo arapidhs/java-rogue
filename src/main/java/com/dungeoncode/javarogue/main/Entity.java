@@ -21,7 +21,12 @@ public class Entity {
     }
 
     public void setPosition(final int x, final int y) {
-        this.position = new Position(x, y);
+        if (position == null) {
+            position = new Position(x, y);
+        } else {
+            this.position.setX(x);
+            this.position.setY(y);
+        }
     }
 
 }

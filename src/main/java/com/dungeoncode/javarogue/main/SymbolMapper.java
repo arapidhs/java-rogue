@@ -31,6 +31,15 @@ public class SymbolMapper {
                 RoomType.EMPTY, ' '
         );
         SYMBOL_REGISTRY.put(RoomType.class, obj -> roomTypeSymbols.get((RoomType) obj));
+
+        final Map<PlaceFlag, Character> placeSymbols = Map.of(
+                PlaceFlag.PASS, '#',
+                PlaceFlag.FLOOR, '.',
+                PlaceFlag.WALL_VERTICAL, '|',
+                PlaceFlag.WALL_HORIZONTAL, '-',
+                PlaceFlag.DOOR, '+'
+        );
+        SYMBOL_REGISTRY.put(PlaceFlag.class, obj -> placeSymbols.get((PlaceFlag) obj));
     }
 
     /**

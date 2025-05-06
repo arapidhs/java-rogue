@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Template representing potion information, based on the original Rogue pot_info table.

@@ -10,13 +10,14 @@ public class ItemDataTest {
 
     final Config config = new Config();
     final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-    final ItemData itemData = new ItemData(config,rogueRandom);
-    final int invNameTestIterations=50;
+    final ItemData itemData = new ItemData(config, rogueRandom);
+    final int invNameTestIterations = 50;
+
     /**
      * Tests initialization of ItemData, ensuring names, forms, and worth are set for all item subtypes.
      */
     @Test
-    void initializeItemDataTest() {
+    void testInitializeItemData() {
         itemData.init();
 
         // Verify all ScrollTypes have generated names
@@ -50,7 +51,7 @@ public class ItemDataTest {
      * Tests setting and checking known status for item subtypes, including reset after re-initialization.
      */
     @Test
-    void isKnownTest() {
+    void testIsKnown() {
         itemData.init();
 
         // Initial state: no subtypes are known
@@ -75,7 +76,7 @@ public class ItemDataTest {
      * Tests setting and retrieving guess names for item subtypes, including reset after re-initialization.
      */
     @Test
-    void guessNameTest() {
+    void testGuessName() {
         itemData.init();
 
         final String guessNameHoldMonster = "Hold Monster Scroll";
@@ -104,7 +105,7 @@ public class ItemDataTest {
      * and capitalization. Iterates multiple times to ensure consistency across random initializations.
      */
     @Test
-    void invNamePotionTest() {
+    void testInvNamePotion() {
         // Run multiple iterations to test with different random seeds
         for (int i = 0; i < invNameTestIterations; i++) {
             // Initialize item data to reset names and known status
@@ -166,7 +167,7 @@ public class ItemDataTest {
      * assignments and tests charge display for known rods.
      */
     @Test
-    void invNameRodTest() {
+    void testInvNameRod() {
         // Run multiple iterations to test with different random rod forms and materials
         for (int i = 0; i < invNameTestIterations; i++) {
             // Initialize item data to reset names, forms, and known status
@@ -243,7 +244,7 @@ public class ItemDataTest {
      * across random stone assignments and tests specific cases for non-bonus rings and ring usage.
      */
     @Test
-    void invNameRingTest() {
+    void testInvNameRing() {
         // Run multiple iterations to test with different random stone names
         for (int i = 0; i < invNameTestIterations; i++) {
             // Initialize item data to reset names and known status
@@ -340,7 +341,7 @@ public class ItemDataTest {
      * and capitalization. Iterates multiple times to ensure consistency across random scroll name generations.
      */
     @Test
-    void invNameScrollTest() {
+    void testInvNameScroll() {
         // Run multiple iterations to test with different random scroll names
         for (int i = 0; i < invNameTestIterations; i++) {
             // Initialize item data to reset names and known status
@@ -401,7 +402,7 @@ public class ItemDataTest {
      * including singular/plural forms and capitalization. Ensures proper handling of fruit vs. ration distinction.
      */
     @Test
-    void invNameFoodTest() {
+    void testInvNameFood() {
         // Initialize item data to set up configuration
         itemData.init();
         // Test with uppercase initial for inventory listing
@@ -435,7 +436,7 @@ public class ItemDataTest {
      * bonuses, custom labels, and usage indicators (weapon in hand). Ensures proper singular/plural forms and capitalization.
      */
     @Test
-    void invNameWeaponTest() {
+    void testInvNameWeapon() {
         // Initialize item data to set up configuration
         itemData.init();
 
@@ -484,7 +485,7 @@ public class ItemDataTest {
      * protection values.
      */
     @Test
-    void invNameArmorTest() {
+    void testInvNameArmor() {
         // Initialize item data to set up configuration
         itemData.init();
 
@@ -527,25 +528,25 @@ public class ItemDataTest {
     }
 
     @Test
-    void invNameGoldTest() {
+    void testInvNameGold() {
         itemData.init();
 
         boolean dropCapital = true;
-        final int goldValue=100;
+        final int goldValue = 100;
         final Gold item = new Gold(goldValue);
 
         final String name = itemData.invName(null, item, dropCapital);
-        assertEquals(goldValue+" Gold pieces",name);
+        assertEquals(goldValue + " Gold pieces", name);
     }
 
     @Test
-    void invNameAmuletTest() {
+    void testInvNameAmulet() {
         itemData.init();
 
         boolean dropCapital = false;
-        final Item item = new Item(ObjectType.AMULET,null,1);
+        final Item item = new Item(ObjectType.AMULET, null, 1);
         final String name = itemData.invName(null, item, dropCapital);
-        assertEquals("The Amulet of Yendor",name);
+        assertEquals("The Amulet of Yendor", name);
     }
 
 }

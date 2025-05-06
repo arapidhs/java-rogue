@@ -82,6 +82,10 @@ public class Weapon extends Item {
         return hitPlus;
     }
 
+    public void setHitPlus(int hitPlus) {
+        this.hitPlus = hitPlus;
+    }
+
     /**
      * Returns the bonus to damage for this weapon.
      *
@@ -89,10 +93,6 @@ public class Weapon extends Item {
      */
     public int getDamagePlus() {
         return damagePlus;
-    }
-
-    public void setHitPlus(int hitPlus) {
-        this.hitPlus = hitPlus;
     }
 
     public void setDamagePlus(int damagePlus) {

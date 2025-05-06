@@ -150,7 +150,7 @@ public class TemplatesTest {
         assertEquals(splintMailCumulativeProbability, splintMailTemplate.getCumulativeProbability());
 
         final Armor splintMail = new Armor(ArmorType.SPLINT_MAIL);
-        assertEquals(splintMailArmorClass,splintMail.getArmorClass());
+        assertEquals(splintMailArmorClass, splintMail.getArmorClass());
     }
 
     /**
@@ -228,19 +228,19 @@ public class TemplatesTest {
         assertEquals(cumulative, template.getCumulativeProbability());
 
         final Weapon twoHandedSword = new Weapon(WeaponType.TWO_HANDED_SWORD);
-        final String twoHandedSwordWieldDamage="4x4";
-        final String twoHandedSwordThrowDamage="1x2";
-        assertEquals(twoHandedSwordWieldDamage,twoHandedSword.getWieldDamage());
-        assertEquals(twoHandedSwordThrowDamage,twoHandedSword.getThrowDamage());
+        final String twoHandedSwordWieldDamage = "4x4";
+        final String twoHandedSwordThrowDamage = "1x2";
+        assertEquals(twoHandedSwordWieldDamage, twoHandedSword.getWieldDamage());
+        assertEquals(twoHandedSwordThrowDamage, twoHandedSword.getThrowDamage());
 
         final Weapon arrow = new Weapon(WeaponType.ARROW);
-        final String arrowWieldDamage="1x1";
-        final String arrowThrowDamage="2x3";
-        final WeaponType arrowLaunchWeapon=WeaponType.SHORT_BOW;
+        final String arrowWieldDamage = "1x1";
+        final String arrowThrowDamage = "2x3";
+        final WeaponType arrowLaunchWeapon = WeaponType.SHORT_BOW;
         final EnumSet<ItemFlag> arrowFlags = EnumSet.of(ItemFlag.ISMISL, ItemFlag.ISMANY);
-        assertEquals(arrowWieldDamage,arrow.getWieldDamage());
-        assertEquals(arrowThrowDamage,arrow.getThrowDamage());
-        assertEquals(arrowLaunchWeapon,arrow.getLaunchWeapon());
+        assertEquals(arrowWieldDamage, arrow.getWieldDamage());
+        assertEquals(arrowThrowDamage, arrow.getThrowDamage());
+        assertEquals(arrowLaunchWeapon, arrow.getLaunchWeapon());
         arrowFlags.forEach(flag -> assertTrue(arrow.getItemFlags().contains(flag)));
     }
 
@@ -312,7 +312,7 @@ public class TemplatesTest {
     public void findTemplateByObjectTypeTest() {
         final ObjectInfoTemplate templateByObjectType = Templates.findTemplateByObjectType(ObjectType.RING);
         assert templateByObjectType != null;
-        assertEquals("ring",templateByObjectType.getName());
+        assertEquals("ring", templateByObjectType.getName());
     }
 
     /**

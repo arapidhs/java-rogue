@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.annotation.Nonnull;
-import java.util.Objects;
 
 /**
  * Template representing scroll information, based on the original Rogue scr_info table.

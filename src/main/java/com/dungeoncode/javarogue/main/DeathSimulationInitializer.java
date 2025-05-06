@@ -37,7 +37,7 @@ public class DeathSimulationInitializer implements Initializer {
 
         gameState.setGameEndReason(GameEndReason.KILLED);
         gameState.setGoldAmount(rogueRandom.rnd(100) + 1);
-        gameState.setLevel(rogueRandom.rnd(100) + 1);
+        gameState.setLevelNum(rogueRandom.rnd(100) + 1);
 
         final String defaultKillName = gameState.getConfig().getDefaultKillName();
         gameState.setDeathSource(rogueRandom.selectRandomDeathSource(defaultKillName));

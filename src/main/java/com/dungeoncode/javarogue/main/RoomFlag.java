@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.main;
 public enum RoomFlag {
 
     DARk,
-    CORRIDOR,
+    GONE,
     MAZE
 
 }

@@ -9,12 +9,13 @@ import java.util.Objects;
 /**
  * Represents a level in the game, managing items, monsters, rooms, and the map grid.
  */
-public class Level {
+public class Level extends Entity {
 
     private final List<Item> items;
     private final List<Monster> monsters;
     private final Place[][] places;
     private final List<Room> rooms;
+    private final List<Passage> passages;
     private final int maxWidth;
     private final int maxHeight;
 
@@ -25,10 +26,12 @@ public class Level {
      * @param maxHeight The maximum height of the level map.
      */
     public Level(final int maxWidth, final int maxHeight) {
+        super();
         this.items = new ArrayList<>();
         this.monsters = new ArrayList<>();
         this.places = new Place[maxHeight][maxWidth];
         this.rooms = new ArrayList<>();
+        this.passages = new ArrayList<>();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
     }
@@ -36,6 +39,7 @@ public class Level {
     public void setPlaceAt(final int x, final int y, @Nonnull final Place place) {
         validateCoordinates(x, y);
         places[y][x] = place;
+        place.setPosition(x, y);
     }
 
     private void validateCoordinates(final int x, final int y) {
@@ -178,6 +182,10 @@ public class Level {
         return rooms;
     }
 
+    public List<Passage> getPassages() {
+        return passages;
+    }
+
     /**
      * Adds a room to the level's room list.
      *
@@ -198,4 +206,8 @@ public class Level {
         return monsters.add(monster);
     }
 
+    public void addPassage(@Nonnull final Passage passage) {
+        Objects.requireNonNull(passage);
+        passages.add(passage);
+    }
 }

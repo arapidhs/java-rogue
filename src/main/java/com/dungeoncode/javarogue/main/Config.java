@@ -39,10 +39,15 @@ public class Config {
     private static final int DEFAULT_NUM_SCORES = 10;
     private static final int DEFAULT_PLAYER_MAX_PACK = 23;
     private static final int DEFAULT_MIN_ARMOR_CLASS = 10;
-    private static final boolean DEFAULT_INVENTORY_DESCRIBE=true;
+    private static final boolean DEFAULT_INVENTORY_DESCRIBE = true;
 
-    /** The equivalent of HUNGERTIME	1300*/
+    /**
+     * The equivalent of HUNGERTIME	1300
+     */
     private static final int DEFAULT_PLAYER_STARTING_FOOD = 1300;
+    private static final int DEFAULT_MAX_ROOMS = 9;
+    private static final int DEFAULT_MAX_GONE_ROOMS = 4;
+    private static final int DEFAULT_MAX_PASSAGES = 13;
 
     private static final boolean DEFAULT_MESSAGE_SAVE = true;
     private static final boolean DEFAULT_MESSAGE_ALLOW_LOWERCASE = false;
@@ -57,18 +62,42 @@ public class Config {
     private final int numScores;
     private final int userId;
     private final String defaultKillName;
+
+    /**
+     * Equivalent of NUMLINES.
+     */
     private final int terminalRows;
+
+    /**
+     * Equivalent of NUMCOLS.
+     */
     private final int terminalCols;
+
     private final EnumSet<PlayerFlag> initialPlayerFlags;
     private final Stats initialPlayerStats;
     private final boolean messageSave;
     private final boolean messageAllowLowercase;
     private final boolean messageAllowEscape;
+
+    /**
+     * Equivalent of MAXCOLS.
+     */
     private final int levelMaxWidth;
+
+    /**
+     * Equivalent of MAXLINES.
+     */
     private final int levelMaxHeight;
+
     private final int maxPack;
     private final int foodLeft;
     private final String homeDirName;
+    private final int maxScrollGeneratedNameLength;
+    private final int minArmorClass;
+    private final boolean inventoryDescribe;
+    private final int maxRooms;
+    private final int maxGoneRooms;
+    private final int maxPassages;
     private boolean master;
     private boolean wizard;
     private boolean terse;
@@ -85,9 +114,6 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
-    private final int maxScrollGeneratedNameLength;
-    private final int minArmorClass;
-    private final boolean inventoryDescribe;
 
     public Config() {
         this(null);
@@ -131,8 +157,11 @@ public class Config {
         this.levelMaxWidth = DEFAULT_LEVEL_MAX_WIDTH;
         this.levelMaxHeight = DEFAULT_LEVEL_MAX_HEIGHT;
         this.maxScrollGeneratedNameLength = DEFAULT_MAX_SCROLL_GENERATED_NAME_LENGTH;
-        this.minArmorClass=DEFAULT_MIN_ARMOR_CLASS;
-        this.inventoryDescribe=DEFAULT_INVENTORY_DESCRIBE;
+        this.minArmorClass = DEFAULT_MIN_ARMOR_CLASS;
+        this.inventoryDescribe = DEFAULT_INVENTORY_DESCRIBE;
+        this.maxRooms = DEFAULT_MAX_ROOMS;
+        this.maxGoneRooms = DEFAULT_MAX_GONE_ROOMS;
+        this.maxPassages = DEFAULT_MAX_PASSAGES;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -254,8 +283,8 @@ public class Config {
         return scoring;
     }
 
-    public String getHomeDirName() {
-        return homeDirName;
+    public void setScoring(boolean scoring) {
+        this.scoring = scoring;
     }
 
     public String getJavaRogueDirName() {
@@ -346,15 +375,23 @@ public class Config {
         return maxScrollGeneratedNameLength;
     }
 
-    public void setScoring(boolean scoring) {
-        this.scoring = scoring;
-    }
-
     public int getMinArmorClass() {
         return minArmorClass;
     }
 
     public boolean isInventoryDescribe() {
         return inventoryDescribe;
+    }
+
+    public int getMaxRooms() {
+        return maxRooms;
+    }
+
+    public int getMaxGoneRooms() {
+        return maxGoneRooms;
+    }
+
+    public int getMaxPassages() {
+        return maxPassages;
     }
 }

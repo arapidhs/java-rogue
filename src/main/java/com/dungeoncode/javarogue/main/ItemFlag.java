@@ -4,16 +4,28 @@ package com.dungeoncode.javarogue.main;
  * Flags representing properties or states of items in the game.
  */
 public enum ItemFlag {
-    /** Object is cursed */
+    /**
+     * Object is cursed
+     */
     ISCURSED,
-    /** Player knows details about the object */
+    /**
+     * Player knows details about the object
+     */
     ISKNOW,
-    /** Object is a missile type */
+    /**
+     * Object is a missile type
+     */
     ISMISL,
-    /** Object comes in groups */
+    /**
+     * Object comes in groups
+     */
     ISMANY,
-    /** Object has been seen (also used for creatures) */
+    /**
+     * Object has been seen (also used for creatures)
+     */
     ISFOUND,
-    /** Armor is permanently protected */
+    /**
+     * Armor is permanently protected
+     */
     ISPROT
 }

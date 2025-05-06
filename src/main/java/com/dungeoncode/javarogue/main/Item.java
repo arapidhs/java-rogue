@@ -18,6 +18,7 @@ public class Item extends Entity {
     private int goldValue;
 
     public Item(@Nonnull ObjectType objectType, @Nullable final Enum<? extends ItemSubtype> itemSubType, final int count) {
+        super();
         Objects.requireNonNull(objectType);
         this.objectType = objectType;
         this.itemSubType = itemSubType;
@@ -45,6 +46,10 @@ public class Item extends Entity {
         return group;
     }
 
+    public void setGroup(int group) {
+        this.group = group;
+    }
+
     public Enum<? extends ItemSubtype> getItemSubType() {
         return itemSubType;
     }
@@ -63,10 +68,6 @@ public class Item extends Entity {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
     }
 
     public String getLabel() {

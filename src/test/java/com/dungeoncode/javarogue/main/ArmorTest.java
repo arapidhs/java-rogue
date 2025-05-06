@@ -7,24 +7,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ArmorTest {
 
     @Test
-    void numTest(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom =  new RogueRandom(config.getSeed());
+    void testNum() {
         final Armor armor = new Armor(ArmorType.SPLINT_MAIL);
         final int baseArmorClass = armor.getArmorClass();
 
-        String numArmorClass="+0";
-        assertEquals(numArmorClass,armor.num());
+        String numArmorClass = "+0";
+        assertEquals(numArmorClass, armor.num());
 
         // Assign negative bonus ( higher armor class is worse)
-        armor.setArmorClass(baseArmorClass+2);
-        numArmorClass="-2";
-        assertEquals(numArmorClass,armor.num());
+        armor.setArmorClass(baseArmorClass + 2);
+        numArmorClass = "-2";
+        assertEquals(numArmorClass, armor.num());
 
         // Assign positive bonus
-        armor.setArmorClass(baseArmorClass-1);
-        numArmorClass="+1";
-        assertEquals(numArmorClass,armor.num());
+        armor.setArmorClass(baseArmorClass - 1);
+        numArmorClass = "+1";
+        assertEquals(numArmorClass, armor.num());
     }
 
 }

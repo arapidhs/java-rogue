@@ -10,7 +10,6 @@ import java.util.Objects;
  */
 public class Player extends Creature {
 
-    private final Config config;
     private final String playerName;
     private final EnumSet<PlayerFlag> playerFlags;
     private final int foodLeft;
@@ -21,12 +20,12 @@ public class Player extends Creature {
     private Ring rightRing;
 
     public Player(@Nonnull final Config config) {
+        super();
         Objects.requireNonNull(config);
-        this.config = config;
-        this.setStats(this.config.getInitialPlayerStats());
-        this.playerFlags = EnumSet.copyOf(this.config.getInitialPlayerFlags());
-        this.playerName = this.config.getPlayerName();
-        this.foodLeft = this.config.getFoodLeft();
+        this.setStats(config.getInitialPlayerStats());
+        this.playerFlags = EnumSet.copyOf(config.getInitialPlayerFlags());
+        this.playerName = config.getPlayerName();
+        this.foodLeft = config.getFoodLeft();
         this.inventory = new Inventory(config.getMaxPack());
     }
 

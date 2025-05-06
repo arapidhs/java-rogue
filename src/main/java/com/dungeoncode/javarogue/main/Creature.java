@@ -18,6 +18,10 @@ public abstract class Creature extends Entity {
         this.creatureFlags = EnumSet.noneOf(CreatureFlag.class);
     }
 
+    public void removeFlag(@Nonnull final CreatureFlag playerFlag) {
+        creatureFlags.remove(playerFlag);
+    }
+
     public boolean hasFlag(@Nonnull final CreatureFlag creatureFlag) {
         return creatureFlags.contains(creatureFlag);
     }
@@ -32,10 +36,6 @@ public abstract class Creature extends Entity {
 
     public void setDestination(final int x, final int y) {
         this.destination = new Position(x, y);
-    }
-
-    public Stats getStats() {
-        return stats;
     }
 
     public void setStats(Stats stats) {

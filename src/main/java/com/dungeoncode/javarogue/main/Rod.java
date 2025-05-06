@@ -29,10 +29,6 @@ public class Rod extends Item {
                 String.format(" [%d charges]", charges);
     }
 
-    public int getCharges() {
-        return charges;
-    }
-
     public void setCharges(int charges) {
         this.charges = charges;
     }

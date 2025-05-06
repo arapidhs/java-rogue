@@ -29,6 +29,13 @@ public class RogueRandomTest {
     }
 
     @Test
+    void testRndWithNegativeRange() {
+        final RogueRandom random = new RogueRandom(654321L);
+        final int result = random.rnd(-1);
+        assertEquals(0, result, "rnd(0) should always return 0");
+    }
+
+    @Test
     void testDeterministicSequence() {
         final RogueRandom random1 = new RogueRandom(987654321L);
         final RogueRandom random2 = new RogueRandom(987654321L);
@@ -55,7 +62,7 @@ public class RogueRandomTest {
         final RogueRandom random = new RogueRandom(12345L);
         final Config config = new Config();
 
-        final String result = random.selectRandomDeathSource(config.getDefaultKillName()).getName();
+        final String result = random.selectRandomDeathSource(config.getDefaultKillName()).name();
 
         assertNotNull(result);
         assertFalse(result.isBlank());

@@ -90,8 +90,8 @@ public class ScoreManager {
             if (isHighScore) {
 
                 final int userId = getConfig().getUserId();
-                final long monsterId = state.getDeathSource().getType().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().getTemplateId() : 0;
-                final long killTypeId = state.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().getTemplateId() : 0;
+                final long monsterId = state.getDeathSource().type().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().templateId() : 0;
+                final long killTypeId = state.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().templateId() : 0;
 
                 // Construct new score entry
                 final ScoreEntry newEntry = new ScoreEntry(
@@ -100,7 +100,7 @@ public class ScoreManager {
                         state.getGameEndReason(),
                         monsterId,
                         killTypeId,
-                        state.getGameEndReason() == GameEndReason.WIN ? state.getMaxLevel() : state.getLevel(),
+                        state.getGameEndReason() == GameEndReason.WIN ? state.getMaxLevel() : state.getLevelNum(),
                         Instant.now().getEpochSecond(),
                         getConfig().getPlayerName()
                 );

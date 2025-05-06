@@ -20,7 +20,7 @@ public class Armor extends Item {
      */
     public String num() {
         final ArmorInfoTemplate armorTemplate = (ArmorInfoTemplate) Templates.findTemplateBySubType(getItemSubType());
-        final int baseClass=armorTemplate.getArmorClass();
+        final int baseClass = armorTemplate.getArmorClass();
         final int bonus = baseClass - getArmorClass();
         return bonus < 0 ? Integer.toString(bonus) : "+" + bonus;
     }

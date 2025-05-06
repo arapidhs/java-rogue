@@ -84,11 +84,27 @@ public class DefaultInitializerTest extends RogueBaseTest {
                 .forEach(ringType -> assertNotNull(itemData.getName(ringType)));
 
         Arrays.stream(RingType.values())
-                .forEach(ringType -> assertTrue(itemData.getRingWorth(ringType)>0));
+                .forEach(ringType -> assertTrue(itemData.getRingWorth(ringType) > 0));
 
         Arrays.stream(RodType.values())
                 .forEach(rodType -> assertNotNull(itemData.getRodForm(rodType)));
 
     }
 
+    @Test
+    void testLevelInitialization() throws IOException {
+        // Set up game state with necessary dependencies
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final DefaultInitializer initializer = new DefaultInitializer();
+
+        final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
+
+        final int startLevel = 1;
+        assertNotNull(gameState.getCurrentLevel());
+        assertEquals(startLevel, gameState.getLevelNum());
+        assertEquals(startLevel, gameState.getMaxLevel());
+        assertFalse(gameState.getPlayer().hasFlag(CreatureFlag.ISHELD));
+
+    }
 }

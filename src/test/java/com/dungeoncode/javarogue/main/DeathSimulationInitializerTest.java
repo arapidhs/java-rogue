@@ -20,8 +20,8 @@ public class DeathSimulationInitializerTest extends RogueBaseTest {
 
         assertEquals(GameEndReason.KILLED, gameState.getGameEndReason());
         assertTrue(gameState.getGoldAmount() >= 1 && gameState.getGoldAmount() <= 100);
-        assertTrue(gameState.getLevel() >= 1 && gameState.getLevel() <= 100);
-        assertNotNull(gameState.getDeathSource().getName());
+        assertTrue(gameState.getLevelNum() >= 1 && gameState.getLevelNum() <= 100);
+        assertNotNull(gameState.getDeathSource().name());
 
     }
 

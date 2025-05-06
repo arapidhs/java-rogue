@@ -43,16 +43,16 @@ public class TombstoneRenderer {
             screen.putString(0, 8 + i, TOMBSTONE_ART.get(i));
         }
 
-        final String killerName = gameState.getDeathSource().getName();
+        final String killerName = gameState.getDeathSource().name();
         screen.putString(center(killerName), 17, killerName);
 
         final boolean isKillType = gameState.getDeathSource().isTemplate() &&
-                gameState.getDeathSource().getType().equals(DeathSource.Type.KILL_TYPE);
+                gameState.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE);
 
         boolean isUseArticle = true;
 
         if (isKillType) {
-            final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().getTemplateId());
+            final KillTypeTemplate killTypeTemplate = Templates.getTemplate(KillTypeTemplate.class, gameState.getDeathSource().templateId());
             isUseArticle = killTypeTemplate != null ? killTypeTemplate.isUseArticle() : isUseArticle;
         }
 

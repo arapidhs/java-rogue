@@ -4,7 +4,6 @@ import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -106,14 +105,11 @@ public class GameStateTest extends RogueBaseTest {
         level.addItem(food);
 
         // Add a room at player's position for valid pickup context
-        final Room room = new Room(
-                new Position(playerX, playerY),
-                new Position(10, 10),
-                new Position(7, 7),
-                100,
-                null,
-                new ArrayList<>()
-        );
+        final Room room = new Room();
+        final int sizeX = 1;
+        final int sizeY = 1;
+        room.setPosition(playerX, playerY);
+        room.setSize(sizeX, sizeY);
         gameState.getCurrentLevel().addRoom(room);
 
         // Verify Food is picked up and added to inventory
