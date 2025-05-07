@@ -174,6 +174,9 @@ public class Rogue {
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             System.exit(1);
+        } catch (StackOverflowError stackOverflowError){
+            LOGGER.error("Stack Overflow!");
+            System.exit(1);
         } finally {
             exit(screen);
         }
