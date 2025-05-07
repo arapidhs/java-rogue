@@ -234,7 +234,6 @@ public class ItemDataTest {
         // Mark rod as known and verify name includes charge count
         itemData.setKnown(item.getItemSubType(), true);
         String name = itemData.invName(null, item, dropCapital);
-        System.out.println(name);
         assertTrue(name.matches("a (staff|wand) of " + realName + " \\[" + charges + " charges]\\(.+\\)"));
     }
 

@@ -237,11 +237,10 @@ public class LevelGenerator {
             // Find a place and size for a random room
             if (room.hasFlag(RoomFlag.MAZE)) {
                 room.setSize(maxRoomX - 1, maxRoomY - 1);
-                room.getPosition().setX(topLeftCorner.getX());
+                room.setPosition(topLeftCorner.getX(),topLeftCorner.getY());
                 if (room.getPosition().getX() == 1) {
                     room.getPosition().setX(0);
                 }
-                room.getPosition().setY(topLeftCorner.getY());
                 if (room.getPosition().getY() == 0) {
                     room.getPosition().setY(room.getPosition().getY() + 1);
                     room.getSize().setY(room.getSize().getY() - 1);
@@ -291,13 +290,19 @@ public class LevelGenerator {
     public void doMaze(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         final Spot[][] maze = new Spot[config.getTerminalRows() / 3][config.getTerminalCols() / 3];
+        // Initialize maze array with Spot objects
+        for (int y = 0; y < maze.length; y++) {
+            for (int x = 0; x < maze[0].length; x++) {
+                maze[y][x] = new Spot();
+            }
+        }
         final int maxy = room.getSize().getY();
         final int maxx = room.getSize().getX();
         final int topy = room.getPosition().getY();
         final int topx = room.getPosition().getX();
         final int starty = (rnd(room.getSize().getY()) / 2) * 2;
         final int startx = (rnd(room.getSize().getX()) / 2) * 2;
-        final Position position = new Position(starty + topy, startx + topx);
+        final Position position = new Position(startx + topx, starty + topy);
         putPass(position);
         dig(maze, startx, starty, topx, topy, maxx, maxy);
     }
@@ -341,7 +346,7 @@ public class LevelGenerator {
                     continue;
                 }
 
-                if (level.getPlaceAt(newY + topy, newX + topx).hasFlag(PlaceFlag.PASS)) {
+                if (level.getPlaceAt(newX + topx, newY + topy).hasFlag(PlaceFlag.PASS)) {
                     continue;
                 }
 
@@ -385,7 +390,8 @@ public class LevelGenerator {
     }
 
     public void putPass(@Nonnull final Position position) {
-        final Place place = new Place();
+        Place place = level.getPlaceAt(position.getX(), position.getY());
+        assert place!=null;
         place.addFlag(PlaceFlag.PASS);
         if ((rnd(10) + 1) < levelNum && rnd(40) == 0) {
             place.removeFlag(PlaceFlag.REAL);

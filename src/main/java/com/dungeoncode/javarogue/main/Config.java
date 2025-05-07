@@ -40,6 +40,7 @@ public class Config {
     private static final int DEFAULT_PLAYER_MAX_PACK = 23;
     private static final int DEFAULT_MIN_ARMOR_CLASS = 10;
     private static final boolean DEFAULT_INVENTORY_DESCRIBE = true;
+    private static final int DEFAULT_AMULET_LEVEL=26;
 
     /**
      * The equivalent of HUNGERTIME	1300
@@ -114,6 +115,7 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
+    private final int amuletLevel;
 
     public Config() {
         this(null);
@@ -162,6 +164,7 @@ public class Config {
         this.maxRooms = DEFAULT_MAX_ROOMS;
         this.maxGoneRooms = DEFAULT_MAX_GONE_ROOMS;
         this.maxPassages = DEFAULT_MAX_PASSAGES;
+        this.amuletLevel=DEFAULT_AMULET_LEVEL;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -393,5 +396,9 @@ public class Config {
 
     public int getMaxPassages() {
         return maxPassages;
+    }
+
+    public int getAmuletLevel() {
+        return amuletLevel;
     }
 }

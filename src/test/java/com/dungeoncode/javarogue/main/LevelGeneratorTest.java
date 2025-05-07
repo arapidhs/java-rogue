@@ -13,7 +13,7 @@ public class LevelGeneratorTest {
             final Config config = new Config();
             final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
             final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
-            final int levelNum = 1;
+            final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
             final Level level = levelGenerator.newLevel(levelNum);
             assertNotNull(level);
         }

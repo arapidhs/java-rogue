@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.TerminalSize;
+import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
@@ -151,8 +152,23 @@ public class Rogue {
 
                 final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
 
-                screen.refresh();
-                screen.readInput();
+                //TODO remove this block is only to be used
+                // for visually debugging level generation
+
+                //TODO: when a stack overflow error is thrown
+                // while digging recursively the maze,
+                // the error is not caught here, the process ends with exit 0
+                // i need to catch that
+                Character character = 'a';
+                while( 'e'!=character){
+                    screen.clear();
+                    gameState.showMap();
+                    screen.refresh();
+                    final KeyStroke keyStroke = screen.readInput();
+                    character = keyStroke.getCharacter();
+                    gameState.setLevelNum(gameState.getLevelNum()+1);
+                    gameState.newLevel(gameState.getLevelNum());
+                }
             }
 
         } catch (Exception ex) {
