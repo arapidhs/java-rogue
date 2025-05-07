@@ -6,7 +6,6 @@ import com.googlecode.lanterna.TerminalPosition;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
-import java.lang.invoke.StringConcatFactory;
 import java.util.Objects;
 
 public class GameState {
@@ -62,7 +61,7 @@ public class GameState {
         setCurrentLevel(level);
     }
 
-    //TODO: method for debugging purpose only
+    //TODO: method to show map for debugging purpose only
     public void showMap() throws IOException {
         for (int x = 0; x < config.getTerminalCols(); x++) {
             for (int y = 1; y < config.getTerminalRows() - 1; y++) {
@@ -73,7 +72,6 @@ public class GameState {
                     screen.enableModifiers(SGR.BOLD);
                 }
                 if (place.hasFlag(PlaceFlag.PASS)){
-                    // TODO debug because all passage numbers are 0.
                     screen.putString(x, y, place.getPassageNumber() + "");
                 } else if(place.getSymbol()==null || !place.hasFlag(PlaceFlag.REAL)){
                     screen.putString(0,0, String.format("Null NON REAL symbol at %d,%d",x,y));

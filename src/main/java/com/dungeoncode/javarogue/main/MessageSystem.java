@@ -20,7 +20,7 @@ public class MessageSystem {
     private int messagePosition;
     private GameState gameState;
 
-    public MessageSystem(@Nonnull final RogueScreen screen) throws IOException {
+    public MessageSystem(@Nonnull final RogueScreen screen) {
         Objects.requireNonNull(screen);
         this.screen = screen;
         this.config = screen.getConfig();

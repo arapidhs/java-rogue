@@ -154,11 +154,6 @@ public class Rogue {
 
                 //TODO remove this block is only to be used
                 // for visually debugging level generation
-
-                //TODO: when a stack overflow error is thrown
-                // while digging recursively the maze,
-                // the error is not caught here, the process ends with exit 0
-                // i need to catch that
                 Character character = 'a';
                 while( 'e'!=character){
                     screen.clear();

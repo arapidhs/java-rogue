@@ -26,7 +26,7 @@ public class Config {
     };
     public static final String DEFAULT_PLAYER_INIT_STATS = "/data/player-init-stats.json";
     private static final int DEFAULT_MAX_STRING_LENGTH = 1024;
-    private static final int DEFAULT_MAX_SCROLL_GENERATED_NAME_LENGTH = 40;
+    private static final int DEFAULT_MAX_SCROLL_ITEM_GENERATED_NAME_LENGTH = 40;
     private static final String SYSTEM_PROPERTY_USER_NAME = "user.name";
     private static final String SYSTEM_PROPERTY_USER_HOME = "user.home";
     private static final String DEFAULT_JAVAROGUE_DIR_NAME = ".java-rogue";
@@ -93,7 +93,7 @@ public class Config {
     private final int maxPack;
     private final int foodLeft;
     private final String homeDirName;
-    private final int maxScrollGeneratedNameLength;
+    private final int maxScrollItemGeneratedNameLength;
     private final int minArmorClass;
     private final boolean inventoryDescribe;
     private final int maxRooms;
@@ -158,7 +158,7 @@ public class Config {
         this.messageAllowEscape = DEFAULT_MESSAGE_ALLOW_ESCAPE;
         this.levelMaxWidth = DEFAULT_LEVEL_MAX_WIDTH;
         this.levelMaxHeight = DEFAULT_LEVEL_MAX_HEIGHT;
-        this.maxScrollGeneratedNameLength = DEFAULT_MAX_SCROLL_GENERATED_NAME_LENGTH;
+        this.maxScrollItemGeneratedNameLength = DEFAULT_MAX_SCROLL_ITEM_GENERATED_NAME_LENGTH;
         this.minArmorClass = DEFAULT_MIN_ARMOR_CLASS;
         this.inventoryDescribe = DEFAULT_INVENTORY_DESCRIBE;
         this.maxRooms = DEFAULT_MAX_ROOMS;
@@ -374,8 +374,8 @@ public class Config {
         return terse;
     }
 
-    public int getMaxScrollGeneratedNameLength() {
-        return maxScrollGeneratedNameLength;
+    public int getMaxScrollItemGeneratedNameLength() {
+        return maxScrollItemGeneratedNameLength;
     }
 
     public int getMinArmorClass() {

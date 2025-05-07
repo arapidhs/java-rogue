@@ -23,6 +23,27 @@ public class LevelGenerator {
 
     public Level newLevel(final int levelNum) {
 
+        initializeLevel(levelNum);
+
+        final Room[] rooms = doRooms();
+        Arrays.stream(rooms).forEach(level::addRoom);
+
+        final Passage[] passages = doPassages(rooms);
+        Arrays.stream(passages).forEach(level::addPassage);
+
+        // TODO continue with no_food, traps etc..
+        return level;
+    }
+
+    /**
+     * Initializes a new level with the specified level number and prepares the level grid.
+     * Creates a new {@link Level} instance with dimensions defined by {@link Config#getLevelMaxWidth()}
+     * and {@link Config#getLevelMaxHeight()}. Initializes the level's places array with empty space tiles
+     * (' ') that have the {@link PlaceFlag#REAL} flag and no associated monster.
+     *
+     * @param levelNum The level number for this level (affects random generation behavior).
+     */
+    public void initializeLevel(final int levelNum) {
         this.level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
         this.levelNum = levelNum;
 
@@ -36,14 +57,6 @@ public class LevelGenerator {
                 level.setPlaceAt(x, y, place);
             }
         }
-
-        final Room[] rooms = doRooms();
-        Arrays.stream(rooms).forEach(level::addRoom);
-
-        final Passage[] passages = doPassages(rooms);
-        Arrays.stream(passages).forEach(level::addPassage);
-
-        return level;
     }
 
     /**
@@ -196,8 +209,8 @@ public class LevelGenerator {
     }
 
     public Room[] doRooms() {
-        final int maxRoomX = config.getTerminalCols() / 3;
-        final int maxRoomY = config.getTerminalRows() / 3;
+        final int maxRoomX = getMaxRoomX();
+        final int maxRoomY = getMaxRoomY();
 
         final int maxRooms = config.getMaxRooms();
         final Room[] rooms = new Room[maxRooms];
@@ -236,15 +249,7 @@ public class LevelGenerator {
             }
             // Find a place and size for a random room
             if (room.hasFlag(RoomFlag.MAZE)) {
-                room.setSize(maxRoomX - 1, maxRoomY - 1);
-                room.setPosition(topLeftCorner.getX(),topLeftCorner.getY());
-                if (room.getPosition().getX() == 1) {
-                    room.getPosition().setX(0);
-                }
-                if (room.getPosition().getY() == 0) {
-                    room.getPosition().setY(room.getPosition().getY() + 1);
-                    room.getSize().setY(room.getSize().getY() - 1);
-                }
+                setMazeRoomDimensions(room, maxRoomX, maxRoomY, topLeftCorner);
             } else {
                 do {
                     int sizeX = rnd(maxRoomX - 4) + 4;
@@ -263,6 +268,29 @@ public class LevelGenerator {
         return rooms;
     }
 
+    public void setMazeRoomDimensions(@Nonnull final Room room, final int maxRoomX, final int maxRoomY,
+                                      @Nonnull final Position position) {
+        Objects.requireNonNull(room);
+        Objects.requireNonNull(position);
+        room.setSize(maxRoomX - 1, maxRoomY - 1);
+        room.setPosition(position.getX(), position.getY());
+        if (room.getPosition().getX() == 1) {
+            room.getPosition().setX(0);
+        }
+        if (room.getPosition().getY() == 0) {
+            room.getPosition().setY(room.getPosition().getY() + 1);
+            room.getSize().setY(room.getSize().getY() - 1);
+        }
+    }
+
+    public int getMaxRoomY() {
+        return config.getTerminalRows() / 3;
+    }
+
+    public int getMaxRoomX() {
+        return config.getTerminalCols() / 3;
+    }
+
     public void drawRoom(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         if (room.hasFlag(RoomFlag.MAZE)) {
@@ -279,9 +307,8 @@ public class LevelGenerator {
             // Fill the interior with floor tiles
             for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY() - 1; y++) {
                 for (int x = room.getPosition().getX() + 1; x < room.getPosition().getX() + room.getSize().getX() - 1; x++) {
-                    final Place place = new Place();
+                    final Place place = level.getPlaceAt(x,y);
                     place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.FLOOR)); // '.'
-                    level.setPlaceAt(x, y, place);
                 }
             }
         }
@@ -289,13 +316,7 @@ public class LevelGenerator {
 
     public void doMaze(@Nonnull final Room room) {
         Objects.requireNonNull(room);
-        final Spot[][] maze = new Spot[config.getTerminalRows() / 3][config.getTerminalCols() / 3];
-        // Initialize maze array with Spot objects
-        for (int y = 0; y < maze.length; y++) {
-            for (int x = 0; x < maze[0].length; x++) {
-                maze[y][x] = new Spot();
-            }
-        }
+        final Spot[][] maze = initializeMaze();
         final int maxy = room.getSize().getY();
         final int maxx = room.getSize().getX();
         final int topy = room.getPosition().getY();
@@ -307,6 +328,17 @@ public class LevelGenerator {
         dig(maze, startx, starty, topx, topy, maxx, maxy);
     }
 
+    public Spot[][] initializeMaze() {
+        final Spot[][] maze = new Spot[getMaxRoomY()][getMaxRoomX()];
+        // Initialize maze array with Spot objects
+        for (int y = 0; y < maze.length; y++) {
+            for (int x = 0; x < maze[0].length; x++) {
+                maze[y][x] = new Spot();
+            }
+        }
+        return maze;
+    }
+
     /**
      * Digs passages in the maze using a recursive backtracking algorithm, starting from the given cell.
      * Explores neighboring cells in the four cardinal directions (up, down, left, right) in random order,
@@ -315,8 +347,8 @@ public class LevelGenerator {
      * @param maze   The maze grid of Spot objects.
      * @param startx The initial x-coordinate in the maze grid (relative to the room).
      * @param starty The initial y-coordinate in the maze grid (relative to the room).
-     * @param topx   The x-coordinate of the room’s top-left corner in the game grid.
-     * @param topy   The y-coordinate of the room’s top-left corner in the game grid.
+     * @param topx   The x-coordinate of the room’s top-left corner in the game grid - 'Startx' in the original code.
+     * @param topy   The y-coordinate of the room’s top-left corner in the game grid. - 'Starty' in the original code.
      * @param maxx   The width of the room in the maze grid.
      * @param maxy   The height of the room in the maze grid.
      */
@@ -390,7 +422,7 @@ public class LevelGenerator {
     }
 
     public void putPass(@Nonnull final Position position) {
-        Place place = level.getPlaceAt(position.getX(), position.getY());
+        final Place place = level.getPlaceAt(position.getX(), position.getY());
         assert place!=null;
         place.addFlag(PlaceFlag.PASS);
         if ((rnd(10) + 1) < levelNum && rnd(40) == 0) {
@@ -410,10 +442,10 @@ public class LevelGenerator {
     public void vert(@Nonnull final Room room, int startx) {
         Objects.requireNonNull(room);
         for (int y = room.getPosition().getY() + 1; y <= room.getPosition().getY() + room.getSize().getY() - 1; y++) {
-            final Place place = new Place();
-            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_VERTICAL));
+            final Place place = level.getPlaceAt(startx,y);
+            assert place!=null;
             place.addFlag(PlaceFlag.WALL_VERTICAL);
-            level.setPlaceAt(startx, y, place);
+            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_VERTICAL));
         }
     }
 
@@ -426,10 +458,10 @@ public class LevelGenerator {
     public void horiz(@Nonnull final Room room, int starty) {
         Objects.requireNonNull(room);
         for (int x = room.getPosition().getX(); x <= room.getPosition().getX() + room.getSize().getX() - 1; x++) {
-            final Place place = new Place();
+            final Place place = level.getPlaceAt(x,starty);
+            assert place!=null;
             place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_HORIZONTAL)); // '-'
             place.addFlag(PlaceFlag.WALL_HORIZONTAL);
-            level.setPlaceAt(x, starty, place);
         }
     }
 
@@ -679,7 +711,7 @@ public class LevelGenerator {
      * @param room The room to place the door in.
      * @param pos  The position of the door.
      */
-    public void door(@Nonnull Room room, @Nonnull Position pos) {
+    public void door(@Nonnull final Room room, @Nonnull final Position pos) {
         Objects.requireNonNull(room);
         Objects.requireNonNull(pos);
 
@@ -692,10 +724,8 @@ public class LevelGenerator {
         }
 
         // Get or create the Place at the door's position
-        Place place = level.getPlaceAt(pos.getX(), pos.getY());
-        if (place == null) {
-            place = new Place();
-        }
+        final Place place = level.getPlaceAt(pos.getX(), pos.getY());
+        assert place!=null;
 
         // Determine if it's a secret door based on level and random chance
         if (rnd(10) + 1 < levelNum && rnd(5) == 0) {
@@ -715,8 +745,6 @@ public class LevelGenerator {
             place.addFlag(PlaceFlag.DOOR);
         }
 
-        // Update the level with the modified Place
-        level.setPlaceAt(pos.getX(), pos.getY(), place);
     }
 
     /**
@@ -772,12 +800,10 @@ public class LevelGenerator {
 
         // Get the Place at the position
         final Place place = level.getPlaceAt(pos.getX(), pos.getY());
-        if (place == null) {
-            return; // No tile exists
-        }
+        assert place!=null;
 
         // Skip if tile is already numbered
-        if (place.getPassageNumber() >= 0) {
+        if (place.getPassageNumber()!=null) {
             return;
         }
 
@@ -816,6 +842,11 @@ public class LevelGenerator {
         numpass(new Position(pos.getX() - 1, pos.getY()), passages, state); // Left
     }
 
+    /**
+     * Picks a valid 'real' non-gone room.
+     * @param rooms array of all rooms.
+     * @return index of a 'real' non-gone room.
+     */
     public int rndRoom(Room[] rooms) {
         int rm;
         do {
@@ -879,7 +910,7 @@ public class LevelGenerator {
          * and the new passage flag set to false.
          */
         public PassageNumberState() {
-            this.pnum = 0;
+            this.pnum=0;
             this.newPnum = false;
         }
 
@@ -916,5 +947,9 @@ public class LevelGenerator {
         public void setNewPnum(boolean newPnum) {
             this.newPnum = newPnum;
         }
+    }
+
+    public Level getLevel() {
+        return level;
     }
 }

@@ -13,7 +13,7 @@ public class Place extends Entity {
     private final EnumSet<PlaceFlag> placeFlags;
     private Character symbol;
     private Monster monster;
-    private int passageNumber;
+    private Integer passageNumber;
 
     public Place() {
         this(null);
@@ -56,11 +56,11 @@ public class Place extends Entity {
         this.monster = monster;
     }
 
-    public int getPassageNumber() {
+    public Integer getPassageNumber() {
         return passageNumber;
     }
 
-    public void setPassageNumber(int passageNumber) {
+    public void setPassageNumber(Integer passageNumber) {
         this.passageNumber = passageNumber;
     }
 }

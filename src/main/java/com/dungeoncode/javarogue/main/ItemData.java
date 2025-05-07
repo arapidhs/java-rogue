@@ -47,7 +47,7 @@ public class ItemData {
         Objects.requireNonNull(random);
         this.config = config;
         this.random = random;
-        this.maxScrollGeneratedNameLength = config.getMaxScrollGeneratedNameLength();
+        this.maxScrollGeneratedNameLength = config.getMaxScrollItemGeneratedNameLength();
         this.itemSubTypeNames = new HashMap<>();
         this.ringWorthMap = new HashMap<>();
         this.rodFormData = new HashMap<>();
