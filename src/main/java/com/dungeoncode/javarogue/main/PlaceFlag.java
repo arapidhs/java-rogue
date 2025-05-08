@@ -4,7 +4,7 @@ package com.dungeoncode.javarogue.main;
  * Flags representing properties of a level map tile.
  */
 public enum PlaceFlag {
-    PASS,      // Tile is a passageway
+    PASSAGE,      // Tile is a passageway
     SEEN,      // Tile has been seen by the player
     DROPPED,   // An object was dropped here (shared with LOCKED)
     LOCKED,    // Door is locked (shared with DROPPED)
@@ -13,5 +13,6 @@ public enum PlaceFlag {
     TMASK,     // Trap number (mask, typically combined with value)
     FLOOR,
     WALL_VERTICAL,
-    DOOR, WALL_HORIZONTAL
+    DOOR, WALL_HORIZONTAL,
+    EMPTY
 }

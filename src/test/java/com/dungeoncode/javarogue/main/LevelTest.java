@@ -61,7 +61,7 @@ public class LevelTest {
 
         int symbolX = 3;
         int symbolY = 6;
-        char symbol = SymbolMapper.getSymbol(RoomType.FLOOR);
+        char symbol = SymbolMapper.getSymbol(PlaceFlag.FLOOR);
         level.setPlaceSymbol(symbolX, symbolY, symbol);
         assertNull(level.getSymbol(symbolX, symbolY));
 

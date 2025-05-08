@@ -121,7 +121,7 @@ public class LevelGeneratorTest {
 
     /**
      * Tests the {@link LevelGenerator#putPass(Position)} method to ensure it correctly places a passage tile.
-     * Verifies that the passage tile is placed at the specified position with the {@link PlaceFlag#PASS} flag.
+     * Verifies that the passage tile is placed at the specified position with the {@link PlaceFlag#PASSAGE} flag.
      * Ensures that if the place has the {@link PlaceFlag#REAL} flag, it has the passage symbol ('#');
      * otherwise, it has the empty space ' ' symbol (secret passage).
      */
@@ -144,12 +144,12 @@ public class LevelGeneratorTest {
             // Assert
             final Place place = levelGenerator.getLevel().getPlaceAt(pos.getX(), pos.getY());
             assertNotNull(place);
-            assertTrue(place.hasFlag(PlaceFlag.PASS));
+            assertTrue(place.hasFlag(PlaceFlag.PASSAGE));
             // If REAL flag is present, symbol should be '#'; otherwise, no symbol (secret passage)
             if (place.hasFlag(PlaceFlag.REAL)) {
-                assertEquals(SymbolMapper.getSymbol(PlaceFlag.PASS), place.getSymbol());
+                assertEquals(SymbolMapper.getSymbol(PlaceFlag.PASSAGE), place.getSymbol());
             } else {
-                assertEquals(SymbolMapper.getSymbol(RoomType.EMPTY), place.getSymbol());
+                assertEquals(SymbolMapper.getSymbol(PlaceFlag.EMPTY), place.getSymbol());
             }
         }
     }
@@ -243,7 +243,7 @@ public class LevelGeneratorTest {
     /**
      * Tests the {@link LevelGenerator#doMaze(Room)} method to ensure it correctly generates a maze
      * within a room using recursive backtracking. Verifies that passage tiles are placed according to
-     * the expected 25x7 maze grid with the {@link PlaceFlag#PASS} flag, starting from a hardcoded
+     * the expected 25x7 maze grid with the {@link PlaceFlag#PASSAGE} flag, starting from a hardcoded
      * position (2,4) in a room at (5,8). Uses a specific seed (12345L) for predictable random number
      * generation to match the expected maze layout.
      */
@@ -286,7 +286,7 @@ public class LevelGeneratorTest {
                 // Assert PASS flag where expectedMaze is 1
                 if (expectedMaze[y - roomY][x - roomX] == 1) {
                     assertNotNull(place);
-                    assertTrue(place.hasFlag(PlaceFlag.PASS));
+                    assertTrue(place.hasFlag(PlaceFlag.PASSAGE));
                 }
             }
         }

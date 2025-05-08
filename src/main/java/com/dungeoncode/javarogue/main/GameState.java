@@ -1,7 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.SGR;
-import com.googlecode.lanterna.TerminalPosition;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -68,13 +67,13 @@ public class GameState {
                 final Place place = currentLevel.getPlaceAt(x, y);
                 assert place != null;
                 final boolean isReal = place.hasFlag(PlaceFlag.REAL);
-                final boolean isPass = place.hasFlag(PlaceFlag.PASS);
+                final boolean isPass = place.hasFlag(PlaceFlag.PASSAGE);
                 final boolean isWall = place.hasFlag(PlaceFlag.WALL_HORIZONTAL)||place.hasFlag(PlaceFlag.WALL_VERTICAL);
                 if (!isReal) {
                     screen.enableModifiers(SGR.BOLD);
                 }
                 if(isPass) {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.PASS));
+                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.PASSAGE));
                 }else if (!isReal&&isWall){
                     screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.DOOR));
                 } else {
@@ -171,7 +170,7 @@ public class GameState {
         if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
             return room.getChar();
         } else {
-            return SymbolMapper.getSymbol(RoomType.EMPTY);
+            return SymbolMapper.getSymbol(PlaceFlag.EMPTY);
         }
     }
 

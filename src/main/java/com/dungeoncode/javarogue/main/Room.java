@@ -42,9 +42,9 @@ public class Room extends Entity {
 
     public char getChar() {
         if (roomFlags.contains(RoomFlag.GONE))
-            return SymbolMapper.getSymbol(RoomType.PASSAGE);
+            return SymbolMapper.getSymbol(PlaceFlag.PASSAGE);
         else {
-            return SymbolMapper.getSymbol(RoomType.FLOOR);
+            return SymbolMapper.getSymbol(PlaceFlag.FLOOR);
         }
     }
 

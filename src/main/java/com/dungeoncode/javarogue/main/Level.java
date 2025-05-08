@@ -182,10 +182,6 @@ public class Level extends Entity {
         return rooms;
     }
 
-    public List<Passage> getPassages() {
-        return passages;
-    }
-
     /**
      * Adds a room to the level's room list.
      *

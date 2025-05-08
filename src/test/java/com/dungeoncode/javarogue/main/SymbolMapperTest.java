@@ -16,8 +16,8 @@ class SymbolMapperTest {
         assertEquals(')', SymbolMapper.getSymbol(ObjectType.WEAPON));
         assertEquals('/', SymbolMapper.getSymbol(ObjectType.ROD));
 
-        assertEquals('.', SymbolMapper.getSymbol(RoomType.FLOOR));
-        assertEquals('#', SymbolMapper.getSymbol(RoomType.PASSAGE));
+        assertEquals('.', SymbolMapper.getSymbol(PlaceFlag.FLOOR));
+        assertEquals('#', SymbolMapper.getSymbol(PlaceFlag.PASSAGE));
     }
 
 }
