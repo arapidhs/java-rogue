@@ -161,8 +161,7 @@ public class Rogue {
                     screen.refresh();
                     final KeyStroke keyStroke = screen.readInput();
                     character = keyStroke.getCharacter();
-                    gameState.setLevelNum(gameState.getLevelNum()+1);
-                    gameState.newLevel(gameState.getLevelNum());
+                    gameState.newLevel(rogueRandom.rnd(config.getAmuletLevel()));
                 }
             }
 

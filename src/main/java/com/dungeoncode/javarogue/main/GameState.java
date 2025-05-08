@@ -68,19 +68,17 @@ public class GameState {
                 final Place place = currentLevel.getPlaceAt(x, y);
                 assert place != null;
                 final boolean isReal = place.hasFlag(PlaceFlag.REAL);
+                final boolean isPass = place.hasFlag(PlaceFlag.PASS);
+                final boolean isWall = place.hasFlag(PlaceFlag.WALL_HORIZONTAL)||place.hasFlag(PlaceFlag.WALL_VERTICAL);
                 if (!isReal) {
                     screen.enableModifiers(SGR.BOLD);
                 }
-                if (place.hasFlag(PlaceFlag.PASS)){
-                    screen.putString(x, y, place.getPassageNumber() + "");
-                } else if(place.getSymbol()==null || !place.hasFlag(PlaceFlag.REAL)){
-                    screen.putString(0,0, String.format("Null NON REAL symbol at %d,%d",x,y));
-                    screen.setCursorPosition(new TerminalPosition(x,y));
-                    screen.refresh();
-                    screen.waitFor(' ');
-                    screen.clearLine(0);
-                }else {
-                    screen.putChar(x, y, place.getSymbol());
+                if(isPass) {
+                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.PASS));
+                }else if (!isReal&&isWall){
+                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.DOOR));
+                } else {
+                    screen.putChar(x,y,place.getSymbol());
                 }
                 if (!isReal) {
                     screen.disableModifiers(SGR.BOLD);
