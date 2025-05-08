@@ -86,6 +86,8 @@ public class LevelGenerator {
      * @see #conn(int, int, Room[])
      * @see #passnum(Passage[])
      */
+    //TODO unit test for doPassages and all inner methods
+    // (bottom up approach - requires doRooms unittest first)
     public Passage[] doPassages(@Nonnull final Room[] rooms) {
         Objects.requireNonNull(rooms);
         final Passage[] passages = new Passage[config.getMaxPassages()];
@@ -208,6 +210,7 @@ public class LevelGenerator {
         return passages;
     }
 
+    // TODO unit test for doRooms
     public Room[] doRooms() {
         final int maxRoomX = getMaxRoomX();
         final int maxRoomY = getMaxRoomY();
@@ -268,6 +271,8 @@ public class LevelGenerator {
         return rooms;
     }
 
+    // todo add java doc to setMazeRoomDimensions
+    // why they are set the way they are
     public void setMazeRoomDimensions(@Nonnull final Room room, final int maxRoomX, final int maxRoomY,
                                       @Nonnull final Position position) {
         Objects.requireNonNull(room);
@@ -291,6 +296,7 @@ public class LevelGenerator {
         return config.getTerminalCols() / 3;
     }
 
+    // todo unit test for drawing a normal room since doMaze is already covered
     public void drawRoom(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         if (room.hasFlag(RoomFlag.MAZE)) {
@@ -421,6 +427,7 @@ public class LevelGenerator {
         }
     }
 
+    // todo add javadoc to putPass
     public void putPass(@Nonnull final Position position) {
         final Place place = level.getPlaceAt(position.getX(), position.getY());
         assert place!=null;
