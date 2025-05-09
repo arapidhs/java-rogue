@@ -10,3 +10,4 @@ This Java port is licensed under the MIT License (see `LICENSE.txt`).
 
 ## Status
 **Early development.** Core systems like dungeon generation, gameplay mechanics, and rendering are currently being ported.
+![java-rogue.png](java-rogue.png)
