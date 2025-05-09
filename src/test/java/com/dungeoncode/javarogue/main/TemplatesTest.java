@@ -91,7 +91,7 @@ public class TemplatesTest {
      */
     @Test
     void testObjectInfoLoading() {
-        assertEquals(7, Templates.getTemplates(ObjectInfoTemplate.class).size());
+        assertEquals(9, Templates.getTemplates(ObjectInfoTemplate.class).size());
 
         // Verify scroll template
         final long scrollId = 2;

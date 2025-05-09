@@ -1,14 +1,13 @@
 package com.dungeoncode.javarogue.main;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.RepeatedTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WeaponsFactoryTest {
 
-    static final int weaponCreationIterations = 100;
 
-    @Test
+    @RepeatedTest(100)
     void testInitializeWeapon() {
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
@@ -23,17 +22,15 @@ public class WeaponsFactoryTest {
         assertNull(longSword.getLaunchWeapon());
         assertTrue(longSword.getItemFlags().isEmpty());
 
-        for (int i = 0; i < weaponCreationIterations; i++) {
-            final Weapon dagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
-            assertTrue(dagger.getGroup() > 0);
-            assertTrue(dagger.getCount() > 1);
+        final Weapon dagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
+        assertTrue(dagger.getGroup() > 0);
+        assertTrue(dagger.getCount() > 1);
 
-            final Weapon dart = weaponsFactory.initializeWeapon(WeaponType.DART);
-            assertTrue(dart.getGroup() > 1);
-            assertTrue(dart.hasFlag(ItemFlag.ISMANY));
-            assertTrue(dart.hasFlag(ItemFlag.ISMISL));
-            assertTrue(dart.getCount() > 7);
-        }
+        final Weapon dart = weaponsFactory.initializeWeapon(WeaponType.DART);
+        assertTrue(dart.getGroup() > 1);
+        assertTrue(dart.hasFlag(ItemFlag.ISMANY));
+        assertTrue(dart.hasFlag(ItemFlag.ISMISL));
+        assertTrue(dart.getCount() > 7);
 
     }
 }

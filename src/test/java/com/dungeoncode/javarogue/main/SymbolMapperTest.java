@@ -8,13 +8,13 @@ class SymbolMapperTest {
 
     @Test
     void testSymbolMappings() {
-        assertEquals(']', SymbolMapper.getSymbol(ObjectType.ARMOR));
-        assertEquals('!', SymbolMapper.getSymbol(ObjectType.POTION));
-        assertEquals('?', SymbolMapper.getSymbol(ObjectType.SCROLL));
-        assertEquals(':', SymbolMapper.getSymbol(ObjectType.FOOD));
-        assertEquals('=', SymbolMapper.getSymbol(ObjectType.RING));
-        assertEquals(')', SymbolMapper.getSymbol(ObjectType.WEAPON));
-        assertEquals('/', SymbolMapper.getSymbol(ObjectType.ROD));
+        assertEquals(']', SymbolMapper.getSymbol(SymbolType.ARMOR));
+        assertEquals('!', SymbolMapper.getSymbol(SymbolType.POTION));
+        assertEquals('?', SymbolMapper.getSymbol(SymbolType.SCROLL));
+        assertEquals(':', SymbolMapper.getSymbol(SymbolType.FOOD));
+        assertEquals('=', SymbolMapper.getSymbol(SymbolType.RING));
+        assertEquals(')', SymbolMapper.getSymbol(SymbolType.WEAPON));
+        assertEquals('/', SymbolMapper.getSymbol(SymbolType.ROD));
 
         assertEquals('.', SymbolMapper.getSymbol(SymbolType.FLOOR));
         assertEquals('#', SymbolMapper.getSymbol(SymbolType.PASSAGE));

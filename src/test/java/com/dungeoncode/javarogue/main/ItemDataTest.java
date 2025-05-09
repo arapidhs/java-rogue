@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -11,7 +12,6 @@ public class ItemDataTest {
     final Config config = new Config();
     final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
     final ItemData itemData = new ItemData(config, rogueRandom);
-    final int invNameTestIterations = 50;
 
     /**
      * Tests initialization of ItemData, ensuring names, forms, and worth are set for all item subtypes.
@@ -104,61 +104,58 @@ public class ItemDataTest {
      * Tests the invName method for Potion items, verifying correct name formatting based on count, known status, guess names,
      * and capitalization. Iterates multiple times to ensure consistency across random initializations.
      */
-    @Test
+    @RepeatedTest(50)
     void testInvNamePotion() {
-        // Run multiple iterations to test with different random seeds
-        for (int i = 0; i < invNameTestIterations; i++) {
-            // Initialize item data to reset names and known status
-            itemData.init();
+        // Initialize item data to reset names and known status
+        itemData.init();
 
-            // Test with lowercase initial for dropping items
-            boolean dropCapital = true;
+        // Test with lowercase initial for dropping items
+        boolean dropCapital = true;
 
-            // Create a HASTE_SELF potion for testing
-            final Potion item = new Potion(PotionType.HASTE_SELF);
-            final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
+        // Create a HASTE_SELF potion for testing
+        final Potion item = new Potion(PotionType.HASTE_SELF);
+        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
-            // Verify unknown single potion starts with "a" or "an" and ends with "potion"
-            String name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("an? .+ potion"));
+        // Verify unknown single potion starts with "a" or "an" and ends with "potion"
+        String name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("an? .+ potion"));
 
-            // Verify unknown single potion with uppercase initial
-            name = itemData.invName(null, item, !dropCapital);
-            assertTrue(name.matches("An? .+ potion"));
+        // Verify unknown single potion with uppercase initial
+        name = itemData.invName(null, item, !dropCapital);
+        assertTrue(name.matches("An? .+ potion"));
 
-            // Test plural form for multiple unknown potions
-            int count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " .+ potions"));
+        // Test plural form for multiple unknown potions
+        int count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " .+ potions"));
 
-            // Test single potion with a guess name
-            count = 1;
-            final String guessedName = "guessed name";
-            item.setCount(count);
-            itemData.setGuessName(item.getItemSubType(), guessedName);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a potion called " + guessedName + "\\(.+\\)"));
+        // Test single potion with a guess name
+        count = 1;
+        final String guessedName = "guessed name";
+        item.setCount(count);
+        itemData.setGuessName(item.getItemSubType(), guessedName);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a potion called " + guessedName + "\\(.+\\)"));
 
-            // Test multiple potions with a guess name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " potions called " + guessedName + "\\(.+\\)"));
+        // Test multiple potions with a guess name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " potions called " + guessedName + "\\(.+\\)"));
 
-            // Test single known potion with real name
-            count = 1;
-            item.setCount(count);
-            itemData.setKnown(item.getItemSubType(), true);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a potion of " + realName + "\\(.+\\)"));
+        // Test single known potion with real name
+        count = 1;
+        item.setCount(count);
+        itemData.setKnown(item.getItemSubType(), true);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a potion of " + realName + "\\(.+\\)"));
 
-            // Test multiple known potions with real name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " potions of " + realName + "\\(.+\\)"));
-        }
+        // Test multiple known potions with real name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " potions of " + realName + "\\(.+\\)"));
     }
 
     /**
@@ -166,75 +163,71 @@ public class ItemDataTest {
      * status, guess names, charges, and capitalization. Iterates multiple times to ensure consistency across random material
      * assignments and tests charge display for known rods.
      */
-    @Test
+    @RepeatedTest(50)
     void testInvNameRod() {
-        // Run multiple iterations to test with different random rod forms and materials
-        for (int i = 0; i < invNameTestIterations; i++) {
-            // Initialize item data to reset names, forms, and known status
-            itemData.init();
+        // Initialize item data to reset names, forms, and known status
+        itemData.init();
 
-            // Test with lowercase initial for dropping items
-            boolean dropCapital = true;
+        // Test with lowercase initial for dropping items
+        boolean dropCapital = true;
 
-            // Create a SLOW_MONSTER rod for testing
-            final Rod item = new Rod(RodType.SLOW_MONSTER);
-            final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
+        // Create a SLOW_MONSTER rod for testing
+        final Rod item = new Rod(RodType.SLOW_MONSTER);
+        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
-            // Verify unknown single rod starts with "a" or "an" and ends with "staff" or "wand"
-            String name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("an? .+ (staff|wand)"));
+        // Verify unknown single rod starts with "a" or "an" and ends with "staff" or "wand"
+        String name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("an? .+ (staff|wand)"));
 
-            // Verify unknown single rod with uppercase initial
-            name = itemData.invName(null, item, !dropCapital);
-            assertTrue(name.matches("An? .+ (staff|wand)"));
+        // Verify unknown single rod with uppercase initial
+        name = itemData.invName(null, item, !dropCapital);
+        assertTrue(name.matches("An? .+ (staff|wand)"));
 
-            // Test plural form for multiple unknown rods
-            int count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " .+ (staffs|wands)"));
+        // Test plural form for multiple unknown rods
+        int count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " .+ (staffs|wands)"));
 
-            // Test single rod with a guess name
-            count = 1;
-            final String guessedName = "guessed name";
-            item.setCount(count);
-            itemData.setGuessName(item.getItemSubType(), guessedName);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a (staff|wand) called " + guessedName + "\\(.+\\)"));
+        // Test single rod with a guess name
+        count = 1;
+        final String guessedName = "guessed name";
+        item.setCount(count);
+        itemData.setGuessName(item.getItemSubType(), guessedName);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a (staff|wand) called " + guessedName + "\\(.+\\)"));
 
-            // Test multiple rods with a guess name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " (staffs|wands) called " + guessedName + "\\(.+\\)"));
+        // Test multiple rods with a guess name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " (staffs|wands) called " + guessedName + "\\(.+\\)"));
 
-            // Test single known rod with real name
-            count = 1;
-            item.setCount(count);
-            itemData.setKnown(item.getItemSubType(), true);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a (staff|wand) of " + realName + "\\(.+\\)"));
+        // Test single known rod with real name
+        count = 1;
+        item.setCount(count);
+        itemData.setKnown(item.getItemSubType(), true);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a (staff|wand) of " + realName + "\\(.+\\)"));
 
-            // Test multiple known rods with real name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " (staffs|wands) of " + realName + "\\(.+\\)"));
-        }
+        // Test multiple known rods with real name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " (staffs|wands) of " + realName + "\\(.+\\)"));
 
         // Test known rod with specific charges to verify charge display
         itemData.init();
-        boolean dropCapital = true;
-        final Rod item = new Rod(RodType.SLOW_MONSTER);
-        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
+        final Rod rodItem = new Rod(RodType.SLOW_MONSTER);
+        final String rodRealName = Templates.findTemplateBySubType(rodItem.getItemSubType()).getName();
         final int charges = 3;
-        item.setCharges(charges);
-        item.addFlag(ItemFlag.ISKNOW);
+        rodItem.setCharges(charges);
+        rodItem.addFlag(ItemFlag.ISKNOW);
 
         // Mark rod as known and verify name includes charge count
-        itemData.setKnown(item.getItemSubType(), true);
-        String name = itemData.invName(null, item, dropCapital);
-        assertTrue(name.matches("a (staff|wand) of " + realName + " \\[" + charges + " charges]\\(.+\\)"));
+        itemData.setKnown(rodItem.getItemSubType(), true);
+        String rodInvName = itemData.invName(null, rodItem, dropCapital);
+        assertTrue(rodInvName.matches("a (staff|wand) of " + rodRealName + " \\[" + charges + " charges]\\(.+\\)"));
     }
 
     /**
@@ -242,158 +235,151 @@ public class ItemDataTest {
      * armor class bonuses, and usage indicators (worn on left/right hand). Iterates multiple times to ensure consistency
      * across random stone assignments and tests specific cases for non-bonus rings and ring usage.
      */
-    @Test
+    @RepeatedTest(50)
     void testInvNameRing() {
-        // Run multiple iterations to test with different random stone names
-        for (int i = 0; i < invNameTestIterations; i++) {
-            // Initialize item data to reset names and known status
-            itemData.init();
+        // Initialize item data to reset names and known status
+        itemData.init();
 
-            // Test with lowercase initial for dropping items
-            boolean dropCapital = true;
+        // Test with lowercase initial for dropping items
+        boolean dropCapital = true;
 
-            // Create a PROTECTION ring for testing
-            final Ring item = new Ring(RingType.PROTECTION);
-            final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
+        // Create a PROTECTION ring for testing
+        final Ring item = new Ring(RingType.PROTECTION);
+        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
-            // Verify unknown single ring starts with "a" or "an" and ends with "ring"
-            String name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("an? .+ ring"));
+        // Verify unknown single ring starts with "a" or "an" and ends with "ring"
+        String name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("an? .+ ring"));
 
-            // Verify unknown single ring with uppercase initial
-            name = itemData.invName(null, item, !dropCapital);
-            assertTrue(name.matches("An? .+ ring"));
+        // Verify unknown single ring with uppercase initial
+        name = itemData.invName(null, item, !dropCapital);
+        assertTrue(name.matches("An? .+ ring"));
 
-            // Test plural form for multiple unknown rings
-            int count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " .+ rings"));
+        // Test plural form for multiple unknown rings
+        int count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " .+ rings"));
 
-            // Test single ring with a guess name
-            count = 1;
-            final String guessedName = "guessed name";
-            item.setCount(count);
-            itemData.setGuessName(item.getItemSubType(), guessedName);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a ring called " + guessedName + "\\(.+\\)"));
+        // Test single ring with a guess name
+        count = 1;
+        final String guessedName = "guessed name";
+        item.setCount(count);
+        itemData.setGuessName(item.getItemSubType(), guessedName);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a ring called " + guessedName + "\\(.+\\)"));
 
-            // Test multiple rings with a guess name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " rings called " + guessedName + "\\(.+\\)"));
+        // Test multiple rings with a guess name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " rings called " + guessedName + "\\(.+\\)"));
 
-            // Test single known ring with real name
-            count = 1;
-            item.setCount(count);
-            itemData.setKnown(item.getItemSubType(), true);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a ring of " + realName + "\\(.+\\)"));
+        // Test single known ring with real name
+        count = 1;
+        item.setCount(count);
+        itemData.setKnown(item.getItemSubType(), true);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a ring of " + realName + "\\(.+\\)"));
 
-            // Test single known ring with armor class bonus
-            int armorClass = 2;
-            item.setCount(count);
-            itemData.setKnown(item.getItemSubType(), true);
-            item.addFlag(ItemFlag.ISKNOW);
-            item.setArmorClass(armorClass);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a ring of " + realName + " \\[\\+" + armorClass + "]\\(.+\\)"));
+        // Test single known ring with armor class bonus
+        int armorClass = 2;
+        item.setCount(count);
+        itemData.setKnown(item.getItemSubType(), true);
+        item.addFlag(ItemFlag.ISKNOW);
+        item.setArmorClass(armorClass);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a ring of " + realName + " \\[\\+" + armorClass + "]\\(.+\\)"));
 
-            // Test multiple known rings with armor class bonus
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " rings of " + realName + " \\[\\+" + armorClass + "]\\(.+\\)"));
-        }
+        // Test multiple known rings with armor class bonus
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " rings of " + realName + " \\[\\+" + armorClass + "]\\(.+\\)"));
 
         // Test known ADORNMENT ring without armor class bonus
         itemData.init();
-        boolean dropCapital = true;
-        final Ring item = new Ring(RingType.ADORNMENT);
-        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
-        itemData.setKnown(item.getItemSubType(), true);
+        final Ring ringItem = new Ring(RingType.ADORNMENT);
+        final String ringRealName = Templates.findTemplateBySubType(ringItem.getItemSubType()).getName();
+        itemData.setKnown(ringItem.getItemSubType(), true);
 
         item.addFlag(ItemFlag.ISKNOW);
-        int armorClass = 2;
-        item.setArmorClass(armorClass);
+        armorClass = 3;
+        ringItem.setArmorClass(armorClass);
 
         // Verify ADORNMENT ring omits bonus due to ring type
-        String name = itemData.invName(null, item, dropCapital);
-        assertTrue(name.matches("a ring of " + realName + "\\(.+\\)"));
+        String ringName = itemData.invName(null, ringItem, dropCapital);
+        assertTrue(ringName.matches("a ring of " + ringRealName + "\\(.+\\)"));
 
         // Test ring usage indicators when worn
         final Player player = new Player(config);
-        player.setLeftRing(item);
-        name = itemData.invName(player, item, dropCapital);
-        assertTrue(name.matches("a ring of " + realName + "\\(.+\\)" + " \\(on left hand\\)"));
+        player.setLeftRing(ringItem);
+        name = itemData.invName(player, ringItem, dropCapital);
+        assertTrue(name.matches("a ring of " + ringRealName + "\\(.+\\)" + " \\(on left hand\\)"));
 
         // Verify right hand usage indicator
         player.setLeftRing(null);
-        player.setRightRing(item);
-        name = itemData.invName(player, item, dropCapital);
-        assertTrue(name.matches("a ring of " + realName + "\\(.+\\)" + " \\(on right hand\\)"));
+        player.setRightRing(ringItem);
+        name = itemData.invName(player, ringItem, dropCapital);
+        assertTrue(name.matches("a ring of " + ringRealName + "\\(.+\\)" + " \\(on right hand\\)"));
     }
 
     /**
      * Tests the invName method for Scroll items, verifying correct name formatting based on count, known status, guess names,
      * and capitalization. Iterates multiple times to ensure consistency across random scroll name generations.
      */
-    @Test
+    @RepeatedTest(50)
     void testInvNameScroll() {
-        // Run multiple iterations to test with different random scroll names
-        for (int i = 0; i < invNameTestIterations; i++) {
-            // Initialize item data to reset names and known status
-            itemData.init();
+        // Initialize item data to reset names and known status
+        itemData.init();
 
-            // Test with lowercase initial for dropping items
-            boolean dropCapital = true;
+        // Test with lowercase initial for dropping items
+        boolean dropCapital = true;
 
-            // Create a HOLD_MONSTER scroll for testing
-            final Scroll item = new Scroll(ScrollType.HOLD_MONSTER);
-            final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
+        // Create a HOLD_MONSTER scroll for testing
+        final Scroll item = new Scroll(ScrollType.HOLD_MONSTER);
+        final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
-            // Verify unknown single scroll starts with "a" and uses titled name
-            String name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a scroll titled '.+'"));
+        // Verify unknown single scroll starts with "a" and uses titled name
+        String name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a scroll titled '.+'"));
 
-            // Verify unknown single scroll with uppercase initial
-            name = itemData.invName(null, item, !dropCapital);
-            assertTrue(name.matches("A scroll titled '.+'"));
+        // Verify unknown single scroll with uppercase initial
+        name = itemData.invName(null, item, !dropCapital);
+        assertTrue(name.matches("A scroll titled '.+'"));
 
-            // Test plural form for multiple unknown scrolls
-            int count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " scrolls titled '.+'"));
+        // Test plural form for multiple unknown scrolls
+        int count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " scrolls titled '.+'"));
 
-            // Test single scroll with a guess name
-            count = 1;
-            final String guessedName = "guessed name";
-            item.setCount(count);
-            itemData.setGuessName(item.getItemSubType(), guessedName);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a scroll called " + guessedName));
+        // Test single scroll with a guess name
+        count = 1;
+        final String guessedName = "guessed name";
+        item.setCount(count);
+        itemData.setGuessName(item.getItemSubType(), guessedName);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a scroll called " + guessedName));
 
-            // Test multiple scrolls with a guess name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " scrolls called " + guessedName));
+        // Test multiple scrolls with a guess name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " scrolls called " + guessedName));
 
-            // Test single known scroll with real name
-            count = 1;
-            item.setCount(count);
-            itemData.setKnown(item.getItemSubType(), true);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches("a scroll of " + realName));
+        // Test single known scroll with real name
+        count = 1;
+        item.setCount(count);
+        itemData.setKnown(item.getItemSubType(), true);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches("a scroll of " + realName));
 
-            // Test multiple known scrolls with real name
-            count = 2;
-            item.setCount(count);
-            name = itemData.invName(null, item, dropCapital);
-            assertTrue(name.matches(count + " scrolls of " + realName));
-        }
+        // Test multiple known scrolls with real name
+        count = 2;
+        item.setCount(count);
+        name = itemData.invName(null, item, dropCapital);
+        assertTrue(name.matches(count + " scrolls of " + realName));
     }
 
     /**
@@ -545,7 +531,9 @@ public class ItemDataTest {
         boolean dropCapital = false;
         final Item item = new Item(ObjectType.AMULET, null, 1);
         final String name = itemData.invName(null, item, dropCapital);
-        assertEquals("The Amulet of Yendor", name);
+        final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(ObjectType.AMULET);
+        assertNotNull(objectInfoTemplate);
+        assertEquals(objectInfoTemplate.getName(), name);
     }
 
 }

@@ -21,6 +21,8 @@ public class RodTest {
 
         final String verboseCharges = " [15 charges]";
         assertEquals(verboseCharges, rod.chargeStr(false));
+
+        assertEquals(SymbolType.ROD,rod.getSymbolType());
     }
 
 }

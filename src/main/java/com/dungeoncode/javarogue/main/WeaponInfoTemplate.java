@@ -28,7 +28,7 @@ public class WeaponInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("launchWeapon") @Nullable final WeaponType launchWeapon,
             @JsonProperty("itemFlags") @Nullable final EnumSet<ItemFlag> itemFlags) {
 
-        super(id, ObjectType.WEAPON, weaponType, name, probability, worth, null, itemFlags);
+        super(id, ObjectType.WEAPON, weaponType, name, probability, worth, null, itemFlags,null);
         this.wieldDamage = wieldDamage;
         this.throwDamage = throwDamage;
         this.launchWeapon = launchWeapon;

@@ -11,6 +11,8 @@ public class Item extends Entity {
     private final Enum<? extends ItemSubtype> itemSubType;
     private final EnumSet<ItemFlag> itemFlags;
     private int count;
+
+    // TODO replace packChar with Symbol SymbolType, something more abstract.
     private Character packChar;
     private int group;
     private String label;
@@ -24,6 +26,9 @@ public class Item extends Entity {
         this.itemSubType = itemSubType;
         this.count = count;
         this.itemFlags = EnumSet.noneOf(ItemFlag.class);
+        final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(objectType);
+        assert objectInfoTemplate!=null;
+        setSymbolType(objectInfoTemplate.getSymbolType());
     }
 
     public void addFlag(@Nonnull final ItemFlag itemFlag) {

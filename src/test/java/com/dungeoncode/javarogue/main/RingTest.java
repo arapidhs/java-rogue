@@ -24,6 +24,8 @@ public class RingTest {
         final Ring adornmentRing = new Ring(RingType.ADORNMENT);
         adornmentRing.addFlag(ItemFlag.ISKNOW);
         assertTrue(adornmentRing.num().isEmpty());
+
+        assertEquals(SymbolType.RING,ring.getSymbolType());
     }
 
 }

@@ -20,6 +20,8 @@ public class WeaponTest {
         mace.setDamagePlus(+2);
         final String negativePositiveBonus = "-1,+2";
         assertEquals(negativePositiveBonus, mace.num());
+
+        assertEquals(SymbolType.WEAPON,mace.getSymbolType());
     }
 
 }

@@ -23,6 +23,8 @@ public class ArmorTest {
         armor.setArmorClass(baseArmorClass - 1);
         numArmorClass = "+1";
         assertEquals(numArmorClass, armor.num());
+
+        assertEquals(SymbolType.ARMOR,armor.getSymbolType());
     }
 
 }

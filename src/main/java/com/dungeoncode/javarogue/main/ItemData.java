@@ -314,7 +314,11 @@ public class ItemData {
             // Fixed name for gold based on quantity
             case GOLD -> itemBuf.append(String.format("%d Gold pieces", item.getGoldValue()));
             // Unique name for the Amulet of Yendor
-            case AMULET -> itemBuf.append("The Amulet of Yendor");
+            case AMULET -> {
+                final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(objectType);
+                assert objectInfoTemplate != null;
+                itemBuf.append(objectInfoTemplate.getName());
+            }
             default -> {
                 // Handle unknown types in master mode with debug logging
                 if (config.isMaster()) {

@@ -33,6 +33,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
     private final int worth;
     private final Boolean stackable;
     private final EnumSet<ItemFlag> itemFlags;
+    private final SymbolType symbolType;
     private double cumulativeProbability;
 
     @JsonCreator
@@ -44,7 +45,8 @@ public class ObjectInfoTemplate extends AbstractTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth,
             @JsonProperty("stackable") final Boolean stackable,
-            @JsonProperty("itemFlags") @Nullable final EnumSet<ItemFlag> itemFlags) {
+            @JsonProperty("itemFlags") @Nullable final EnumSet<ItemFlag> itemFlags,
+            @JsonProperty("symbolType") @Nullable final SymbolType symbolType) {
 
         super(id);
 
@@ -59,6 +61,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
         this.worth = worth;
         this.stackable = stackable;
         this.itemFlags = itemFlags != null ? EnumSet.copyOf(itemFlags) : EnumSet.noneOf(ItemFlag.class);
+        this.symbolType=symbolType;
     }
 
     @Override
@@ -116,5 +119,9 @@ public class ObjectInfoTemplate extends AbstractTemplate {
 
     public void setCumulativeProbability(double cumulativeProbability) {
         this.cumulativeProbability = cumulativeProbability;
+    }
+
+    public SymbolType getSymbolType() {
+        return symbolType;
     }
 }

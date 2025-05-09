@@ -1,9 +1,83 @@
 [
-  { "id": 1, "objectType": "POTION", "name": "potion", "probability": 26, "worth": 0, "stackable": true },
-  { "id": 2, "objectType": "SCROLL", "name": "scroll", "probability": 36, "worth": 0, "stackable": true },
-  { "id": 3, "objectType": "FOOD",   "name": "food",   "probability": 16, "worth": 0, "stackable": true },
-  { "id": 4, "objectType": "WEAPON", "name": "weapon", "probability": 7,  "worth": 0, "stackable": false },
-  { "id": 5, "objectType": "ARMOR",  "name": "armor",  "probability": 7,  "worth": 0, "stackable": false },
-  { "id": 6, "objectType": "RING",   "name": "ring",   "probability": 4,  "worth": 0, "stackable": false },
-  { "id": 7, "objectType": "ROD",    "name": "stick",  "probability": 4,  "worth": 0, "stackable": false }
+  {
+    "id": 1,
+    "objectType": "POTION",
+    "name": "potion",
+    "probability": 26,
+    "worth": 0,
+    "stackable": true,
+    "symbolType": "POTION"
+  },
+  {
+    "id": 2,
+    "objectType": "SCROLL",
+    "name": "scroll",
+    "probability": 36,
+    "worth": 0,
+    "stackable": true,
+    "symbolType": "SCROLL"
+  },
+  {
+    "id": 3,
+    "objectType": "FOOD",
+    "name": "food",
+    "probability": 16,
+    "worth": 0,
+    "stackable": true,
+    "symbolType": "FOOD"
+  },
+  {
+    "id": 4,
+    "objectType": "WEAPON",
+    "name": "weapon",
+    "probability": 7,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "WEAPON"
+  },
+  {
+    "id": 5,
+    "objectType": "ARMOR",
+    "name": "armor",
+    "probability": 7,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "ARMOR"
+  },
+  {
+    "id": 6,
+    "objectType": "RING",
+    "name": "ring",
+    "probability": 4,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "RING"
+  },
+  {
+    "id": 7,
+    "objectType": "ROD",
+    "name": "stick",
+    "probability": 4,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "ROD"
+  },
+  {
+    "id": 8,
+    "objectType": "GOLD",
+    "name": "gold",
+    "probability": 0,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "GOLD"
+  },
+  {
+    "id": 9,
+    "objectType": "AMULET",
+    "name": "The Amulet of Yendor",
+    "probability": 0,
+    "worth": 0,
+    "stackable": false,
+    "symbolType": "AMULET"
+  }
 ]
