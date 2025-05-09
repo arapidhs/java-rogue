@@ -7,14 +7,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RoomTest {
 
     @Test
-    void testGetChar() {
-        final char corridorSymbol = SymbolMapper.getSymbol(PlaceFlag.PASSAGE);
+    void testGetSymbolType() {
         final Room corridor = new Room();
         corridor.addFlag(RoomFlag.GONE);
-        assertEquals(corridorSymbol, corridor.getChar());
+        assertEquals(SymbolType.PASSAGE, corridor.getSymbolType());
 
-        final char floorSymbol = SymbolMapper.getSymbol(PlaceFlag.FLOOR);
         final Room room = new Room();
-        assertEquals(floorSymbol, room.getChar());
+        assertEquals(SymbolType.FLOOR, room.getSymbolType());
     }
 }

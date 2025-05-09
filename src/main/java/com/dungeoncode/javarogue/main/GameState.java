@@ -66,20 +66,17 @@ public class GameState {
             for (int y = 1; y < config.getTerminalRows() - 1; y++) {
                 final Place place = currentLevel.getPlaceAt(x, y);
                 assert place != null;
-                final boolean isReal = place.hasFlag(PlaceFlag.REAL);
-                final boolean isPass = place.hasFlag(PlaceFlag.PASSAGE);
-                final boolean isWall = place.hasFlag(PlaceFlag.WALL_HORIZONTAL)||place.hasFlag(PlaceFlag.WALL_VERTICAL);
-                if (!isReal) {
+                if (!place.isReal()) {
                     screen.enableModifiers(SGR.BOLD);
                 }
-                if(isPass) {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.PASSAGE));
-                }else if (!isReal&&isWall){
-                    screen.putChar(x, y, SymbolMapper.getSymbol(PlaceFlag.DOOR));
+                if(place.isType(PlaceType.PASSAGE)) {
+                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
+                }else if (!place.isReal()&&place.isType(PlaceType.WALL)){
+                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.DOOR));
                 } else {
-                    screen.putChar(x,y,place.getSymbol());
+                    screen.putChar(x,y,SymbolMapper.getSymbol(place.getSymbolType()));
                 }
-                if (!isReal) {
+                if (!place.isReal()) {
                     screen.disableModifiers(SGR.BOLD);
                 }
             }
@@ -104,16 +101,16 @@ public class GameState {
                 // Check for and deal with scare monster scrolls
                 if (item.getObjectType() == ObjectType.SCROLL && item.getItemSubType() == ScrollType.SCARE_MONSTER
                         && item.getItemFlags().contains(ItemFlag.ISFOUND)) {
-                    screen.putChar(x, y, getFloorChar());
-                    setPlaceCharAt(x, y, room.getChar());
+                    screen.putChar(x, y, SymbolMapper.getSymbol(getFloorSymbolType()));
+                    setPlaceSymbolTypeAt(x, y, room.getSymbolType());
                     currentLevel.removeItem(item);
                     messageSystem.msg(MSG_SCROLL_TURNS_TO_DUST);
                 } else {
                     boolean itemAdded = addToPack(item, silent);
                     if (itemAdded) {
                         currentLevel.removeItem(item);
-                        screen.putChar(x, y, getFloorChar());
-                        setPlaceCharAt(x, y, room.getChar());
+                        screen.putChar(x, y, SymbolMapper.getSymbol(getFloorSymbolType()));
+                        setPlaceSymbolTypeAt(x, y, room.getSymbolType());
                     } else {
                         // Notify player if item cannot be picked up
                         if (!config.isTerse()) {
@@ -157,32 +154,34 @@ public class GameState {
     }
 
     /**
-     * Returns the character that should be rendered at the player's current position,
+     * Returns the symbol type that should be rendered at the player's current position,
      * based on the room type and visibility.
      *
      * <p>If the player is in a corridor or the floor should be shown (e.g., lit room or non-blind state),
-     * the actual room symbol is returned. Otherwise, the fallback symbol for an empty room is used.</p>
+     * the actual room symbol type is returned. Otherwise, the fallback symbol for an empty room is used.</p>
      *
      * @return the character representing the floor or empty space at the player's position
      */
-    private char getFloorChar() {
+    private SymbolType getFloorSymbolType() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
         if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
-            return room.getChar();
+            return room.getSymbolType();
         } else {
-            return SymbolMapper.getSymbol(PlaceFlag.EMPTY);
+            return SymbolType.EMPTY;
         }
     }
 
     /**
-     * Sets the display character for the given map coordinates on the current level.
+     * Sets the display SymbolType for the given map coordinates on the current level.
      *
      * @param x      the x-coordinate
      * @param y      the y-coordinate
-     * @param symbol the character to place at the specified coordinates
+     * @param symbolType the Symbol Type to place at the specified coordinates
+     * @see SymbolType
      */
-    private void setPlaceCharAt(final int x, final int y, char symbol) {
-        currentLevel.setPlaceSymbol(x, y, symbol);
+    private void setPlaceSymbolTypeAt(final int x, final int y, @Nonnull SymbolType symbolType) {
+        Objects.requireNonNull(symbolType);
+        currentLevel.setPlaceSymbol(x, y, symbolType);
     }
 
     /**

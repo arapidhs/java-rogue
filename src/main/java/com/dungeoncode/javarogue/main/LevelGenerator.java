@@ -50,10 +50,8 @@ public class LevelGenerator {
         // Initialize places array with empty spaces and REAL flag
         for (int y = 0; y < config.getLevelMaxHeight(); y++) {
             for (int x = 0; x < config.getLevelMaxWidth(); x++) {
-                final Place place = new Place();
-                place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.EMPTY)); // ' '
+                final Place place = new Place(SymbolType.EMPTY);
                 place.addFlag(PlaceFlag.REAL);
-                place.setMonster(null);
                 level.setPlaceAt(x, y, place);
             }
         }
@@ -314,7 +312,7 @@ public class LevelGenerator {
             for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY() - 1; y++) {
                 for (int x = room.getPosition().getX() + 1; x < room.getPosition().getX() + room.getSize().getX() - 1; x++) {
                     final Place place = level.getPlaceAt(x,y);
-                    place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.FLOOR)); // '.'
+                    place.setSymbolType(SymbolType.FLOOR); // '.'
                 }
             }
         }
@@ -384,7 +382,7 @@ public class LevelGenerator {
                     continue;
                 }
 
-                if (level.getPlaceAt(newX + topx, newY + topy).hasFlag(PlaceFlag.PASSAGE)) {
+                if (level.getPlaceAt(newX + topx, newY + topy).isType(PlaceType.PASSAGE)) {
                     continue;
                 }
 
@@ -431,11 +429,12 @@ public class LevelGenerator {
     public void putPass(@Nonnull final Position position) {
         final Place place = level.getPlaceAt(position.getX(), position.getY());
         assert place!=null;
-        place.addFlag(PlaceFlag.PASSAGE);
+        place.setPlaceType(PlaceType.PASSAGE);
         if ((rnd(10) + 1) < levelNum && rnd(40) == 0) {
             place.removeFlag(PlaceFlag.REAL);
+            place.setSymbolType(SymbolType.EMPTY);
         } else {
-            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.PASSAGE));
+            place.setSymbolType(SymbolType.PASSAGE);
         }
         level.setPlaceAt(position.getX(), position.getY(), place);
     }
@@ -451,8 +450,8 @@ public class LevelGenerator {
         for (int y = room.getPosition().getY() + 1; y <= room.getPosition().getY() + room.getSize().getY() - 1; y++) {
             final Place place = level.getPlaceAt(startx,y);
             assert place!=null;
-            place.addFlag(PlaceFlag.WALL_VERTICAL);
-            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_VERTICAL));
+            place.setPlaceType(PlaceType.WALL);
+            place.setSymbolType(SymbolType.WALL_VERTICAL);
         }
     }
 
@@ -467,8 +466,8 @@ public class LevelGenerator {
         for (int x = room.getPosition().getX(); x <= room.getPosition().getX() + room.getSize().getX() - 1; x++) {
             final Place place = level.getPlaceAt(x,starty);
             assert place!=null;
-            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_HORIZONTAL)); // '-'
-            place.addFlag(PlaceFlag.WALL_HORIZONTAL);
+            place.setPlaceType(PlaceType.WALL);
+            place.setSymbolType(SymbolType.WALL_HORIZONTAL);
         }
     }
 
@@ -593,7 +592,7 @@ public class LevelGenerator {
                     spos.setX(rpf.getPosition().getX() + rnd(rpf.getSize().getX() - 2) + 1);
                     spos.setY(rpf.getPosition().getY() + rpf.getSize().getY() - 1);
                 } while (rpf.hasFlag(RoomFlag.MAZE) &&
-                        !level.getPlaceAt(spos.getX(), spos.getY()).hasFlag(PlaceFlag.PASSAGE));
+                        !level.getPlaceAt(spos.getX(), spos.getY()).isType(PlaceType.PASSAGE));
             }
             if (!rpt.hasFlag(RoomFlag.GONE)) {
                 do {
@@ -601,7 +600,7 @@ public class LevelGenerator {
                     epos.setX(rpt.getPosition().getX() + rnd(rpt.getSize().getX() - 2) + 1);
                     epos.setY(rpt.getPosition().getY());
                 } while (rpt.hasFlag(RoomFlag.MAZE) &&
-                        !level.getPlaceAt(epos.getX(), epos.getY()).hasFlag(PlaceFlag.PASSAGE));
+                        !level.getPlaceAt(epos.getX(), epos.getY()).isType(PlaceType.PASSAGE));
             }
 
             // Distance to move down (excluding doors)
@@ -633,7 +632,7 @@ public class LevelGenerator {
                     spos.setX(rpf.getPosition().getX() + rpf.getSize().getX() - 1);
                     spos.setY(rpf.getPosition().getY() + rnd(rpf.getSize().getY() - 2) + 1);
                 } while (rpf.hasFlag(RoomFlag.MAZE) &&
-                        !level.getPlaceAt(spos.getX(), spos.getY()).hasFlag(PlaceFlag.PASSAGE));
+                        !level.getPlaceAt(spos.getX(), spos.getY()).isType(PlaceType.PASSAGE));
             }
             if (!rpt.hasFlag(RoomFlag.GONE)) {
                 do {
@@ -641,7 +640,7 @@ public class LevelGenerator {
                     epos.setX(rpt.getPosition().getX());
                     epos.setY(rpt.getPosition().getY() + rnd(rpt.getSize().getY() - 2) + 1);
                 } while (rpt.hasFlag(RoomFlag.MAZE) &&
-                        !level.getPlaceAt(epos.getX(), epos.getY()).hasFlag(PlaceFlag.PASSAGE));
+                        !level.getPlaceAt(epos.getX(), epos.getY()).isType(PlaceType.PASSAGE));
             }
             // Distance to move right (excluding doors)
             distance = Math.abs(spos.getX() - epos.getX()) - 1;
@@ -737,19 +736,18 @@ public class LevelGenerator {
         // Determine if it's a secret door based on level and random chance
         if (rnd(10) + 1 < levelNum && rnd(5) == 0) {
             // Secret door: disguise as a wall
+            place.removeFlag(PlaceFlag.REAL); // Hide true nature
+            place.setPlaceType(PlaceType.WALL);
             if (pos.getY() == room.getPosition().getY() ||
                     pos.getY() == room.getPosition().getY() + room.getSize().getY() - 1) {
-                place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_HORIZONTAL)); // '-'
-                place.addFlag(PlaceFlag.WALL_HORIZONTAL);
+                place.setSymbolType(SymbolType.WALL_HORIZONTAL); // '-'
             } else {
-                place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.WALL_VERTICAL)); // '|'
-                place.addFlag(PlaceFlag.WALL_VERTICAL);
+                place.setSymbolType(SymbolType.WALL_VERTICAL); // '|'
             }
-            place.removeFlag(PlaceFlag.REAL); // Hide true nature
         } else {
             // Normal door
-            place.setSymbol(SymbolMapper.getSymbol(PlaceFlag.DOOR)); // '+'
-            place.addFlag(PlaceFlag.DOOR);
+            place.setPlaceType(PlaceType.DOOR);
+            place.setSymbolType(SymbolType.DOOR); // '+'
         }
 
     }
@@ -821,10 +819,9 @@ public class LevelGenerator {
         }
 
         // Check if tile is a door or secret door
-        boolean isDoor = place.hasFlag(PlaceFlag.DOOR);
+        boolean isDoor = place.isType(PlaceType.DOOR);
 
-        boolean isSecret = !place.hasFlag(PlaceFlag.REAL) &&
-                (place.hasFlag(PlaceFlag.WALL_HORIZONTAL) || place.hasFlag(PlaceFlag.WALL_VERTICAL));
+        boolean isSecret = !place.isReal() && place.isType(PlaceType.WALL);
 
         // If door or secret door, add position to passage exits
         if (isDoor || isSecret) {
@@ -835,7 +832,7 @@ public class LevelGenerator {
             }
         }
         // Skip if not a passage tile (unless it’s a door/secret door)
-        else if (!place.hasFlag(PlaceFlag.PASSAGE)) {
+        else if (!place.isType(PlaceType.PASSAGE)) {
             return;
         }
 

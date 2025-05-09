@@ -68,17 +68,18 @@ public class Level extends Entity {
     }
 
     /**
-     * Gets the display character at the specified coordinates on the level map.
+     * Gets the display symbol type at the specified coordinates on the level map.
      *
      * @param x The x-coordinate.
      * @param y The y-coordinate.
-     * @return The character at (x, y).
+     * @return The symbol type at (x, y).
      * @throws IllegalArgumentException If coordinates are out of bounds.
+     * @see SymbolType
      */
     @Nullable
-    public Character getSymbol(final int x, final int y) {
+    public SymbolType getSymbolType(final int x, final int y) {
         final Place place = getPlaceAt(x, y);
-        return place == null ? null : place.getSymbol();
+        return place == null ? null : place.getSymbolType();
     }
 
     /**
@@ -95,17 +96,18 @@ public class Level extends Entity {
     }
 
     /**
-     * Sets the display character at the specified coordinates on the level map.
+     * Sets the display symbol type at the specified coordinates on the level map.
      *
      * @param x      The x-coordinate.
      * @param y      The y-coordinate.
-     * @param symbol The character to set.
+     * @param symbolType The symbol type to set.
      * @throws IllegalArgumentException If coordinates are out of bounds.
      */
-    public void setPlaceSymbol(final int x, final int y, final char symbol) {
+    public void setPlaceSymbol(final int x, final int y, @Nonnull final SymbolType symbolType) {
+        Objects.requireNonNull(symbolType);
         final Place place = getPlaceAt(x, y);
         if (place != null) {
-            place.setSymbol(symbol);
+            place.setSymbolType(symbolType);
         }
     }
 

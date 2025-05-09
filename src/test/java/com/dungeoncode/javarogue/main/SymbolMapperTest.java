@@ -16,8 +16,12 @@ class SymbolMapperTest {
         assertEquals(')', SymbolMapper.getSymbol(ObjectType.WEAPON));
         assertEquals('/', SymbolMapper.getSymbol(ObjectType.ROD));
 
-        assertEquals('.', SymbolMapper.getSymbol(PlaceFlag.FLOOR));
-        assertEquals('#', SymbolMapper.getSymbol(PlaceFlag.PASSAGE));
+        assertEquals('.', SymbolMapper.getSymbol(SymbolType.FLOOR));
+        assertEquals('#', SymbolMapper.getSymbol(SymbolType.PASSAGE));
+        assertEquals(' ', SymbolMapper.getSymbol(SymbolType.EMPTY));
+        assertEquals('|', SymbolMapper.getSymbol(SymbolType.WALL_VERTICAL));
+        assertEquals('-', SymbolMapper.getSymbol(SymbolType.WALL_HORIZONTAL));
+        assertEquals('+', SymbolMapper.getSymbol(SymbolType.DOOR));
     }
 
 }

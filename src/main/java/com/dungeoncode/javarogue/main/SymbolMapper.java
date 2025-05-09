@@ -25,15 +25,15 @@ public class SymbolMapper {
         );
         SYMBOL_REGISTRY.put(ObjectType.class, obj -> objectTypeSymbols.get((ObjectType) obj));
 
-        final Map<PlaceFlag, Character> placeSymbols = Map.of(
-                PlaceFlag.EMPTY, ' ',
-                PlaceFlag.PASSAGE, '#',
-                PlaceFlag.FLOOR, '.',
-                PlaceFlag.WALL_VERTICAL, '|',
-                PlaceFlag.WALL_HORIZONTAL, '-',
-                PlaceFlag.DOOR, '+'
+        final Map<SymbolType, Character> placeSymbols = Map.of(
+                SymbolType.EMPTY, ' ',
+                SymbolType.PASSAGE, '#',
+                SymbolType.FLOOR, '.',
+                SymbolType.WALL_VERTICAL, '|',
+                SymbolType.WALL_HORIZONTAL, '-',
+                SymbolType.DOOR, '+'
         );
-        SYMBOL_REGISTRY.put(PlaceFlag.class, obj -> placeSymbols.get((PlaceFlag) obj));
+        SYMBOL_REGISTRY.put(SymbolType.class, obj -> placeSymbols.get((SymbolType) obj));
     }
 
     /**

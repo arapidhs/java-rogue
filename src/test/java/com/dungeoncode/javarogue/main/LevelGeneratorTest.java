@@ -3,6 +3,7 @@ package com.dungeoncode.javarogue.main;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,7 +12,7 @@ public class LevelGeneratorTest {
     /**
      * Tests the {@link LevelGenerator#vert(Room, int)} method to ensure it correctly draws a vertical wall.
      * Verifies that the wall is placed at the specified x-coordinate along the room's height, with
-     * {@link PlaceFlag#WALL_VERTICAL} flag and the correct symbol ('|'). Checks that only the intended
+     * {@link SymbolType#WALL_VERTICAL} flag and the correct symbol ('|'). Checks that only the intended
      * positions are modified.
      */
     @Test
@@ -35,15 +36,15 @@ public class LevelGeneratorTest {
         for (int y = roomY + 1; y <= roomY + roomSizeY - 1; y++) {
             final Place place = levelGenerator.getLevel().getPlaceAt(roomX, y);
             assertNotNull(place);
-            assertTrue(place.hasFlag(PlaceFlag.WALL_VERTICAL));
-            assertEquals(SymbolMapper.getSymbol(PlaceFlag.WALL_VERTICAL),place.getSymbol());
+            assertTrue(place.isType(PlaceType.WALL));
+            assertEquals(SymbolType.WALL_VERTICAL,place.getSymbolType());
         }
     }
 
     /**
      * Tests the {@link LevelGenerator#vert(Room, int)} method to ensure it correctly draws a vertical wall.
      * Verifies that the wall is placed at the specified x-coordinate along the room's height, with
-     * {@link PlaceFlag#WALL_VERTICAL} flag and the correct symbol ('|'). Checks that only the intended
+     * {@link SymbolType#WALL_VERTICAL} flag and the correct symbol ('|'). Checks that only the intended
      * positions are modified.
      */
     @Test
@@ -67,16 +68,17 @@ public class LevelGeneratorTest {
         for (int x = roomX; x <= roomX + roomSizeX - 1; x++) {
             final Place place = levelGenerator.getLevel().getPlaceAt(x, roomY);
             assertNotNull(place);
-            assertTrue(place.hasFlag(PlaceFlag.WALL_HORIZONTAL));
-            assertEquals(SymbolMapper.getSymbol(PlaceFlag.WALL_HORIZONTAL),place.getSymbol());
+            assertTrue(place.isType(PlaceType.WALL));
+            assertEquals(SymbolType.WALL_HORIZONTAL,place.getSymbolType());
         }
     }
 
     /**
      * Tests the {@link LevelGenerator#door(Room, Position)} method to ensure it correctly places a door.
      * Verifies that the door tile is placed at the specified position and added to the room's exits.
-     * Ensures that if the place has the {@link PlaceFlag#REAL} flag, it has the {@link PlaceFlag#DOOR} flag;
-     * otherwise, it has either the {@link PlaceFlag#WALL_HORIZONTAL} or {@link PlaceFlag#WALL_VERTICAL} flag.
+     * Ensures that if the place has the {@link PlaceFlag#REAL} flag, it has the {@link PlaceType#DOOR} type;
+     * otherwise, it has {@link PlaceType#WALL} type and
+     * either the {@link SymbolType#WALL_HORIZONTAL} or {@link SymbolType#WALL_VERTICAL} symbol type.
      * Tests non-maze rooms.
      */
     @Test
@@ -109,19 +111,21 @@ public class LevelGeneratorTest {
             //Door position should be in room's exits
             assertTrue(room.getExits().stream().anyMatch(e -> e.getX() == pos.getX() && e.getY() == pos.getY()));
 
-            if (place.hasFlag(PlaceFlag.REAL)) {
+            if (place.isReal()) {
                 // Real place should have DOOR flag
-                assertTrue(place.hasFlag(PlaceFlag.DOOR));
+                assertTrue(place.isType(PlaceType.DOOR));
             } else {
                 // Non-real place should have WALL_HORIZONTAL or WALL_VERTICAL flag
-                assertTrue(place.hasFlag(PlaceFlag.WALL_HORIZONTAL) || place.hasFlag(PlaceFlag.WALL_VERTICAL));
+                assertTrue(place.isType(PlaceType.WALL));
+                assertTrue(Objects.equals(place.getSymbolType(),SymbolType.WALL_HORIZONTAL) ||
+                        Objects.equals(place.getSymbolType(),SymbolType.WALL_VERTICAL));
             }
         }
     }
 
     /**
      * Tests the {@link LevelGenerator#putPass(Position)} method to ensure it correctly places a passage tile.
-     * Verifies that the passage tile is placed at the specified position with the {@link PlaceFlag#PASSAGE} flag.
+     * Verifies that the passage tile is placed at the specified position with the {@link PlaceType#PASSAGE} type.
      * Ensures that if the place has the {@link PlaceFlag#REAL} flag, it has the passage symbol ('#');
      * otherwise, it has the empty space ' ' symbol (secret passage).
      */
@@ -144,12 +148,12 @@ public class LevelGeneratorTest {
             // Assert
             final Place place = levelGenerator.getLevel().getPlaceAt(pos.getX(), pos.getY());
             assertNotNull(place);
-            assertTrue(place.hasFlag(PlaceFlag.PASSAGE));
+            assertTrue(place.isType(PlaceType.PASSAGE));
             // If REAL flag is present, symbol should be '#'; otherwise, no symbol (secret passage)
             if (place.hasFlag(PlaceFlag.REAL)) {
-                assertEquals(SymbolMapper.getSymbol(PlaceFlag.PASSAGE), place.getSymbol());
+                assertEquals(SymbolType.PASSAGE, place.getSymbolType());
             } else {
-                assertEquals(SymbolMapper.getSymbol(PlaceFlag.EMPTY), place.getSymbol());
+                assertEquals(SymbolType.EMPTY, place.getSymbolType());
             }
         }
     }
@@ -243,7 +247,7 @@ public class LevelGeneratorTest {
     /**
      * Tests the {@link LevelGenerator#doMaze(Room)} method to ensure it correctly generates a maze
      * within a room using recursive backtracking. Verifies that passage tiles are placed according to
-     * the expected 25x7 maze grid with the {@link PlaceFlag#PASSAGE} flag, starting from a hardcoded
+     * the expected 25x7 maze grid with the {@link PlaceType#PASSAGE} type, starting from a hardcoded
      * position (2,4) in a room at (5,8). Uses a specific seed (12345L) for predictable random number
      * generation to match the expected maze layout.
      */
@@ -286,7 +290,7 @@ public class LevelGeneratorTest {
                 // Assert PASS flag where expectedMaze is 1
                 if (expectedMaze[y - roomY][x - roomX] == 1) {
                     assertNotNull(place);
-                    assertTrue(place.hasFlag(PlaceFlag.PASSAGE));
+                    assertTrue(place.isType(PlaceType.PASSAGE));
                 }
             }
         }

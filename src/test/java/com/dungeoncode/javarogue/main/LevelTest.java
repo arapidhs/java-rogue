@@ -35,15 +35,15 @@ public class LevelTest {
         final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
         final int placeX = 2;
         final int placeY = 5;
-        final char placeSymbol = 'p';
-        final Place place = new Place(placeSymbol);
+        final SymbolType doorSymbolType = SymbolType.DOOR;
+        final Place place = new Place(doorSymbolType);
         level.setPlaceAt(placeX, placeY, place);
 
         Place placeFound = level.getPlaceAt(placeX, placeY);
         assertNotNull(placeFound);
-        assertEquals(placeSymbol, placeFound.getSymbol());
+        assertEquals(doorSymbolType, placeFound.getSymbolType());
 
-        assertEquals(placeSymbol, level.getSymbol(placeX, placeY));
+        assertEquals(doorSymbolType, level.getSymbolType(placeX, placeY));
 
         // set place at max width and height
         final int maxX = config.getLevelMaxWidth() - 1;
@@ -51,7 +51,7 @@ public class LevelTest {
         level.setPlaceAt(maxX, maxY, place);
         placeFound = level.getPlaceAt(maxX, maxY);
         assertNotNull(placeFound);
-        assertEquals(placeSymbol, placeFound.getSymbol());
+        assertEquals(doorSymbolType, placeFound.getSymbolType());
 
         // set place out of bounds
         final int outOfBoundsX = config.getLevelMaxWidth();
@@ -61,14 +61,14 @@ public class LevelTest {
 
         int symbolX = 3;
         int symbolY = 6;
-        char symbol = SymbolMapper.getSymbol(PlaceFlag.FLOOR);
-        level.setPlaceSymbol(symbolX, symbolY, symbol);
-        assertNull(level.getSymbol(symbolX, symbolY));
+        SymbolType floorSymbolType = SymbolType.FLOOR;
+        level.setPlaceSymbol(symbolX, symbolY, floorSymbolType);
+        assertNull(level.getSymbolType(symbolX, symbolY));
 
         symbolX = placeX;
         symbolY = placeY;
-        level.setPlaceSymbol(symbolX, symbolY, symbol);
-        assertEquals(symbol, level.getSymbol(symbolX, symbolY));
+        level.setPlaceSymbol(symbolX, symbolY, floorSymbolType);
+        assertEquals(floorSymbolType, level.getSymbolType(symbolX, symbolY));
 
     }
 

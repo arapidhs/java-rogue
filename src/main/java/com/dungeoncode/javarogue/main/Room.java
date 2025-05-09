@@ -40,11 +40,11 @@ public class Room extends Entity {
         return size;
     }
 
-    public char getChar() {
+    public SymbolType getSymbolType() {
         if (roomFlags.contains(RoomFlag.GONE))
-            return SymbolMapper.getSymbol(PlaceFlag.PASSAGE);
+            return SymbolType.PASSAGE;
         else {
-            return SymbolMapper.getSymbol(PlaceFlag.FLOOR);
+            return SymbolType.FLOOR;
         }
     }
 
