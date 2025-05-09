@@ -310,6 +310,7 @@ public class LevelGenerator {
             for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY() - 1; y++) {
                 for (int x = room.getPosition().getX() + 1; x < room.getPosition().getX() + room.getSize().getX() - 1; x++) {
                     final Place place = level.getPlaceAt(x,y);
+                    place.setPlaceType(PlaceType.FLOOR);
                     place.setSymbolType(SymbolType.FLOOR); // '.'
                 }
             }
