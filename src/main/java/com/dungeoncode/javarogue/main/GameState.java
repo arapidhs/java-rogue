@@ -262,7 +262,7 @@ public class GameState {
      */
     private boolean showFloor() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
-        if (room != null && room.hasFlag(RoomFlag.DARk) &&
+        if (room != null && room.hasFlag(RoomFlag.DARK) &&
                 !room.hasFlag(RoomFlag.GONE) &&
                 !player.hasFlag(CreatureFlag.ISBLIND)) {
             return config.isSeeFloor();

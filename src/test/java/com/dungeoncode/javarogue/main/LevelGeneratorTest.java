@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -288,14 +289,34 @@ public class LevelGeneratorTest {
         }
     }
 
-    // TODO debug level generation wiht high volume of repetitions
-    // there is potential to fall into infinite do while loop state
-    @RepeatedTest(1)
+    @RepeatedTest(100)
     void testLevelGeneration(){
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
         final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
+        final Level level = levelGenerator.newLevel(levelNum);
+        assertNotNull(level);
+    }
+
+    @Tag("stress")
+    @RepeatedTest(10000)
+    void testLevelGenerationStressTest(){
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
+        final Level level = levelGenerator.newLevel(levelNum);
+        assertNotNull(level);
+    }
+
+    @Tag("stress")
+    @RepeatedTest(10000)
+    void testLevelGenerationAtHighLevelsStressTest(){
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+config.getAmuletLevel()/2;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
     }

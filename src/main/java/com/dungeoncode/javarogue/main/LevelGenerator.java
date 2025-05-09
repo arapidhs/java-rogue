@@ -243,7 +243,7 @@ public class LevelGenerator {
             }
             // set room type
             if (rnd(10) < levelNum - 1) {
-                room.addFlag(RoomFlag.DARk);
+                room.addFlag(RoomFlag.DARK);
                 if (rnd(15) == 0) {
                     room.addFlag(RoomFlag.MAZE);
                 }
@@ -269,8 +269,6 @@ public class LevelGenerator {
         return rooms;
     }
 
-    // todo add java doc to setMazeRoomDimensions
-    // why they are set the way they are
     public void setMazeRoomDimensions(@Nonnull final Room room, final int maxRoomX, final int maxRoomY,
                                       @Nonnull final Position position) {
         Objects.requireNonNull(room);
@@ -420,6 +418,8 @@ public class LevelGenerator {
             pos.setX(nextX + topx);
             putPass(pos);
 
+            nextX=Math.min(nextX,maxx-1);
+            nextY=Math.min(nextY,maxy-1);
             // Recursively dig from the next cell
             dig(maze, nextX, nextY, topx, topy, maxx, maxy);
         }

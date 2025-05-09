@@ -91,6 +91,21 @@
 
     </dependencies>
 
+    <profiles>
+        <profile>
+            <id>stress-tests</id>
+        </profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <excludedGroups>stress</excludedGroups>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
         <plugins>
 
@@ -109,6 +124,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
                 <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <groups>${groups}</groups>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <excludedGroups>${excludedGroups}</excludedGroups>
                     <argLine>-Xshare:off</argLine>
                 </configuration>
             </plugin>
