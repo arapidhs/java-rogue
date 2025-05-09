@@ -337,4 +337,8 @@ public class GameState {
     public ItemData getItemData() {
         return itemData;
     }
+
+    public RogueScreen getScreen() {
+        return screen;
+    }
 }

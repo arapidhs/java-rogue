@@ -425,7 +425,6 @@ public class LevelGenerator {
         }
     }
 
-    // todo add javadoc to putPass
     public void putPass(@Nonnull final Position position) {
         final Place place = level.getPlaceAt(position.getX(), position.getY());
         assert place!=null;
@@ -836,7 +835,9 @@ public class LevelGenerator {
             return;
         }
 
-        // Assign passage number to the tile
+        // Assign passage number to the passage and the tile
+        final Passage passage = passages[state.getPnum()];
+        passage.setPassageNumber(state.getPnum());
         place.setPassageNumber(state.getPnum());
 
         // Recursively number adjacent tiles
@@ -906,24 +907,15 @@ public class LevelGenerator {
      * during flood-fill numbering of connected passage and door tiles.
      */
     public static class PassageNumberState {
-        private int pnum;
+        private Integer pnum;
         private boolean newPnum;
-
-        /**
-         * Initializes the passage numbering state with a starting passage number of 0
-         * and the new passage flag set to false.
-         */
-        public PassageNumberState() {
-            this.pnum=0;
-            this.newPnum = false;
-        }
 
         /**
          * Returns the current passage number.
          *
          * @return The current passage number.
          */
-        public int getPnum() {
+        public Integer getPnum() {
             return pnum;
         }
 
@@ -931,7 +923,11 @@ public class LevelGenerator {
          * Increments the passage number by 1.
          */
         public void incrementPnum() {
-            this.pnum++;
+            if ( this.pnum == null ){
+                this.pnum=0;
+            }else{
+                this.pnum++;
+            }
         }
 
         /**

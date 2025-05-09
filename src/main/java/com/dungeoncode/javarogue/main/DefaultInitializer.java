@@ -11,11 +11,17 @@ public class DefaultInitializer implements Initializer {
     @Override
     public void initialize(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
+        final Config config = gameState.getConfig();
+
         initializePlayer(gameState);
         initializeItemData(gameState);
 
-        final boolean isWizard = gameState.getConfig().isWizard();
-        gameState.getConfig().setScoring(!isWizard);
+        gameState.getScreen().addWindow("hw",0,0,config.getTerminalCols(),config.getTerminalRows());
+
+        if(config.isMaster()){
+            final boolean isWizard = config.isWizard();
+            config.setScoring(!isWizard);
+        }
 
         final int levelNum = 1;
         gameState.newLevel(levelNum);
