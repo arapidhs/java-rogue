@@ -17,10 +17,10 @@ public class Place extends Entity {
     private Monster monster;
     private Integer passageNumber;
 
-    public Place(@Nonnull final SymbolType symbolType) {
+    public Place() {
         super();
-        Objects.requireNonNull(symbolType);
-        this.symbolType=symbolType;
+        this.placeType = PlaceType.EMPTY;
+        this.symbolType=SymbolType.EMPTY;
         this.placeFlags = EnumSet.noneOf(PlaceFlag.class);
         this.monster = null;
         this.addFlag(PlaceFlag.REAL);
@@ -28,6 +28,10 @@ public class Place extends Entity {
 
     public boolean isReal() {
         return placeFlags.contains(PlaceFlag.REAL);
+    }
+
+    public boolean isStepOk(){
+        return !isType(PlaceType.EMPTY) && !isType(PlaceType.WALL) && monster==null;
     }
 
     public boolean isType(final PlaceType placeType) {

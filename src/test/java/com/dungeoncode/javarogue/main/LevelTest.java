@@ -36,7 +36,8 @@ public class LevelTest {
         final int placeX = 2;
         final int placeY = 5;
         final SymbolType doorSymbolType = SymbolType.DOOR;
-        final Place place = new Place(doorSymbolType);
+        final Place place = new Place();
+        place.setSymbolType(doorSymbolType);
         level.setPlaceAt(placeX, placeY, place);
 
         Place placeFound = level.getPlaceAt(placeX, placeY);

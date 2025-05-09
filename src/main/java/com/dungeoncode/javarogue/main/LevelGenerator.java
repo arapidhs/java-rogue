@@ -50,7 +50,7 @@ public class LevelGenerator {
         // Initialize places array with empty spaces and REAL flag
         for (int y = 0; y < config.getLevelMaxHeight(); y++) {
             for (int x = 0; x < config.getLevelMaxWidth(); x++) {
-                final Place place = new Place(SymbolType.EMPTY);
+                final Place place = new Place();
                 place.addFlag(PlaceFlag.REAL);
                 level.setPlaceAt(x, y, place);
             }
