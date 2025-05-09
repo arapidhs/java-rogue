@@ -13,12 +13,14 @@ public class SymbolMapper {
 
     static {
         SYMBOL_REGISTRY = Map.ofEntries(
+
                 Map.entry(SymbolType.EMPTY, ' '),
                 Map.entry(SymbolType.PASSAGE, '#'),
                 Map.entry(SymbolType.FLOOR, '.'),
                 Map.entry(SymbolType.WALL_VERTICAL, '|'),
                 Map.entry(SymbolType.WALL_HORIZONTAL, '-'),
                 Map.entry(SymbolType.DOOR, '+'),
+
                 Map.entry(SymbolType.ARMOR, ']'),
                 Map.entry(SymbolType.POTION, '!'),
                 Map.entry(SymbolType.SCROLL, '?'),
@@ -27,7 +29,36 @@ public class SymbolMapper {
                 Map.entry(SymbolType.WEAPON, ')'),
                 Map.entry(SymbolType.ROD, '/'),
                 Map.entry(SymbolType.AMULET, ','),
-                Map.entry(SymbolType.GOLD, '*')
+                Map.entry(SymbolType.GOLD, '*'),
+
+                // Inventory key symbols
+                Map.entry(SymbolType.KEY_A, 'a'),
+                Map.entry(SymbolType.KEY_B, 'b'),
+                Map.entry(SymbolType.KEY_C, 'c'),
+                Map.entry(SymbolType.KEY_D, 'd'),
+                Map.entry(SymbolType.KEY_E, 'e'),
+                Map.entry(SymbolType.KEY_F, 'f'),
+                Map.entry(SymbolType.KEY_G, 'g'),
+                Map.entry(SymbolType.KEY_H, 'h'),
+                Map.entry(SymbolType.KEY_I, 'i'),
+                Map.entry(SymbolType.KEY_J, 'j'),
+                Map.entry(SymbolType.KEY_K, 'k'),
+                Map.entry(SymbolType.KEY_L, 'l'),
+                Map.entry(SymbolType.KEY_M, 'm'),
+                Map.entry(SymbolType.KEY_N, 'n'),
+                Map.entry(SymbolType.KEY_O, 'o'),
+                Map.entry(SymbolType.KEY_P, 'p'),
+                Map.entry(SymbolType.KEY_Q, 'q'),
+                Map.entry(SymbolType.KEY_R, 'r'),
+                Map.entry(SymbolType.KEY_S, 's'),
+                Map.entry(SymbolType.KEY_T, 't'),
+                Map.entry(SymbolType.KEY_U, 'u'),
+                Map.entry(SymbolType.KEY_V, 'v'),
+                Map.entry(SymbolType.KEY_W, 'w'),
+                Map.entry(SymbolType.KEY_X, 'x'),
+                Map.entry(SymbolType.KEY_Y, 'y'),
+                Map.entry(SymbolType.KEY_Z, 'z')
+
         );
     }
 

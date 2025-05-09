@@ -218,7 +218,7 @@ public class GameState {
                 }
                 final String itemName = String.format("%s (%c)",
                         getItemName(getPlayer(), item, !config.isTerse()),
-                        item.getPackChar());
+                        SymbolMapper.getSymbol(item.getInventoryKey()));
                 messageSystem.msg(itemName);
             } else {
                 if (!config.isTerse()) {

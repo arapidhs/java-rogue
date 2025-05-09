@@ -22,12 +22,12 @@ public class InventoryTest {
 
         // Test adding first item (Food) to empty inventory
         final Food food = new Food();
-        assertNull(food.getPackChar()); // Verify no pack character assigned initially
+        assertNull(food.getInventoryKey()); // Verify no pack character assigned initially
         assertFalse(food.hasFlag(ItemFlag.ISFOUND)); // Verify ISFOUND flag not set initially
 
         // Add Food and verify it gets 'a' and ISFOUND flag
         assertTrue(inventory.addToPack(food)); // Should succeed as inventory is empty
-        assertEquals('a', food.getPackChar()); // First item gets 'a'
+        assertEquals(SymbolType.KEY_A, food.getInventoryKey()); // First item gets 'a'
         assertTrue(food.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set on addition
         assertEquals(1, inventory.getPackSize()); // Pack size increments
         assertEquals(1, inventory.getItems().size()); // One item in inventory
@@ -35,14 +35,14 @@ public class InventoryTest {
         // Test stacking additional Food (stackable item)
         final Food additionalFood = new Food();
         assertTrue(inventory.addToPack(additionalFood)); // Should stack with existing Food
-        assertEquals('a', additionalFood.getPackChar()); // Shares 'a' with first Food
+        assertEquals(SymbolType.KEY_A, additionalFood.getInventoryKey()); // Shares 'a' with first Food
         assertEquals(2, inventory.getPackSize()); // Pack size increments for stack
         assertEquals(1, inventory.getItems().size()); // Still one item due to stacking
 
         // Test adding non-stackable item (Armor)
         final Armor plateMail = new Armor(ArmorType.PLATE_MAIL);
         assertTrue(inventory.addToPack(plateMail)); // Should add as new item
-        assertEquals('b', plateMail.getPackChar()); // Gets next character 'b'
+        assertEquals(SymbolType.KEY_B, plateMail.getInventoryKey()); // Gets next character 'b'
         assertTrue(plateMail.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(3, inventory.getPackSize()); // Pack size increments
         assertEquals(2, inventory.getItems().size()); // Two items in inventory
@@ -50,7 +50,7 @@ public class InventoryTest {
         // Test adding stackable item (Potion)
         final Potion healingPotion = new Potion(PotionType.HEALING);
         assertTrue(inventory.addToPack(healingPotion)); // Should add as new item
-        assertEquals('c', healingPotion.getPackChar()); // Gets next character 'c'
+        assertEquals(SymbolType.KEY_C, healingPotion.getInventoryKey()); // Gets next character 'c'
         assertTrue(healingPotion.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(4, inventory.getPackSize()); // Pack size increments
         assertEquals(3, inventory.getItems().size()); // Three items in inventory
@@ -58,7 +58,7 @@ public class InventoryTest {
         // Test adding another stackable item (Scroll)
         final Scroll identifyScroll = new Scroll(ScrollType.IDENTIFY_SCROLL);
         assertTrue(inventory.addToPack(identifyScroll)); // Should add as new item
-        assertEquals('d', identifyScroll.getPackChar()); // Gets next character 'd'
+        assertEquals(SymbolType.KEY_D, identifyScroll.getInventoryKey()); // Gets next character 'd'
         assertTrue(identifyScroll.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(5, inventory.getPackSize()); // Pack size increments
         assertEquals(4, inventory.getItems().size()); // Four items in inventory
@@ -66,7 +66,7 @@ public class InventoryTest {
         // Test adding another Potion (different subtype)
         final Potion blindnessPotion = new Potion(PotionType.BLINDNESS);
         assertTrue(inventory.addToPack(blindnessPotion)); // Should add as new item (different subtype)
-        assertEquals('e', blindnessPotion.getPackChar()); // Gets next character 'e'
+        assertEquals(SymbolType.KEY_E, blindnessPotion.getInventoryKey()); // Gets next character 'e'
         assertTrue(blindnessPotion.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(6, inventory.getPackSize()); // Pack size increments
         assertEquals(5, inventory.getItems().size()); // Five items in inventory
@@ -74,7 +74,7 @@ public class InventoryTest {
         // Test adding another non-stackable item (Armor)
         final Armor leatherArmor = new Armor(ArmorType.LEATHER);
         assertTrue(inventory.addToPack(leatherArmor)); // Should add as new item
-        assertEquals('f', leatherArmor.getPackChar()); // Gets next character 'f'
+        assertEquals(SymbolType.KEY_F, leatherArmor.getInventoryKey()); // Gets next character 'f'
         assertTrue(leatherArmor.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(7, inventory.getPackSize()); // Pack size increments
         assertEquals(6, inventory.getItems().size()); // Six items in inventory
@@ -82,7 +82,7 @@ public class InventoryTest {
         // Test stacking another Healing Potion
         final Potion additionalHealingPotion = new Potion(PotionType.HEALING);
         assertTrue(inventory.addToPack(additionalHealingPotion)); // Should stack with existing Healing Potion
-        assertEquals('c', additionalHealingPotion.getPackChar()); // Shares 'c' with first Healing Potion
+        assertEquals(SymbolType.KEY_C, additionalHealingPotion.getInventoryKey()); // Shares 'c' with first Healing Potion
         assertTrue(additionalHealingPotion.hasFlag(ItemFlag.ISFOUND)); // ISFOUND flag set
         assertEquals(8, inventory.getPackSize()); // Pack size increments
         assertEquals(6, inventory.getItems().size()); // Still six items due to stacking
@@ -90,7 +90,7 @@ public class InventoryTest {
         // Test adding a Dagger (non-stackable but groupable)
         final Weapon dagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
         assertTrue(inventory.addToPack(dagger)); // Should add as new item
-        assertEquals('g', dagger.getPackChar()); // Gets next character 'g'
+        assertEquals(SymbolType.KEY_G, dagger.getInventoryKey()); // Gets next character 'g'
         assertEquals(9, inventory.getPackSize()); // Pack size increments
         assertEquals(7, inventory.getItems().size()); // Seven items in inventory
 
@@ -98,14 +98,14 @@ public class InventoryTest {
         final Weapon additionalDagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
         additionalDagger.setGroup(dagger.getGroup()); // Ensure same group for grouping
         assertTrue(inventory.addToPack(additionalDagger)); // Should group with existing Dagger
-        assertEquals('g', additionalDagger.getPackChar()); // Shares 'g' with first Dagger
+        assertEquals(SymbolType.KEY_G, additionalDagger.getInventoryKey()); // Shares 'g' with first Dagger
         assertEquals(9, inventory.getPackSize()); // Pack size does not increment due to grouping
         assertEquals(7, inventory.getItems().size()); // Still seven items due to grouping
 
         // Test adding a Dagger with a different group
         final Weapon separateGroupDagger = weaponsFactory.initializeWeapon(WeaponType.DAGGER);
         assertTrue(inventory.addToPack(separateGroupDagger)); // Should add as new item (different group)
-        assertEquals('h', separateGroupDagger.getPackChar()); // Gets next character 'h'
+        assertEquals(SymbolType.KEY_H, separateGroupDagger.getInventoryKey()); // Gets next character 'h'
         assertEquals(10, inventory.getPackSize()); // Pack size increments
         assertEquals(8, inventory.getItems().size()); // Eight items in inventory
 
@@ -123,6 +123,6 @@ public class InventoryTest {
                         item.getClass().getSimpleName(),
                         item.getCount(),
                         item.getItemSubType(),
-                        item.getPackChar()));
+                        item.getInventoryKey()));
     }
 }

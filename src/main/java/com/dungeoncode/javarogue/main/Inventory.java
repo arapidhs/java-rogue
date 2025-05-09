@@ -2,8 +2,10 @@ package com.dungeoncode.javarogue.main;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Manages the player's inventory, including item stacking, pack character assignment,
@@ -41,7 +43,7 @@ public class Inventory {
         Objects.requireNonNull(item);
         boolean added = false;
         if (items.isEmpty()) {
-            item.setPackChar(assignPackChar());
+            item.setInventoryKey(assignInventoryKey());
             items.add(item);
             packSize++;
             added = true;
@@ -74,24 +76,24 @@ public class Inventory {
                 // Stack if identical and allowed
                 if (isStackable && checkPackRoom()) {
                     existing.setCount(existing.getCount() + item.getCount());
-                    item.setPackChar(existing.getPackChar());
+                    item.setInventoryKey(existing.getInventoryKey());
                     packSize++;
                     added = true;
                 } else if (item.getGroup() != 0 && existing.getGroup() == item.getGroup()) {
                     // Handle grouped-but-not-stackable logic (e.g., arrows of same origin)
                     existing.setCount(existing.getCount() + item.getCount());
-                    item.setPackChar(existing.getPackChar());
+                    item.setInventoryKey(existing.getInventoryKey());
                     added = true;
                 } else if (checkPackRoom()) {
                     // Insert directly after matching subtype
-                    item.setPackChar(assignPackChar());
+                    item.setInventoryKey(assignInventoryKey());
                     items.add(matchIndex + 1, item);
                     packSize++;
                     added = true;
                 }
 
             } else if (checkPackRoom()) {
-                item.setPackChar(assignPackChar());
+                item.setInventoryKey(assignInventoryKey());
                 // Maintain relative order by inserting after last of same type
                 if (lastTypeMatchIndex >= 0) {
                     items.add(lastTypeMatchIndex + 1, item);
@@ -111,20 +113,21 @@ public class Inventory {
     }
 
     /**
-     * Assigns a unique pack character ('a' to 'z') for a new item.
+     * Assigns a unique Inventory key for a new item.
      *
-     * @return The next available pack character.
-     * @throws IllegalStateException if no pack characters are available.
+     * @return The next available Inventory key.
+     * @throws IllegalStateException if no inventory keys are available.
+     * @see SymbolType#INVENTORY_KEYS
      */
-    private char assignPackChar() {
-        for (char c = 'a'; c <= 'z'; c++) {
-            final char currentChar = c;
-            boolean isUsed = items.stream().anyMatch(item -> item.getPackChar() != null && item.getPackChar() == currentChar);
+    private SymbolType assignInventoryKey() {
+        for (SymbolType key : SymbolType.INVENTORY_KEYS) {
+            final SymbolType currentKey = key;
+            boolean isUsed = items.stream().anyMatch(item -> item.getInventoryKey() != null && item.getInventoryKey() == currentKey);
             if (!isUsed) {
-                return currentChar;
+                return currentKey;
             }
         }
-        throw new IllegalStateException("No pack characters available");
+        throw new IllegalStateException("No inventory keys available");
     }
 
     /**

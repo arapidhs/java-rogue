@@ -12,8 +12,7 @@ public class Item extends Entity {
     private final EnumSet<ItemFlag> itemFlags;
     private int count;
 
-    // TODO replace packChar with Symbol SymbolType, something more abstract.
-    private Character packChar;
+    private SymbolType inventoryKey;
     private int group;
     private String label;
     private int armorClass;
@@ -59,12 +58,12 @@ public class Item extends Entity {
         return itemSubType;
     }
 
-    public Character getPackChar() {
-        return packChar;
+    public  SymbolType getInventoryKey() {
+        return  inventoryKey;
     }
 
-    public void setPackChar(final Character packChar) {
-        this.packChar = packChar;
+    public void setInventoryKey(final SymbolType inventoryKey) {
+        this.inventoryKey = inventoryKey;
     }
 
     public int getCount() {
