@@ -11,6 +11,7 @@ import java.util.Objects;
  */
 public class Level extends Entity {
 
+    private final RogueRandom rogueRandom;
     private final List<Item> items;
     private final List<Monster> monsters;
     private final Place[][] places;
@@ -25,8 +26,10 @@ public class Level extends Entity {
      * @param maxWidth  The maximum width of the level map.
      * @param maxHeight The maximum height of the level map.
      */
-    public Level(final int maxWidth, final int maxHeight) {
+    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
         super();
+        Objects.requireNonNull(rogueRandom);
+        this.rogueRandom=rogueRandom;
         this.items = new ArrayList<>();
         this.monsters = new ArrayList<>();
         this.places = new Place[maxHeight][maxWidth];
@@ -34,6 +37,62 @@ public class Level extends Entity {
         this.passages = new ArrayList<>();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
+    }
+
+    /**
+     * Finds a valid floor spot in a room for item or monster placement.
+     * If room is null, picks a random non-GONE room each attempt.
+     * Based on C function find_floor() in Rogue source.
+     *
+     * @param room   The room to search, or null to pick randomly.
+     * @param limit  Maximum attempts; 0 for unlimited.
+     * @param forMonster True if placing a monster, false for items.
+     * @return A Position with a valid floor spot, or null if none found.
+     * @throws IllegalStateException if no valid rooms exist when room is null.
+     */
+    @Nullable
+    public Position findFloor(@Nullable Room room, final  int limit, final boolean forMonster) {
+        int attempts = limit;
+
+        while (true) {
+            if (limit > 0 && attempts-- == 0) {
+                return null;
+            }
+
+            if(room==null){
+                room=rndRoom();
+            }
+
+            final Position pos = room.rndPos(rogueRandom);
+            final Place place = getPlaceAt(pos.getX(), pos.getY());
+            final PlaceType expectedType = room.hasFlag(RoomFlag.MAZE) ? PlaceType.PASSAGE : PlaceType.FLOOR;
+
+            if (forMonster && place.isStepOk()) {
+                return pos;
+            } else if (place.isType(expectedType)) {
+                return pos;
+            }
+        }
+    }
+
+    /**
+     * Picks a random room that is not marked as GONE.
+     * Based on C function rnd_room() in Rogue source.
+     *
+     * @return A non-null Room that exists.
+     * @throws IllegalStateException if no valid rooms exist.
+     */
+    @Nonnull
+    public Room rndRoom() {
+        if (rooms.isEmpty()) {
+            throw new IllegalStateException("No rooms available");
+        }
+        Room room;
+        do {
+            int rm = rogueRandom.rnd(rooms.size());
+            room = rooms.get(rm);
+        } while (room.hasFlag(RoomFlag.GONE));
+        return room;
     }
 
     public void setPlaceAt(final int x, final int y, @Nonnull final Place place) {

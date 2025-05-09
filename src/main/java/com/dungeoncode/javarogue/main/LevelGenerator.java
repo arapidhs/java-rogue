@@ -44,7 +44,7 @@ public class LevelGenerator {
      * @param levelNum The level number for this level (affects random generation behavior).
      */
     public void initializeLevel(final int levelNum) {
-        this.level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
+        this.level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),this.rogueRandom);
         this.levelNum = levelNum;
 
         // Initialize places array with empty spaces and REAL flag

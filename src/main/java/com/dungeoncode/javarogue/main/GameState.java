@@ -25,6 +25,7 @@ public class GameState {
     private int levelNum;
     private int goldAmount;
     private Level currentLevel;
+    private boolean playing;
 
     public GameState(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom, @Nonnull RogueScreen screen,
                      @Nullable final Initializer initializer, final @Nonnull MessageSystem messageSystem) {
@@ -340,5 +341,13 @@ public class GameState {
 
     public RogueScreen getScreen() {
         return screen;
+    }
+
+    public boolean isPlaying() {
+        return playing;
+    }
+
+    public void setPlaying(boolean playing) {
+        this.playing = playing;
     }
 }

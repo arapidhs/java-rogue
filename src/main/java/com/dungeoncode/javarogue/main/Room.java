@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a room in the game, storing its position, size, gold, exits, and flags.
@@ -20,6 +21,23 @@ public class Room extends Entity {
         super();
         this.exits = new ArrayList<>();
         this.roomFlags = EnumSet.noneOf(RoomFlag.class);
+    }
+
+    /**
+     * Generates a random position within the room, excluding the 1-tile border.
+     * Based on C function rnd_pos() in Rogue source.
+     *
+     * @param rogueRandom The random number generator.
+     * @return A random Position inside the room's inner area.
+     * @throws NullPointerException if rogueRandom, position, or size is null.
+     */
+    @Nonnull
+    public Position rndPos(@Nonnull RogueRandom rogueRandom) {
+        Objects.requireNonNull(rogueRandom);
+
+        int x = getX() + rogueRandom.rnd(size.getX() - 2) + 1;
+        int y = getY() + rogueRandom.rnd(size.getY() - 2) + 1;
+        return new Position(x, y);
     }
 
     public boolean hasFlag(@Nonnull final RoomFlag roomFlag) {

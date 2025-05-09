@@ -25,7 +25,7 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
 
         // Create level with configured dimensions
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
         gameState.setCurrentLevel(level);
 
         // Test adding Food item silently
@@ -96,7 +96,7 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
 
         // Create level with configured dimensions
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight());
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
         gameState.setCurrentLevel(level);
 
         // Test picking up a Food item

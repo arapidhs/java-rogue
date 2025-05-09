@@ -26,6 +26,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
         final Player player = gameState.getPlayer();
 
         // Verify initial player configuration matches config settings
+        assertTrue(gameState.isPlaying());
         assertEquals(config.getPlayerName(), player.getPlayerName());
         assertEquals(config.getMaxPack(), player.getInventory().getMaxPack());
         assertEquals(config.getFoodLeft(), player.getFoodLeft());
