@@ -60,9 +60,10 @@ public class GameState {
     }
 
     /**
-     * Executes the main game loop, processing turns until the game ends. Each turn consists of three phases:
+     * Executes the main game loop, processing turns until the game ends. Each turn consists of four phases:
      * <ul>
      *   <li><b>START_TURN</b>: Executes commands for pre-player actions (e.g., monster movement).</li>
+     *   <li><b>UPKEEP_TURN</b>: Executes commands for status updates (e.g., player status display).</li>
      *   <li><b>MAIN_TURN</b>: Reads player input, queues the resulting command, and executes MAIN_TURN commands.</li>
      *   <li><b>END_TURN</b>: Executes commands for post-player actions (e.g., status effects).</li>
      * </ul>
@@ -80,30 +81,39 @@ public class GameState {
     public void loop() {
         this.playing = true;
         this.commandFactory = new CommandFactory();
+        addCommand(new CommandShowPlayerStatus());
         while (true) {
             processPhase(Phase.START_TURN);
+            screen.refresh();
             if (!playing) {
                 break;
             }
+
+            processPhase(Phase.UPKEEP_TURN);
             screen.refresh();
+            if (!playing) {
+                break;
+            }
 
             KeyStroke keyStroke = screen.readInput();
             final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
             if (playerCommand != null) {
                 addCommand(playerCommand);
             }
+            getMessageSystem().clearMessage();
 
             processPhase(Phase.MAIN_TURN);
+            screen.refresh();
             if (!playing) {
                 break;
             }
-            screen.refresh();
 
             processPhase(Phase.END_TURN);
+            screen.refresh();
             if (!playing) {
                 break;
             }
-            screen.refresh();
+
         }
     }
 
@@ -163,17 +173,6 @@ public class GameState {
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
 
-        // TODO test the edge case where player starts in maze and then enterRoom is callded
-        // then later het roomIn method will identify that player is on a
-        // PASS place and return the respective passage which has null pos and size
-        // probably this is why it triggers an NPE later
-        //
-        // it seems that enter room intentionally does not draw out
-        // the maze or hte passages, only defined rooms with pos and size
-        // mazes DO have ps and size but enter room calls roomin which
-        // in turn returns the respective passage of the maze and not the
-        // actual maze itself. This is done to prevent drawing the entire
-        // maze for the player. Investigate how it interacts with enter room
         final Position pos = level.findFloor(null, 0, true);
         assert pos!=null;
         player.setPosition(pos.getX(), pos.getY());
@@ -552,4 +551,9 @@ public class GameState {
     public Map<Phase, Boolean> getPhaseActivity() {
         return phaseActivity;
     }
+
+    public MessageSystem getMessageSystem() {
+        return messageSystem;
+    }
+
 }

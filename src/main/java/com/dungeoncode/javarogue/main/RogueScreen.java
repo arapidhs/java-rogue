@@ -86,9 +86,9 @@ public class RogueScreen extends TerminalScreen {
     public void waitFor(char ch) throws IOException {
         while (true) {
             final KeyStroke key = readInput();
-            if ((ch == '\n' || ch == '\r') && key.getKeyType() == KeyType.Escape) {
+            if ((ch == '\n' || ch == '\r') && key.getKeyType() == KeyType.Enter) {
                 return;
-            } else if (key.getCharacter() == ch) {
+            } else if ( key.getCharacter()!=null && key.getCharacter() == ch) {
                 return;
             }
         }

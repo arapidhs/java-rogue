@@ -118,6 +118,7 @@ public class Config {
     private boolean allowMultipleScores;
     private final int amuletLevel;
     private final boolean statMsg;
+    private final int statLine;
 
     public Config() {
         this(null);
@@ -168,6 +169,7 @@ public class Config {
         this.maxPassages = DEFAULT_MAX_PASSAGES;
         this.amuletLevel=DEFAULT_AMULET_LEVEL;
         this.statMsg=DEFAULT_STATUS_AS_MESSAGE;
+        this.statLine=this.terminalRows-1;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -413,4 +415,7 @@ public class Config {
         return statMsg;
     }
 
+    public int getStatLine() {
+        return statLine;
+    }
 }
