@@ -60,6 +60,10 @@ public class DefaultInitializerTest extends RogueBaseTest {
         final Armor ringMail = new Armor(ArmorType.RING_MAIL);
         assertTrue(initialRingMail.getArmorClass() < ringMail.getArmorClass());
 
+        assertNull(gameState.getGameEndReason());
+        assertNull(gameState.getDeathSource());
+        assertEquals(0,gameState.getGoldAmount());
+
     }
 
     @Test

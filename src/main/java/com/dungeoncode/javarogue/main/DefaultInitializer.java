@@ -64,6 +64,11 @@ public class DefaultInitializer implements Initializer {
         arrow.setCount(gameState.getRogueRandom().rnd(15) + 25);
         arrow.addFlag(ItemFlag.ISKNOW);
         gameState.addToPack(arrow, silent);
+
+        gameState.setGameEndReason(null);
+        gameState.setDeathSource(null);
+        gameState.setGoldAmount(0);
+
     }
 
     private void initializeItemData(@Nonnull final GameState gameState) {
