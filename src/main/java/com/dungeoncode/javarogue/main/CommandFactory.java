@@ -9,16 +9,56 @@ public class CommandFactory {
         if (keyStroke.getKeyType() == KeyType.Character) {
             char ch = keyStroke.getCharacter();
             return switch (ch) {
+                case 'h' -> {
+                    yield new DoMoveCommand(new Position(-1, 0)); // move left
+                }
+                case 'j' -> {
+                    yield new DoMoveCommand(new Position(0, 1)); // move down
+                }
+                case 'k' -> {
+                    yield new DoMoveCommand(new Position(0, -1)); // move up
+                }
+                case 'l' -> {
+                    yield new DoMoveCommand(new Position(1, 0)); /// move right
+                }
+                case 'y' -> {
+                    yield new DoMoveCommand(new Position(-1, -1)); /// move up left
+                }
+                case 'u' -> {
+                    yield new DoMoveCommand(new Position(1, -1)); /// move up right
+                }
+                case 'b' -> {
+                    yield new DoMoveCommand(new Position(-1, 1)); /// move down left
+                }
+                case 'n' -> {
+                    yield new DoMoveCommand(new Position(1, 1)); /// move down right
+                }
                 case 's' -> {
                     yield new ShowMapCommand();
                 }
                 default -> {
-                    yield  null;
+                    yield null;
                 }
-            }; // Left
-        } else if (keyStroke.getKeyType() == KeyType.Escape) {
-            return new QuitCommand();
+            };
+        } else {
+            final KeyType keyType = keyStroke.getKeyType();
+            return switch (keyType) {
+                case ArrowUp -> {yield fromKeyStroke(KeyStroke.fromString("k"));}
+                case ArrowDown -> {yield fromKeyStroke(KeyStroke.fromString("j"));}
+                case ArrowLeft -> {yield fromKeyStroke(KeyStroke.fromString("h"));}
+                case ArrowRight -> {yield fromKeyStroke(KeyStroke.fromString("l"));}
+                case PageUp -> {yield fromKeyStroke(KeyStroke.fromString("u"));}
+                case PageDown -> {yield fromKeyStroke(KeyStroke.fromString("n"));}
+                case Home -> {yield fromKeyStroke(KeyStroke.fromString("y"));}
+                case End -> {yield fromKeyStroke(KeyStroke.fromString("b"));}
+                case Escape -> {
+                    yield new QuitCommand();
+                }
+                default -> {
+                    yield null;
+                }
+            };
+
         }
-        return null;
     }
 }

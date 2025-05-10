@@ -2,6 +2,8 @@ package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -81,6 +83,8 @@ public class GameState {
             if(!playing){
                 break;
             }
+            screen.refresh();
+
             // Main turn phase: read player input
             KeyStroke keyStroke = screen.readInput();
             final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
@@ -92,11 +96,15 @@ public class GameState {
             if(!playing){
                 break;
             }
+            screen.refresh();
+
             // End turn phase
             processPhase(Phase.END_TURN);
             if(!playing){
                 break;
             }
+            screen.refresh();
+
         }
     }
 
@@ -139,6 +147,7 @@ public class GameState {
         commandQueue.offer(command);
     }
 
+    // TODO newLevel unit test
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
@@ -149,6 +158,18 @@ public class GameState {
         final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
+
+        // TODO test the edge case where player starts in maze and then enterRoom is callded
+        // then later het roomIn method will identify that player is on a
+        // PASS place and return the respective passage which has null pos and size
+        // probably this is why it triggers an NPE later
+        //
+        // it seems that enter room intentionally does not draw out
+        // the maze or hte passages, only defined rooms with pos and size
+        // mazes DO have ps and size but enter room calls roomin which
+        // in turn returns the respective passage of the maze and not the
+        // actual maze itself. This is done to prevent drawing the entire
+        // maze for the player. Investigate how it interacts with enter room
         final Position pos = level.findFloor(null, 0, true);
         assert pos!=null;
         player.setPosition(pos.getX(), pos.getY());
@@ -199,8 +220,6 @@ public class GameState {
                 }
                 if(place.isType(PlaceType.PASSAGE)) {
                     screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
-                }else if (!place.isReal()&&place.isType(PlaceType.WALL)){
-                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.DOOR));
                 } else {
                     screen.putChar(x,y,SymbolMapper.getSymbol(place.getSymbolType()));
                 }
@@ -209,7 +228,6 @@ public class GameState {
                 }
             }
         }
-        screen.refresh();
     }
 
     /**
@@ -230,7 +248,7 @@ public class GameState {
                 // Check for and deal with scare monster scrolls
                 if (item.getObjectType() == ObjectType.SCROLL && item.getItemSubType() == ScrollType.SCARE_MONSTER
                         && item.getItemFlags().contains(ItemFlag.ISFOUND)) {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(getFloorSymbolType()));
+                    screen.putChar(x, y, SymbolMapper.getSymbol(floorCh()));
                     setPlaceSymbolTypeAt(x, y, room.getSymbolType());
                     currentLevel.removeItem(item);
                     messageSystem.msg(MSG_SCROLL_TURNS_TO_DUST);
@@ -238,7 +256,7 @@ public class GameState {
                     boolean itemAdded = addToPack(item, silent);
                     if (itemAdded) {
                         currentLevel.removeItem(item);
-                        screen.putChar(x, y, SymbolMapper.getSymbol(getFloorSymbolType()));
+                        screen.putChar(x, y, SymbolMapper.getSymbol(floorCh()));
                         setPlaceSymbolTypeAt(x, y, room.getSymbolType());
                     } else {
                         // Notify player if item cannot be picked up
@@ -285,19 +303,33 @@ public class GameState {
     /**
      * Returns the symbol type that should be rendered at the player's current position,
      * based on the room type and visibility.
+     * <p>
+     * It is the equivalent of char floor_ch().
      *
      * <p>If the player is in a corridor or the floor should be shown (e.g., lit room or non-blind state),
      * the actual room symbol type is returned. Otherwise, the fallback symbol for an empty room is used.</p>
      *
      * @return the character representing the floor or empty space at the player's position
      */
-    private SymbolType getFloorSymbolType() {
+    private SymbolType floorCh() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
         if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
             return room.getSymbolType();
         } else {
             return SymbolType.EMPTY;
         }
+    }
+
+    // TODO unit test for floorAt equivalent of char floor_at()
+    public SymbolType floorAt(){
+        final Place place = currentLevel.getPlaceAt(player.getX(), player.getY());
+        if(place!=null){
+            if(place.getSymbolType().equals(SymbolType.FLOOR)){
+                return floorCh();
+            };
+            return place.getSymbolType();
+        }
+        return null;
     }
 
     /**
@@ -384,6 +416,7 @@ public class GameState {
     /**
      * Determines if the floor symbol in the player's current room should be rendered.
      *
+     * <p>It is the equivalent of bool show_floor()
      * <p>Only rooms that are not corridors and not dark, or if the player is not blind,
      * will have their floor shown depending on the config flag {@code seeFloor}.</p>
      *

@@ -121,7 +121,7 @@ public class Level extends Entity {
             final Position pos = room.rndPos(rogueRandom);
             final Place place = getPlaceAt(pos.getX(), pos.getY());
             final PlaceType expectedType = room.hasFlag(RoomFlag.MAZE) ? PlaceType.PASSAGE : PlaceType.FLOOR;
-
+            assert place!=null;
             if (forCreature && place.isStepOk()) {
                 return pos;
             } else if (place.isType(expectedType)) {
@@ -204,6 +204,7 @@ public class Level extends Entity {
      * @return The Place at (x, y).
      * @throws IllegalArgumentException If coordinates are out of bounds.
      */
+    @Nullable
     public Place getPlaceAt(final int x, final int y) {
         validateCoordinates(x, y);
         final Place place = places[y][x];
