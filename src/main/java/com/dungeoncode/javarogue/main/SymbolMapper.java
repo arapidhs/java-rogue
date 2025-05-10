@@ -10,10 +10,10 @@ import java.util.Objects;
 public class SymbolMapper {
 
     private static final Map<SymbolType, Character> SYMBOL_REGISTRY;
+    private static final Map<Class<?>, SymbolType> CLASS_TO_SYMBOL_TYPE;
 
     static {
         SYMBOL_REGISTRY = Map.ofEntries(
-
                 Map.entry(SymbolType.EMPTY, ' '),
                 Map.entry(SymbolType.PASSAGE, '#'),
                 Map.entry(SymbolType.FLOOR, '.'),
@@ -30,6 +30,8 @@ public class SymbolMapper {
                 Map.entry(SymbolType.ROD, '/'),
                 Map.entry(SymbolType.AMULET, ','),
                 Map.entry(SymbolType.GOLD, '*'),
+
+                Map.entry(SymbolType.PLAYER, '@'),
 
                 // Inventory key symbols
                 Map.entry(SymbolType.KEY_A, 'a'),
@@ -58,8 +60,39 @@ public class SymbolMapper {
                 Map.entry(SymbolType.KEY_X, 'x'),
                 Map.entry(SymbolType.KEY_Y, 'y'),
                 Map.entry(SymbolType.KEY_Z, 'z')
-
         );
+
+        CLASS_TO_SYMBOL_TYPE = Map.ofEntries(
+                Map.entry(Player.class, SymbolType.PLAYER),
+                Map.entry(Armor.class, SymbolType.ARMOR),
+                Map.entry(Potion.class, SymbolType.POTION),
+                Map.entry(Scroll.class, SymbolType.SCROLL),
+                Map.entry(Food.class, SymbolType.FOOD),
+                Map.entry(Ring.class, SymbolType.RING),
+                Map.entry(Weapon.class, SymbolType.WEAPON),
+                Map.entry(Rod.class, SymbolType.ROD),
+                Map.entry(Amulet.class, SymbolType.AMULET),
+                Map.entry(Gold.class, SymbolType.GOLD)
+        );
+    }
+
+    /**
+     * Returns the character symbol for a given game element class.
+     * If the class is {@code SymbolType.class}, redirects to {@link #getSymbol(SymbolType)}
+     * assuming the input is a {@code SymbolType} instance. Otherwise, maps the class to a
+     * {@code SymbolType} and retrieves the corresponding symbol.
+     *
+     * @param clazz The class to get the character symbol for.
+     * @return The display character.
+     * @throws IllegalArgumentException If the class is not mapped or the input is invalid.
+     */
+    public static char getSymbol(@Nonnull final Class<?> clazz) {
+        Objects.requireNonNull(clazz);
+        final SymbolType symbolType = CLASS_TO_SYMBOL_TYPE.get(clazz);
+        if (symbolType == null) {
+            throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_CLASS + clazz.getSimpleName());
+        }
+        return getSymbol(symbolType);
     }
 
     /**

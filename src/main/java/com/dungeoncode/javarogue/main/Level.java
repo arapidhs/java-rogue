@@ -1,5 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.Objects;
  * Represents a level in the game, managing items, monsters, rooms, and the map grid.
  */
 public class Level extends Entity {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Level.class);
 
     private final RogueRandom rogueRandom;
     private final List<Item> items;
@@ -86,6 +91,7 @@ public class Level extends Entity {
         }
 
         // No room or passage found
+        LOGGER.debug("No room found at {},{}",x,y);
         return null;
     }
     /**
@@ -200,7 +206,11 @@ public class Level extends Entity {
      */
     public Place getPlaceAt(final int x, final int y) {
         validateCoordinates(x, y);
-        return places[y][x];
+        final Place place = places[y][x];
+        if(place==null){
+            LOGGER.debug("No place found at {},{}",x,y);
+        }
+        return place;
     }
 
     /**

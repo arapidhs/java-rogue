@@ -22,6 +22,8 @@ class SymbolMapperTest {
         assertEquals('|', SymbolMapper.getSymbol(SymbolType.WALL_VERTICAL));
         assertEquals('-', SymbolMapper.getSymbol(SymbolType.WALL_HORIZONTAL));
         assertEquals('+', SymbolMapper.getSymbol(SymbolType.DOOR));
+
+        assertEquals('@', SymbolMapper.getSymbol(Player.class));
     }
 
 }

@@ -24,6 +24,7 @@ public class Messages {
     public static final String ERROR_LEVEL_COORDS_OUT_OF_BOUNDS = "Coordinates (%d, %d) out of bounds for level size %dx%d";
     public static final String ERROR_NO_DEATH_CAUSES = "No available death causes to select from.";
     public static final String ERROR_NO_OBJECT_INFO_TEMPLATE_FOUND = "No %s found for ItemSubType %s";
+    public static final String ERROR_NO_SYMBOL_FOR_CLASS = "No symbol mapped for class: ";
     public static final String ERROR_NO_SYMBOL_FOR_TYPE = "No symbol mapped for type: ";
 
 

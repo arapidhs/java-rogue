@@ -10,7 +10,7 @@ public class CommandFactory {
             char ch = keyStroke.getCharacter();
             return switch (ch) {
                 case 's' -> {
-                    yield new NewLevelCommand();
+                    yield new ShowMapCommand();
                 }
                 default -> {
                     yield  null;

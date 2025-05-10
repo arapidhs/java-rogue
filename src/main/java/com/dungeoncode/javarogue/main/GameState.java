@@ -140,6 +140,7 @@ public class GameState {
     }
 
     public void newLevel(final int levelNum) {
+        screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
         this.levelNum = levelNum;
         if (levelNum > maxLevel) {
@@ -148,9 +149,15 @@ public class GameState {
         final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
-        Position floor = level.findFloor(null, 0, true);
+        final Position pos = level.findFloor(null, 0, true);
+        assert pos!=null;
+        player.setPosition(pos.getX(), pos.getY());
+        enterRoom(pos.getX(), pos.getY());
+        screen.putChar(pos.getX(),pos.getY(),SymbolMapper.getSymbol(player.getClass()));
+        screen.refresh();
     }
 
+    @Nullable
     public Room roomIn(final int x, final int y) {
         final Room room = currentLevel.roomIn(x, y);
         if(room==null){
@@ -164,6 +171,21 @@ public class GameState {
 
     private void abort() {
         System.exit(1);
+    }
+
+    // TODO temporary testing method, this should be the equivalent of enter_room(coord *cp)
+    public void enterRoom(final int posX, final int posY){
+        final Room room = roomIn(posX,posY);
+        if (room!=null){
+            for(int y=room.getY();y<room.getY()+room.getSize().getY();y++){
+                for(int x=room.getX();x<room.getX()+room.getSize().getX();x++){
+                    final Place place = currentLevel.getPlaceAt(x, y);
+                    if(place!=null){
+                        screen.putChar(x,y,SymbolMapper.getSymbol(place.getSymbolType()));
+                    }
+                }
+            }
+        }
     }
 
     //TODO: method to show map for debugging purpose only
@@ -187,6 +209,7 @@ public class GameState {
                 }
             }
         }
+        screen.refresh();
     }
 
     /**

@@ -11,7 +11,7 @@ package com.dungeoncode.javarogue.main;
  * particularly in rooms.c (e.g., init_rooms()), and integrates with Lanterna for rendering,
  * replacing the C code's curses-based display.
  */
-public class NewLevelCommand implements Command {
+public class ShowMapCommand implements Command {
 
     /**
      * Executes the command to generate and display a new dungeon level.
@@ -26,11 +26,7 @@ public class NewLevelCommand implements Command {
      */
     @Override
     public void execute(GameState gameState) {
-        gameState.getScreen().clear();
-        gameState.newLevel(gameState.getRogueRandom().rnd(
-                gameState.getConfig().getAmuletLevel()));
         gameState.showMap();
-        gameState.getScreen().refresh();
     }
 
     /**
