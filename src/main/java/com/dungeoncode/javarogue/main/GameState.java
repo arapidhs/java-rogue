@@ -203,12 +203,12 @@ public class GameState {
     // TODO temporary testing method, this should be the equivalent of enter_room(coord *cp)
     public void enterRoom(final int posX, final int posY){
         final Room room = roomIn(posX,posY);
-        if (room!=null){
-            for(int y=room.getY();y<room.getY()+room.getSize().getY();y++){
-                for(int x=room.getX();x<room.getX()+room.getSize().getX();x++){
+        if (room!=null && !room.hasFlag(RoomFlag.DARK)){
+            for (int y = room.getY(); y < room.getY() + room.getSize().getY(); y++) {
+                for (int x = room.getX(); x < room.getX() + room.getSize().getX(); x++) {
                     final Place place = currentLevel.getPlaceAt(x, y);
-                    if(place!=null){
-                        screen.putChar(x,y,SymbolMapper.getSymbol(place.getSymbolType()));
+                    if (place != null) {
+                        screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
                     }
                 }
             }

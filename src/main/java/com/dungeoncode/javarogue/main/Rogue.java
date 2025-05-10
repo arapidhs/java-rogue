@@ -158,6 +158,7 @@ public class Rogue {
 
                 final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
                 gameState.loop();
+                exit(screen);
             }
 
         } catch (Exception ex) {

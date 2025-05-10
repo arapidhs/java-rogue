@@ -254,4 +254,24 @@ public class GameStateTest extends RogueBaseTest {
         assertEquals(expectedQueueSizeAfterEnd, gameState.getCommandQueue().size()); // EternalCommand still persists
     }
 
+    @Test
+    void testNewLevelStartingAtMaze() {
+        final long problematicSeed=336362311;
+        final RogueRandom rogueRandom = new RogueRandom(problematicSeed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        final Player player = new Player(config);
+        final int levelNum=20;
+        gameState.setPlayer(player);
+        gameState.newLevel(levelNum);
+
+        final int px=gameState.getPlayer().getX();
+        final int py=gameState.getPlayer().getY();
+        final Room room = gameState.getCurrentLevel().roomIn(px, py);
+        assertNotNull(room);
+        assertTrue(room.hasFlag(RoomFlag.GONE));
+        assertTrue(room.hasFlag(RoomFlag.DARK));
+        assertInstanceOf(Passage.class, room);
+    }
+
 }
