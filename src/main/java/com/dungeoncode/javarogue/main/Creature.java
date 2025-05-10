@@ -18,8 +18,12 @@ public abstract class Creature extends Entity {
         this.creatureFlags = EnumSet.noneOf(CreatureFlag.class);
     }
 
-    public void removeFlag(@Nonnull final CreatureFlag playerFlag) {
-        creatureFlags.remove(playerFlag);
+    public void addFlag(@Nonnull final CreatureFlag creatureFlag) {
+        creatureFlags.add(creatureFlag);
+    }
+
+    public void removeFlag(@Nonnull final CreatureFlag creatureFlag) {
+        creatureFlags.remove(creatureFlag);
     }
 
     public boolean hasFlag(@Nonnull final CreatureFlag creatureFlag) {

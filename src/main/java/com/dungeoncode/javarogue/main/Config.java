@@ -370,6 +370,10 @@ public class Config {
         return seeFloor;
     }
 
+    public void setSeeFloor(boolean seeFloor) {
+        this.seeFloor = seeFloor;
+    }
+
     public boolean isTerse() {
         return terse;
     }

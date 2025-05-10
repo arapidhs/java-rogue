@@ -48,6 +48,10 @@ public class Room extends Entity {
         roomFlags.add(roomFlag);
     }
 
+    public void removeFlag(@Nonnull final RoomFlag roomFlag) {
+        roomFlags.remove(roomFlag);
+    }
+
     /**
      * Returns the dimensions of the room.
      *

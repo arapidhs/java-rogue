@@ -315,7 +315,7 @@ public class GameState {
      *
      * @return the character representing the floor or empty space at the player's position
      */
-    private SymbolType floorCh() {
+    public SymbolType floorCh() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
         if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
             return room.getSymbolType();
@@ -324,7 +324,17 @@ public class GameState {
         }
     }
 
-    // TODO unit test for floorAt equivalent of char floor_at()
+    /**
+     * Returns the symbol type to render at the player's current position, based on the place and room visibility.
+     * <p>
+     * Equivalent to C function <code>char floor_at()</code> in the Rogue source.
+     * <p>
+     * If the place at the player's position is a floor, returns the room's symbol type via {@link #floorCh()}
+     * if visible (e.g., lit room or non-blind state). Otherwise, returns the place's symbol type.
+     * Returns null if no place exists at the position.
+     *
+     * @return The symbol type to render at the player's position, or null if no place exists.
+     */
     public SymbolType floorAt(){
         final Place place = currentLevel.getPlaceAt(player.getX(), player.getY());
         if(place!=null){
@@ -426,7 +436,7 @@ public class GameState {
      *
      * @return true if the floor should be shown in the current room, false otherwise
      */
-    private boolean showFloor() {
+    public boolean showFloor() {
         final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
         if (room != null && room.hasFlag(RoomFlag.DARK) &&
                 !room.hasFlag(RoomFlag.GONE) &&

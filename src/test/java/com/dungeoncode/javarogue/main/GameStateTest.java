@@ -265,6 +265,10 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
 
+        final Room maze = gameState.getCurrentLevel().findRoomAt(player.getPosition().getX(), player.getPosition().getY());
+        assertNotNull(maze);
+        assertTrue(maze.hasFlag(RoomFlag.MAZE));
+
         final int px=gameState.getPlayer().getX();
         final int py=gameState.getPlayer().getY();
         final Room room = gameState.getCurrentLevel().roomIn(px, py);
@@ -272,6 +276,162 @@ public class GameStateTest extends RogueBaseTest {
         assertTrue(room.hasFlag(RoomFlag.GONE));
         assertTrue(room.hasFlag(RoomFlag.DARK));
         assertInstanceOf(Passage.class, room);
+    }
+
+    /**
+     * Tests the behavior of starting a new level in a maze, ensuring correct room and passage handling.
+     * Verifies that:
+     * <ul>
+     *   <li>The player starts in a maze room (has {@link RoomFlag#MAZE}).</li>
+     *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Passage} for the player's position.</li>
+     *   <li>The passage has {@link RoomFlag#GONE} and {@link RoomFlag#DARK} flags, per Rogue's maze behavior.</li>
+     * </ul>
+     * Uses a specific seed (336362311) and level 20 to reproduce maze start conditions.
+     */
+    @Test
+    void testShowFloor() {
+        final Config config=new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        final Player player = new Player(config);
+        final int levelNum=1;
+        final boolean seeFloor=false;
+        config.setSeeFloor(seeFloor);
+        gameState.setPlayer(player);
+        gameState.newLevel(levelNum);
+
+        assertFalse(config.isSeeFloor());
+
+        final Room room = gameState.getCurrentLevel().findRoomAt(player.getPosition().getX(), player.getPosition().getY());
+        assertNotNull(room);
+        room.removeFlag(RoomFlag.DARK);
+        room.removeFlag(RoomFlag.GONE);
+        player.removeFlag(CreatureFlag.ISBLIND);
+        assertTrue(gameState.showFloor());
+
+        room.addFlag(RoomFlag.DARK);
+        assertEquals(config.isSeeFloor(),gameState.showFloor());
+
+        player.addFlag(CreatureFlag.ISBLIND);
+        assertTrue(gameState.showFloor());
+    }
+
+    /**
+     * Tests the {@link GameState#floorCh()} method to ensure correct symbol type rendering at the player's position.
+     * Verifies that:
+     * <ul>
+     *   <li>In a dark, non-corridor room with {@code seeFloor = false} and player not blind, returns {@link SymbolType#EMPTY}.</li>
+     *   <li>In a corridor room ({@link RoomFlag#GONE}), returns {@link SymbolType#PASSAGE}.</li>
+     *   <li>In a lit, non-corridor room, returns {@link SymbolType#FLOOR}.</li>
+     * </ul>
+     */
+    @Test
+    void testFloorCh() {
+        final Config config=new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        final Player player = new Player(config);
+        final int levelNum=1;
+        final boolean seeFloor=false;
+        config.setSeeFloor(seeFloor);
+        gameState.setPlayer(player);
+        gameState.newLevel(levelNum);
+
+        assertFalse(config.isSeeFloor());
+
+        final Room room = gameState.getCurrentLevel().findRoomAt(player.getPosition().getX(), player.getPosition().getY());
+        assertNotNull(room);
+        room.addFlag(RoomFlag.DARK);
+        room.removeFlag(RoomFlag.GONE);
+        player.removeFlag(CreatureFlag.ISBLIND);
+        assertFalse(gameState.showFloor());
+        assertEquals(SymbolType.EMPTY,gameState.floorCh());
+
+        room.addFlag(RoomFlag.GONE);
+        assertEquals(SymbolType.PASSAGE,gameState.floorCh());
+
+        room.removeFlag(RoomFlag.GONE);
+        room.removeFlag(RoomFlag.DARK);
+        assertEquals(SymbolType.FLOOR,gameState.floorCh());
+    }
+
+    /**
+     * Tests the {@link GameState#floorAt()} method when the player starts in a maze.
+     * Verifies that:
+     * <ul>
+     *   <li>The player is in a maze room with {@link RoomFlag#MAZE}.</li>
+     *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Passage}.</li>
+     *   <li>The {@link GameState#floorAt()} method returns {@link SymbolType#PASSAGE} for the player's position.</li>
+     * </ul>
+     * Uses a specific seed (336362311) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
+     */
+    @Test
+    void testFloorAtMaze() {
+        final long startInMazeSeed=336362311;
+        final Config config=new Config();
+        final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        final Player player = new Player(config);
+        final int levelNum=20;
+        final boolean seeFloor=false;
+        config.setSeeFloor(seeFloor);
+        gameState.setPlayer(player);
+        gameState.newLevel(levelNum);
+
+        final int px=gameState.getPlayer().getX();
+        final int py=gameState.getPlayer().getY();
+
+        // Starting in maze
+        final Room maze = gameState.getCurrentLevel().findRoomAt(px,py);
+        assertNotNull(maze);
+        assertTrue(maze.hasFlag(RoomFlag.MAZE));
+
+        final Room room = gameState.getCurrentLevel().roomIn(px, py);
+        assertNotNull(room);
+        assertInstanceOf(Passage.class, room);
+        assertEquals(SymbolType.PASSAGE,gameState.floorAt());
+    }
+
+    /**
+     * Tests the {@link GameState#floorAt()} method when the player starts in a normal room.
+     * Verifies that:
+     * <ul>
+     *   <li>The player is in a non-maze, non-corridor room (no {@link RoomFlag#MAZE} or {@link RoomFlag#GONE}).</li>
+     *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Room}, not a {@link Passage}.</li>
+     *   <li>The {@link GameState#floorAt()} method returns {@link SymbolType#FLOOR} for the player's position.</li>
+     * </ul>
+     * Uses a specific seed (100) and level 1 with {@code seeFloor = false} to ensure a normal room start.
+     */
+    @Test
+    void testFloorAtNormalRoom() {
+        final long startInMazeSeed=100;
+        final Config config=new Config();
+        final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        final Player player = new Player(config);
+        final int levelNum=1;
+        final boolean seeFloor=false;
+        config.setSeeFloor(seeFloor);
+        gameState.setPlayer(player);
+        gameState.newLevel(levelNum);
+
+        final int px=gameState.getPlayer().getX();
+        final int py=gameState.getPlayer().getY();
+
+        // Starting in a normal non-maze non-gone room
+        final Room normalRoom = gameState.getCurrentLevel().findRoomAt(px,py);
+        assertNotNull(normalRoom);
+        assertFalse(normalRoom.hasFlag(RoomFlag.MAZE));
+        assertFalse(normalRoom.hasFlag(RoomFlag.GONE));
+
+        final Room room = gameState.getCurrentLevel().roomIn(px, py);
+        assertNotNull(room);
+        assertFalse(room instanceof Passage);
+        assertEquals(SymbolType.FLOOR,gameState.floorAt());
     }
 
 }
