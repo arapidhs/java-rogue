@@ -107,7 +107,9 @@ public class DefaultInitializerTest extends RogueBaseTest {
         final int startLevel = 1;
         assertNotNull(gameState.getCurrentLevel());
         assertEquals(startLevel, gameState.getLevelNum());
+        assertEquals(startLevel, gameState.getCurrentLevel().getLevelNum());
         assertEquals(startLevel, gameState.getMaxLevel());
+        assertEquals(startLevel,gameState.getPlayer().getCurrentLevel());
         assertFalse(gameState.getPlayer().hasFlag(CreatureFlag.ISHELD));
 
     }

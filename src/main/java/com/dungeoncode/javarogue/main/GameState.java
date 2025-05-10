@@ -526,6 +526,7 @@ public class GameState {
 
     public void setCurrentLevel(Level currentLevel) {
         this.currentLevel = currentLevel;
+        this.player.setCurrentLevel(currentLevel.getLevelNum());
     }
 
     public WeaponsFactory getWeaponsFactory() {

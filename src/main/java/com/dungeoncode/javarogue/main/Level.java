@@ -24,6 +24,7 @@ public class Level extends Entity {
     private final List<Passage> passages;
     private final int maxWidth;
     private final int maxHeight;
+    private final int levelNum;
 
     /**
      * Constructs a new Level with the specified maximum width and height, initializing empty lists and map.
@@ -31,7 +32,7 @@ public class Level extends Entity {
      * @param maxWidth  The maximum width of the level map.
      * @param maxHeight The maximum height of the level map.
      */
-    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
+    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom, final int levelNum) {
         super();
         Objects.requireNonNull(rogueRandom);
         this.rogueRandom=rogueRandom;
@@ -42,6 +43,11 @@ public class Level extends Entity {
         this.passages = new ArrayList<>();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
+        this.levelNum=levelNum;
+    }
+
+    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
+        this(maxWidth,maxHeight,rogueRandom,0);
     }
 
     /**
@@ -326,5 +332,9 @@ public class Level extends Entity {
     public void addPassage(@Nonnull final Passage passage) {
         Objects.requireNonNull(passage);
         passages.add(passage);
+    }
+
+    public int getLevelNum() {
+        return levelNum;
     }
 }
