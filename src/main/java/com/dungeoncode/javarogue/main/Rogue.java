@@ -11,6 +11,7 @@ import picocli.CommandLine;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
@@ -33,11 +34,17 @@ public class Rogue {
     public static void main(String[] args) {
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final Font font = new Font("Monospaced", Font.PLAIN, 16);
 
         RogueScreen screen = null;
         MessageSystem messageSystem;
         try {
+
+            final InputStream fontStream = Rogue.class.getResourceAsStream("/fonts/Ac437_IBM_VGA_8x16.ttf");
+            assert fontStream != null;
+            final Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 20);
+            fontStream.close();
+            // final Font font = new Font("Monospaced", Font.PLAIN, 16);
+
             // Initialize terminal with configured size and font
             final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory(System.out, System.in, StandardCharsets.UTF_8);
             terminalFactory.setInitialTerminalSize(
