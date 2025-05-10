@@ -20,4 +20,8 @@ public class Passage extends Room {
     public void setPassageNumber(final int passageNumber) {
         this.passageNumber = passageNumber;
     }
+
+    public int getPassageNumber() {
+        return passageNumber;
+    }
 }

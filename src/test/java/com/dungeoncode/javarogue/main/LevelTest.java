@@ -211,5 +211,74 @@ public class LevelTest {
         assertNull(pos, "Expected null when no valid floor spot found within limit");
     }
 
+    /**
+     * Tests the {@link Level#roomIn(int, int)} method to ensure it correctly identifies rooms and passages
+     * at given coordinates, returns null for coordinates outside rooms or passages, and handles out-of-bounds
+     * coordinates. Verifies exclusive bounds for room edges, aligning with drawRoom's wall placement.
+     */
+    @Test
+    void testRoomIn() {
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
+
+        // Populate all places with new Place()
+        final int maxWidth = config.getLevelMaxWidth();
+        final int maxHeight = config.getLevelMaxHeight();
+        for (int x = 0; x < maxWidth; x++) {
+            for (int y = 0; y < maxHeight; y++) {
+                level.setPlaceAt(x, y, new Place());
+            }
+        }
+
+        // Test with room
+        final int roomX = 5;
+        final int roomY = 7;
+        final int roomWidth = 12;
+        final int roomHeight = 4;
+        final Room room = new Room();
+        room.setPosition(roomX, roomY);
+        room.setSize(roomWidth, roomHeight);
+        level.addRoom(room);
+
+        // Test coordinates inside room
+        final int insideX = roomX + 2;
+        final int insideY = roomY + 2;
+        assertEquals(room, level.roomIn(insideX, insideY), "Expected room at coordinates inside room");
+
+        // Test coordinates on right edge (outside)
+        int edgeX = roomX + roomWidth;
+        int edgeY = roomY + 2;
+        assertNull(level.roomIn(edgeX, edgeY), "Expected null for coordinates on right edge");
+
+        // Test coordinates on bottom edge (outside)
+        edgeX = roomX + 2;
+        edgeY = roomY + roomHeight;
+        assertNull(level.roomIn(edgeX, edgeY), "Expected null for coordinates on bottom edge");
+
+        // Test with passage
+        final int passageX = 20;
+        final int passageY = 20;
+        final int passageNum = 1;
+        final Passage passage = new Passage();
+        passage.setPassageNumber(passageNum);
+        passage.setPosition(passageX, passageY);
+        passage.setSize(1, 1);
+        level.addPassage(passage);
+        final Place passagePlace = new Place();
+        passagePlace.setPlaceType(PlaceType.PASSAGE);
+        passagePlace.setPassageNumber(passageNum);
+        level.setPlaceAt(passageX, passageY, passagePlace);
+
+        assertEquals(passage, level.roomIn(passageX, passageY), "Expected passage at passage coordinates");
+
+        // Test coordinates outside any room or passage
+        final int outsideX = config.getLevelMaxWidth() - 1;
+        final int outsideY = config.getLevelMaxHeight() - 1;
+        assertNull(level.roomIn(outsideX, outsideY), "Expected null for coordinates outside rooms and passages");
+
+        // Test out-of-bounds coordinates
+        final int outOfBoundsX = config.getLevelMaxWidth();
+        final int outOfBoundsY = config.getLevelMaxHeight();
+        assertThrows(IllegalArgumentException.class, () -> level.roomIn(outOfBoundsX, outOfBoundsY), "Expected exception for out-of-bounds coordinates");
+    }
 
 }

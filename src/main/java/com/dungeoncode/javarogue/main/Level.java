@@ -40,18 +40,67 @@ public class Level extends Entity {
     }
 
     /**
+     * Finds the room or passage containing the specified coordinates.
+     * Returns null if the coordinates are not in any room or passage.
+     * <p>
+     * This method is a port of the C function roomin() from the Rogue source code,
+     * which checks if coordinates are in a passage (F_PASS flag) or a room based on its
+     * position and size. Unlike the original C code, which uses inclusive bounds
+     * (<=) for room edges, this implementation uses exclusive bounds (<) for the right
+     * and bottom edges to align with the Java drawRoom method, which places walls at
+     * size-1 (e.g., x=3 for width 4). This ensures coordinates beyond walls are not
+     * considered part of the room.
+     * </p>
+     *
+     * @param x The x-coordinate to check.
+     * @param y The y-coordinate to check.
+     * @return The Room or Passage containing the coordinates, or null if none found.
+     * @throws IllegalArgumentException If coordinates are out of bounds.
+     */
+    @Nullable
+    public Room roomIn(final int x, final int y) {
+        validateCoordinates(x, y);
+
+        // Check if coordinates are in a passage
+        final Place place = getPlaceAt(x, y);
+        assert place != null;
+        if (place.isType(PlaceType.PASSAGE)) {
+            final Integer passageNum = place.getPassageNumber();
+            if (passageNum != null) {
+                return passages.stream()
+                        .filter(passage -> passage.getPassageNumber() == passageNum)
+                        .findFirst()
+                        .orElse(null);
+            }
+        }
+
+        // Check if coordinates are in a room, using exclusive bounds (<) for right and bottom
+        // edges to exclude coordinates beyond walls, unlike C's inclusive bounds (<=)
+        for (Room room : rooms) {
+            final Position pos = room.getPosition();
+            final Position size = room.getSize();
+            if (x >= pos.getX() && x < pos.getX() + size.getX() &&
+                    y >= pos.getY() && y < pos.getY() + size.getY()) {
+                return room;
+            }
+        }
+
+        // No room or passage found
+        return null;
+    }
+    /**
      * Finds a valid floor spot in a room for item or monster placement.
      * If room is null, picks a random non-GONE room each attempt.
      * Based on C function find_floor() in Rogue source.
      *
      * @param room   The room to search, or null to pick randomly.
      * @param limit  Maximum attempts; 0 for unlimited.
-     * @param forMonster True if placing a monster, false for items.
+     * @param forCreature True if placing a creature, false for items.
      * @return A Position with a valid floor spot, or null if none found.
      * @throws IllegalStateException if no valid rooms exist when room is null.
      */
     @Nullable
-    public Position findFloor(@Nullable Room room, final  int limit, final boolean forMonster) {
+    public Position findFloor(@Nullable Room room, final  int limit, final boolean forCreature) {
         int attempts = limit;
 
         while (true) {
@@ -67,7 +116,7 @@ public class Level extends Entity {
             final Place place = getPlaceAt(pos.getX(), pos.getY());
             final PlaceType expectedType = room.hasFlag(RoomFlag.MAZE) ? PlaceType.PASSAGE : PlaceType.FLOOR;
 
-            if (forMonster && place.isStepOk()) {
+            if (forCreature && place.isStepOk()) {
                 return pos;
             } else if (place.isType(expectedType)) {
                 return pos;

@@ -447,7 +447,7 @@ public class LevelGenerator {
      */
     public void vert(@Nonnull final Room room, int startx) {
         Objects.requireNonNull(room);
-        for (int y = room.getPosition().getY() + 1; y <= room.getPosition().getY() + room.getSize().getY() - 1; y++) {
+        for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY(); y++) {
             final Place place = level.getPlaceAt(startx,y);
             assert place!=null;
             place.setPlaceType(PlaceType.WALL);
@@ -463,7 +463,7 @@ public class LevelGenerator {
      */
     public void horiz(@Nonnull final Room room, int starty) {
         Objects.requireNonNull(room);
-        for (int x = room.getPosition().getX(); x <= room.getPosition().getX() + room.getSize().getX() - 1; x++) {
+        for (int x = room.getPosition().getX(); x < room.getPosition().getX() + room.getSize().getX(); x++) {
             final Place place = level.getPlaceAt(x,starty);
             assert place!=null;
             place.setPlaceType(PlaceType.WALL);
