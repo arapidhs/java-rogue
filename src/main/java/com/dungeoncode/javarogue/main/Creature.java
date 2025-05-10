@@ -46,4 +46,7 @@ public abstract class Creature extends Entity {
         this.stats = stats;
     }
 
+    public Stats getStats() {
+        return stats;
+    }
 }
