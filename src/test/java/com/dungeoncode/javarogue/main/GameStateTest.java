@@ -139,6 +139,16 @@ public class GameStateTest extends RogueBaseTest {
         gameState.pickupItemFromFloor(); // Should fail to add Food and display message
     }
 
+    /**
+     * Tests the {@link GameState#processPhase(Phase)} method to ensure correct command processing for each phase.
+     * Verifies that:
+     * <ul>
+     *   <li><b>START_TURN</b>: Executes a regular {@link FunctionalCommand}, updates state (gold amount), and removes the command.</li>
+     *   <li><b>MAIN_TURN</b>: Processes a {@link TimedCommand}, decrements its timer, executes when ready, and removes it.</li>
+     *   <li><b>END_TURN</b>: Executes an {@link EternalCommand}, persists it in the queue, and executes repeatedly.</li>
+     * </ul>
+     * Ensures phase-specific command execution, queue management, and state updates align with the C Rogue turn-based structure.
+     */
     @Test
     void testProcessPhase() {
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
