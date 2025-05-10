@@ -26,8 +26,6 @@ public class DefaultInitializer implements Initializer {
         final int levelNum = 1;
         gameState.newLevel(levelNum);
 
-        final boolean isPlaying=true;
-        gameState.setPlaying(isPlaying);
     }
 
     private void initializePlayer(@Nonnull final GameState gameState) {

@@ -4,13 +4,14 @@ import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameStateTest extends RogueBaseTest {
 
     @Test
-    void testAddToPackSilently() throws IOException {
+    void testAddToPackSilently() {
         // Configure silent mode to suppress messages
         boolean silent = true;
 
@@ -82,7 +83,7 @@ public class GameStateTest extends RogueBaseTest {
      * processes scare monster scrolls, and manages inventory limits.
      */
     @Test
-    void testPickupItemFromFloor() throws IOException {
+    void testPickupItemFromFloor() {
         // Initialize game state with mocked screen and random seed
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
@@ -135,6 +136,120 @@ public class GameStateTest extends RogueBaseTest {
         // Test picking up Food when inventory is full
         level.addItem(food);
         gameState.pickupItemFromFloor(); // Should fail to add Food and display message
+    }
+
+    @Test
+    void testProcessPhase() throws IOException {
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+
+        // Set up player and level
+        final Player player = new Player(config);
+        final int playerX = 1;
+        final int playerY = 1;
+        player.setPosition(playerX, playerY);
+        gameState.setPlayer(player);
+
+        final int levelWidth = config.getLevelMaxWidth();
+        final int levelHeight = config.getLevelMaxHeight();
+        final Level level = new Level(levelWidth, levelHeight, rogueRandom);
+        gameState.setCurrentLevel(level);
+
+        // Test START_TURN phase with regular FunctionalCommand
+        final int startGoldIncrease = 5;
+        final AtomicInteger startExecutions = new AtomicInteger(0);
+        gameState.addCommand(new FunctionalCommand(
+                gs -> {
+                    gs.setGoldAmount(gs.getGoldAmount() + startGoldIncrease);
+                    startExecutions.incrementAndGet();
+                }, Phase.START_TURN));
+
+        // Test MAIN_TURN phase with TimedCommand
+        final int initialTimer = 2;
+        final int mainGoldIncrease = 10;
+        final AtomicInteger mainTimer = new AtomicInteger(initialTimer);
+        gameState.addCommand(new DelayedCommand<Integer>(initialTimer, 0, Phase.MAIN_TURN) {
+            @Override
+            public void execute(GameState gs) {
+                gs.setGoldAmount(gs.getGoldAmount() + mainGoldIncrease);
+            }
+
+            @Override
+            public int getTurnsRemaining() {
+                return mainTimer.get();
+            }
+
+            @Override
+            public void decrementTimer() {
+                mainTimer.decrementAndGet();
+            }
+
+            @Override
+            public boolean isReadyToExecute() {
+                return mainTimer.get() <= 0;
+            }
+        });
+
+        // Test END_TURN phase with inline TestEternalCommand
+        final AtomicInteger endEternalExecutions = new AtomicInteger(0);
+        class TestEternalCommand implements EternalCommand {
+            private final AtomicInteger executions;
+            private final Phase phase;
+
+            TestEternalCommand(AtomicInteger executions, Phase phase) {
+                this.executions = executions;
+                this.phase = phase;
+            }
+
+            @Override
+            public void execute(GameState gameState) {
+                executions.incrementAndGet();
+            }
+
+            @Override
+            public Phase getPhase() {
+                return phase;
+            }
+        }
+        gameState.addCommand(new TestEternalCommand(endEternalExecutions, Phase.END_TURN));
+
+        // Process START_TURN phase
+        final int expectedStartExecutions = 1;
+        final int expectedQueueSizeAfterStart = 2;
+        gameState.processPhase(Phase.START_TURN);
+        assertEquals(startGoldIncrease, gameState.getGoldAmount()); // START_TURN command executed
+        assertEquals(expectedStartExecutions, startExecutions.get()); // START_TURN command executed once
+        assertEquals(expectedQueueSizeAfterStart, gameState.getCommandQueue().size()); // START_TURN command removed
+
+        // Process MAIN_TURN phase once
+        final int expectedMainTimerAfterFirst = initialTimer - 1;
+        final int expectedQueueSizeAfterMain = 2;
+        gameState.processPhase(Phase.MAIN_TURN);
+        assertEquals(startGoldIncrease, gameState.getGoldAmount()); // No MAIN_TURN execution yet
+        assertEquals(expectedMainTimerAfterFirst, mainTimer.get()); // TimedCommand timer decremented
+        assertEquals(expectedQueueSizeAfterMain, gameState.getCommandQueue().size()); // No commands removed
+
+        // Process MAIN_TURN again
+        final int expectedGoldAfterMainSecond = startGoldIncrease + mainGoldIncrease;
+        final int expectedMainTimerAfterSecond = 0;
+        gameState.processPhase(Phase.MAIN_TURN);
+        assertEquals(expectedGoldAfterMainSecond, gameState.getGoldAmount()); // TimedCommand executed
+        assertEquals(expectedMainTimerAfterSecond, mainTimer.get()); // TimedCommand timer at 0
+        assertEquals(1, gameState.getCommandQueue().size()); // TimedCommand removed
+
+        // Process END_TURN phase
+        final int expectedEndEternalExecutions = 1;
+        final int expectedQueueSizeAfterEnd = 1;
+        gameState.processPhase(Phase.END_TURN);
+        assertEquals(expectedEndEternalExecutions, endEternalExecutions.get()); // EternalCommand executed once
+        assertEquals(expectedQueueSizeAfterEnd, gameState.getCommandQueue().size()); // EternalCommand persists
+
+        // Process END_TURN again
+        final int expectedEndEternalExecutionsSecond = 2;
+        gameState.processPhase(Phase.END_TURN);
+        assertEquals(expectedEndEternalExecutionsSecond, endEternalExecutions.get()); // EternalCommand executed again
+        assertEquals(expectedQueueSizeAfterEnd, gameState.getCommandQueue().size()); // EternalCommand still persists
     }
 
 }

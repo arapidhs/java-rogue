@@ -39,18 +39,14 @@ public class MessageSystem {
      */
     public boolean msg(@Nonnull final String message) {
         Objects.requireNonNull(message);
-        try {
-            if (message.isEmpty()) {
-                screen.clearLine(0);
-                messagePosition = 0;
-                screen.refresh();
-                return true;
-            } else {
-                doadd(message);
-                return endmsg();
-            }
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+        if (message.isEmpty()) {
+            screen.clearLine(0);
+            messagePosition = 0;
+            screen.refresh();
+            return true;
+        } else {
+            doadd(message);
+            return endmsg();
         }
     }
 

@@ -45,6 +45,22 @@ public class RogueScreen extends TerminalScreen {
         refresh();
     }
 
+    public void refresh(){
+        try {
+            super.refresh();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public KeyStroke readInput(){
+        try {
+            return super.readInput();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void clearLine(int row) {
         putString(0, row, " ".repeat(getColumns() - 1));
     }

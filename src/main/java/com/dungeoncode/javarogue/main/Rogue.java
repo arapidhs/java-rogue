@@ -1,7 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFontConfiguration;
@@ -151,18 +150,7 @@ public class Rogue {
                 }
 
                 final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
-
-                //TODO remove this block is only to be used
-                // for visually debugging level generation
-                Character character = 'a';
-                while( 'e'!=character){
-                    screen.clear();
-                    gameState.showMap();
-                    screen.refresh();
-                    final KeyStroke keyStroke = screen.readInput();
-                    character = keyStroke.getCharacter();
-                    gameState.newLevel(rogueRandom.rnd(config.getAmuletLevel()));
-                }
+                gameState.loop();
             }
 
         } catch (Exception ex) {

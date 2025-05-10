@@ -1,11 +1,13 @@
 package com.dungeoncode.javarogue.main;
 
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.input.KeyStroke;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.io.IOException;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameState {
 
@@ -26,6 +28,9 @@ public class GameState {
     private int goldAmount;
     private Level currentLevel;
     private boolean playing;
+
+    private final Queue<Command> commandQueue = new ConcurrentLinkedQueue<>();
+    private CommandFactory commandFactory;
 
     public GameState(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom, @Nonnull RogueScreen screen,
                      @Nullable final Initializer initializer, final @Nonnull MessageSystem messageSystem) {
@@ -50,6 +55,90 @@ public class GameState {
         }
     }
 
+    /**
+     * Executes the main game loop, processing turns until the game ends. Each turn consists of three phases:
+     * <ul>
+     *   <li><b>START_TURN</b>: Executes commands for pre-player actions (e.g., monster movement).</li>
+     *   <li><b>MAIN_TURN</b>: Reads player input, queues the resulting command, and executes MAIN_TURN commands.</li>
+     *   <li><b>END_TURN</b>: Executes commands for post-player actions (e.g., status effects).</li>
+     * </ul>
+     * Commands are handled based on their type:
+     * <ul>
+     *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
+     *   <li>{@link EternalCommand}: Executes every turn and remains in the queue.</li>
+     *   <li>Other commands: Executes once and is removed.</li>
+     * </ul>
+     * This method mirrors the turn-based game loop in the original C Rogue source code (main.c),
+     * with pre-player actions (monsters.c), player input processing (command.c), and post-player
+     * updates (daemon.c), ensuring proper command ordering and persistence.
+     */
+    public void loop() {
+        this.playing = true;
+        this.commandFactory = new CommandFactory();
+        while (true) {
+            // Start turn phase
+            processPhase(Phase.START_TURN);
+            if(!playing){
+                break;
+            }
+            // Main turn phase: read player input
+            KeyStroke keyStroke = screen.readInput();
+            final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
+            if (playerCommand != null) {
+                addCommand(playerCommand);
+            }
+
+            processPhase(Phase.MAIN_TURN);
+            if(!playing){
+                break;
+            }
+            // End turn phase
+            processPhase(Phase.END_TURN);
+            if(!playing){
+                break;
+            }
+        }
+    }
+
+    /**
+     * Processes all commands in the queue for the specified phase. Handles different
+     * command types:
+     * <ul>
+     *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
+     *   <li>{@link EternalCommand}: Executes every turn and remains in the queue.</li>
+     *   <li>Other commands: Executes once and is removed.</li>
+     * </ul>
+     * This method supports the turn-based structure of the C Rogue source code (main.c),
+     * processing commands in a specific phase (e.g., monster movement in monsters.c for
+     * START_TURN, player actions in command.c for MAIN_TURN).
+     *
+     * @param phase The phase to process commands for (START_TURN, MAIN_TURN, or END_TURN).
+     */
+    public void processPhase( @Nonnull final Phase phase) {
+        Objects.requireNonNull(phase);
+        commandQueue.forEach(command -> {
+            if (command.getPhase() == phase) {
+                if (command instanceof TimedCommand timedCommand) {
+                    timedCommand.decrementTimer();
+                    if (timedCommand.isReadyToExecute()) {
+                        command.execute(this);
+                        commandQueue.remove(command);
+                    }
+                } else {
+                    command.execute(this);
+                    if (!(command instanceof EternalCommand)) {
+                        commandQueue.remove(command);
+                    }
+                }
+            }
+        });
+    }
+
+    public void addCommand(@Nonnull final Command command) {
+        Objects.requireNonNull(command);
+        commandQueue.offer(command);
+    }
+
     public void newLevel(final int levelNum) {
         player.removeFlag(CreatureFlag.ISHELD);
         this.levelNum = levelNum;
@@ -62,7 +151,7 @@ public class GameState {
     }
 
     //TODO: method to show map for debugging purpose only
-    public void showMap() throws IOException {
+    public void showMap() {
         for (int x = 0; x < config.getTerminalCols(); x++) {
             for (int y = 1; y < config.getTerminalRows() - 1; y++) {
                 final Place place = currentLevel.getPlaceAt(x, y);
@@ -343,11 +432,11 @@ public class GameState {
         return screen;
     }
 
-    public boolean isPlaying() {
-        return playing;
-    }
-
     public void setPlaying(boolean playing) {
         this.playing = playing;
+    }
+
+    public Queue<Command> getCommandQueue() {
+        return commandQueue;
     }
 }
