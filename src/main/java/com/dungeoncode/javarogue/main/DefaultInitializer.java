@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,8 @@ public class DefaultInitializer implements Initializer {
 
         final int levelNum = 1;
         gameState.newLevel(levelNum);
+
+        Arrays.stream(Phase.values()).forEach(gameState::enablePhase);
 
     }
 

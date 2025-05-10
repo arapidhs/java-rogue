@@ -107,4 +107,18 @@ public class DefaultInitializerTest extends RogueBaseTest {
         assertFalse(gameState.getPlayer().hasFlag(CreatureFlag.ISHELD));
 
     }
+
+    @Test
+    void testGameStateInitialization() throws IOException {
+        // Set up game state with necessary dependencies
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final DefaultInitializer initializer = new DefaultInitializer();
+
+        final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
+
+        Arrays.stream(Phase.values()).forEach(phase ->
+                assertTrue(gameState.getPhaseActivity().get(phase)));
+    }
+
 }

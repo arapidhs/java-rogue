@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,6 +24,7 @@ public class GameState {
     private final RogueScreen screen;
     private final WeaponsFactory weaponsFactory;
     private final ItemData itemData;
+    private final Map<Phase, Boolean> phaseActivity;
     private Player player;
     private GameEndReason gameEndReason;
     private DeathSource deathSource;
@@ -47,6 +50,7 @@ public class GameState {
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
         this.itemData = new ItemData(config, rogueRandom);
+        phaseActivity=new HashMap<>();
         init();
     }
 
@@ -64,6 +68,7 @@ public class GameState {
      *   <li><b>MAIN_TURN</b>: Reads player input, queues the resulting command, and executes MAIN_TURN commands.</li>
      *   <li><b>END_TURN</b>: Executes commands for post-player actions (e.g., status effects).</li>
      * </ul>
+     * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
      * Commands are handled based on their type:
      * <ul>
      *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
@@ -78,14 +83,12 @@ public class GameState {
         this.playing = true;
         this.commandFactory = new CommandFactory();
         while (true) {
-            // Start turn phase
             processPhase(Phase.START_TURN);
-            if(!playing){
+            if (!playing) {
                 break;
             }
             screen.refresh();
 
-            // Main turn phase: read player input
             KeyStroke keyStroke = screen.readInput();
             final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
             if (playerCommand != null) {
@@ -93,24 +96,23 @@ public class GameState {
             }
 
             processPhase(Phase.MAIN_TURN);
-            if(!playing){
+            if (!playing) {
                 break;
             }
             screen.refresh();
 
-            // End turn phase
             processPhase(Phase.END_TURN);
-            if(!playing){
+            if (!playing) {
                 break;
             }
             screen.refresh();
-
         }
     }
 
     /**
-     * Processes all commands in the queue for the specified phase. Handles different
-     * command types:
+     * Processes all commands in the queue for the specified phase, if the phase is active.
+     * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
+     * Handles different command types:
      * <ul>
      *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
      *   <li>{@link EternalCommand}: Executes every turn and remains in the queue.</li>
@@ -121,9 +123,13 @@ public class GameState {
      * START_TURN, player actions in command.c for MAIN_TURN).
      *
      * @param phase The phase to process commands for (START_TURN, MAIN_TURN, or END_TURN).
+     * @throws NullPointerException if phase is null.
      */
-    public void processPhase( @Nonnull final Phase phase) {
+    public void processPhase(@Nonnull final Phase phase) {
         Objects.requireNonNull(phase);
+        if (!phaseActivity.getOrDefault(phase, false)) {
+            return;
+        }
         commandQueue.forEach(command -> {
             if (command.getPhase() == phase) {
                 if (command instanceof TimedCommand timedCommand) {
@@ -432,6 +438,28 @@ public class GameState {
         return true;
     }
 
+    /**
+     * Enables the specified phase, allowing its commands to be processed in the game loop.
+     *
+     * @param phase The phase to enable (START_TURN, MAIN_TURN, or END_TURN).
+     * @throws NullPointerException if phase is null.
+     */
+    public void enablePhase(@Nonnull final Phase phase) {
+        Objects.requireNonNull(phase);
+        phaseActivity.put(phase, true);
+    }
+
+    /**
+     * Disables the specified phase, preventing its commands from being processed in the game loop.
+     *
+     * @param phase The phase to disable (START_TURN, MAIN_TURN, or END_TURN).
+     * @throws NullPointerException if phase is null.
+     */
+    public void disablePhase(@Nonnull final  Phase phase) {
+        Objects.requireNonNull(phase);
+        phaseActivity.put(phase, false);
+    }
+
     public void death() {
         this.goldAmount -= this.goldAmount / 10;
     }
@@ -510,5 +538,9 @@ public class GameState {
 
     public Queue<Command> getCommandQueue() {
         return commandQueue;
+    }
+
+    public Map<Phase, Boolean> getPhaseActivity() {
+        return phaseActivity;
     }
 }

@@ -4,6 +4,7 @@ import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,10 +140,11 @@ public class GameStateTest extends RogueBaseTest {
     }
 
     @Test
-    void testProcessPhase() throws IOException {
+    void testProcessPhase() {
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        Arrays.stream(Phase.values()).forEach(gameState::enablePhase);
 
         // Set up player and level
         final Player player = new Player(config);
