@@ -148,6 +148,22 @@ public class GameState {
         final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
+        Position floor = level.findFloor(null, 0, true);
+    }
+
+    public Room roomIn(final int x, final int y) {
+        final Room room = currentLevel.roomIn(x, y);
+        if(room==null){
+            messageSystem.msg(String.format("in some bizarre place (%d, %d)",x,y));
+            if(config.isMaster()){
+                abort();
+            }
+        }
+        return room;
+    }
+
+    private void abort() {
+        System.exit(1);
     }
 
     //TODO: method to show map for debugging purpose only
