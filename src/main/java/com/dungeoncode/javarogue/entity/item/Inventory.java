@@ -1,8 +1,8 @@
 package com.dungeoncode.javarogue.entity.item;
 
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
-import com.dungeoncode.javarogue.template.Templates;
 import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.template.Templates;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

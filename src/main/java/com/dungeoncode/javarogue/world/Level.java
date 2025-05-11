@@ -33,10 +33,6 @@ public class Level extends Entity {
     private final int maxHeight;
     private final int levelNum;
 
-    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
-        this(maxWidth, maxHeight, rogueRandom, 0);
-    }
-
     /**
      * Constructs a new Level with the specified maximum width and height, initializing empty lists and map.
      *
@@ -46,7 +42,7 @@ public class Level extends Entity {
     public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom, final int levelNum) {
         super();
         Objects.requireNonNull(rogueRandom);
-        this.rogueRandom = rogueRandom;
+        this.rogueRandom=rogueRandom;
         this.items = new ArrayList<>();
         this.monsters = new ArrayList<>();
         this.places = new Place[maxHeight][maxWidth];
@@ -54,7 +50,11 @@ public class Level extends Entity {
         this.passages = new ArrayList<>();
         this.maxWidth = maxWidth;
         this.maxHeight = maxHeight;
-        this.levelNum = levelNum;
+        this.levelNum=levelNum;
+    }
+
+    public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
+        this(maxWidth,maxHeight,rogueRandom,0);
     }
 
     /**
@@ -104,48 +104,22 @@ public class Level extends Entity {
         }
 
         // No room or passage found
-        LOGGER.debug("No room found at {},{}", x, y);
+        LOGGER.debug("No room found at {},{}",x,y);
         return null;
     }
-
-    private void validateCoordinates(final int x, final int y) {
-        if (x < 0 || x >= maxWidth || y < 0 || y >= maxHeight) {
-            throw new IllegalArgumentException(String.format(
-                    Messages.ERROR_LEVEL_COORDS_OUT_OF_BOUNDS, x, y, maxWidth, maxHeight));
-        }
-    }
-
-    /**
-     * Gets the Place at the specified coordinates.
-     *
-     * @param x The x-coordinate.
-     * @param y The y-coordinate.
-     * @return The Place at (x, y).
-     * @throws IllegalArgumentException If coordinates are out of bounds.
-     */
-    @Nullable
-    public Place getPlaceAt(final int x, final int y) {
-        validateCoordinates(x, y);
-        final Place place = places[y][x];
-        if (place == null) {
-            LOGGER.debug("No place found at {},{}", x, y);
-        }
-        return place;
-    }
-
     /**
      * Finds a valid floor spot in a room for item or monster placement.
      * If room is null, picks a random non-GONE room each attempt.
      * Based on C function find_floor() in Rogue source.
      *
-     * @param room        The room to search, or null to pick randomly.
-     * @param limit       Maximum attempts; 0 for unlimited.
+     * @param room   The room to search, or null to pick randomly.
+     * @param limit  Maximum attempts; 0 for unlimited.
      * @param forCreature True if placing a creature, false for items.
      * @return A Position with a valid floor spot, or null if none found.
      * @throws IllegalStateException if no valid rooms exist when room is null.
      */
     @Nullable
-    public Position findFloor(@Nullable Room room, final int limit, final boolean forCreature) {
+    public Position findFloor(@Nullable Room room, final  int limit, final boolean forCreature) {
         int attempts = limit;
 
         while (true) {
@@ -153,14 +127,14 @@ public class Level extends Entity {
                 return null;
             }
 
-            if (room == null) {
-                room = rndRoom();
+            if(room==null){
+                room=rndRoom();
             }
 
             final Position pos = room.rndPos(rogueRandom);
             final Place place = getPlaceAt(pos.getX(), pos.getY());
             final PlaceType expectedType = room.hasFlag(RoomFlag.MAZE) ? PlaceType.PASSAGE : PlaceType.FLOOR;
-            assert place != null;
+            assert place!=null;
             if (forCreature && place.isStepOk()) {
                 return pos;
             } else if (place.isType(expectedType)) {
@@ -193,6 +167,13 @@ public class Level extends Entity {
         validateCoordinates(x, y);
         places[y][x] = place;
         place.setPosition(x, y);
+    }
+
+    private void validateCoordinates(final int x, final int y) {
+        if (x < 0 || x >= maxWidth || y < 0 || y >= maxHeight) {
+            throw new IllegalArgumentException(String.format(
+                    Messages.ERROR_LEVEL_COORDS_OUT_OF_BOUNDS, x, y, maxWidth, maxHeight));
+        }
     }
 
     /**
@@ -229,10 +210,28 @@ public class Level extends Entity {
     }
 
     /**
+     * Gets the Place at the specified coordinates.
+     *
+     * @param x The x-coordinate.
+     * @param y The y-coordinate.
+     * @return The Place at (x, y).
+     * @throws IllegalArgumentException If coordinates are out of bounds.
+     */
+    @Nullable
+    public Place getPlaceAt(final int x, final int y) {
+        validateCoordinates(x, y);
+        final Place place = places[y][x];
+        if(place==null){
+            LOGGER.debug("No place found at {},{}",x,y);
+        }
+        return place;
+    }
+
+    /**
      * Sets the display symbol type at the specified coordinates on the level map.
      *
-     * @param x          The x-coordinate.
-     * @param y          The y-coordinate.
+     * @param x      The x-coordinate.
+     * @param y      The y-coordinate.
      * @param symbolType The symbol type to set.
      * @throws IllegalArgumentException If coordinates are out of bounds.
      */

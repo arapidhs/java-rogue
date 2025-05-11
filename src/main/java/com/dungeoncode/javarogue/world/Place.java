@@ -24,26 +24,26 @@ public class Place extends Entity {
     public Place() {
         super();
         this.placeType = PlaceType.EMPTY;
-        this.symbolType = SymbolType.EMPTY;
+        this.symbolType=SymbolType.EMPTY;
         this.placeFlags = EnumSet.noneOf(PlaceFlag.class);
         this.monster = null;
         this.addFlag(PlaceFlag.REAL);
-    }
-
-    public void addFlag(@Nonnull final PlaceFlag placeFlag) {
-        placeFlags.add(placeFlag);
     }
 
     public boolean isReal() {
         return placeFlags.contains(PlaceFlag.REAL);
     }
 
-    public boolean isStepOk() {
-        return !isType(PlaceType.EMPTY) && !isType(PlaceType.WALL) && monster == null;
+    public boolean isStepOk(){
+        return !isType(PlaceType.EMPTY) && !isType(PlaceType.WALL) && monster==null;
     }
 
     public boolean isType(final PlaceType placeType) {
-        return Objects.equals(this.placeType, placeType);
+        return Objects.equals(this.placeType,placeType);
+    }
+
+    public void addFlag(@Nonnull final PlaceFlag placeFlag) {
+        placeFlags.add(placeFlag);
     }
 
     public void removeFlag(@Nonnull final PlaceFlag placeFlag) {

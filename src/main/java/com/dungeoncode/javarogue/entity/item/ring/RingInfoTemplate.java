@@ -21,7 +21,7 @@ public class RingInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.RING, ringType, name, probability, worth, null, null, null);
+        super(id, ObjectType.RING, ringType, name, probability, worth, null, null,null);
 
     }
 

@@ -28,9 +28,9 @@ public class DefaultInitializer implements Initializer {
         initializePlayer(gameState);
         initializeItemData(gameState);
 
-        gameState.getScreen().addWindow("hw", 0, 0, config.getTerminalCols(), config.getTerminalRows());
+        gameState.getScreen().addWindow("hw",0,0,config.getTerminalCols(),config.getTerminalRows());
 
-        if (config.isMaster()) {
+        if(config.isMaster()){
             final boolean isWizard = config.isWizard();
             config.setScoring(!isWizard);
         }

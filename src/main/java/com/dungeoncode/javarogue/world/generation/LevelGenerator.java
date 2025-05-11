@@ -25,7 +25,7 @@ public class LevelGenerator {
     private int levelNum;
 
     public LevelGenerator(@Nonnull final GameState gameState) {
-        this.gameState = gameState;
+        this.gameState=gameState;
         this.config = gameState.getConfig();
         this.rogueRandom = gameState.getRogueRandom();
     }
@@ -59,7 +59,7 @@ public class LevelGenerator {
      * @param levelNum The level number for this level (affects random generation behavior).
      */
     public void initializeLevel(final int levelNum) {
-        this.level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), this.rogueRandom, levelNum);
+        this.level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),this.rogueRandom,levelNum);
         this.levelNum = levelNum;
 
         // Initialize places array with empty spaces and REAL flag
@@ -278,15 +278,15 @@ public class LevelGenerator {
             }
             drawRoom(room);
 
-            if (rogueRandom.rnd(2) == 0 && (!gameState.hasAmulet() || levelNum >= gameState.getMaxLevel())) {
+            if(rogueRandom.rnd(2)==0&&(!gameState.hasAmulet()||levelNum>=gameState.getMaxLevel())) {
 
-                final int goldValue = gameState.goldCalc(levelNum);
+                final int goldValue=gameState.goldCalc(levelNum);
                 final Gold gold = new Gold(goldValue);
                 room.setGoldValue(goldValue);
 
                 final Position goldPos = level.findFloor(room, 0, false);
-                assert goldPos != null;
-                room.setGoldPosition(goldPos.getX(), goldPos.getY());
+                assert goldPos!=null;
+                room.setGoldPosition(goldPos.getX(),goldPos.getY());
 
                 final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
                 assert place != null;
@@ -341,8 +341,8 @@ public class LevelGenerator {
             // Fill the interior with floor tiles
             for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY() - 1; y++) {
                 for (int x = room.getPosition().getX() + 1; x < room.getPosition().getX() + room.getSize().getX() - 1; x++) {
-                    final Place place = level.getPlaceAt(x, y);
-                    assert place != null;
+                    final Place place = level.getPlaceAt(x,y);
+                    assert place!=null;
                     place.setPlaceType(PlaceType.FLOOR);
                     place.setSymbolType(SymbolType.FLOOR); // '.'
                 }
@@ -452,8 +452,8 @@ public class LevelGenerator {
             pos.setX(nextX + topx);
             putPass(pos);
 
-            nextX = Math.min(nextX, maxx - 1);
-            nextY = Math.min(nextY, maxy - 1);
+            nextX=Math.min(nextX,maxx-1);
+            nextY=Math.min(nextY,maxy-1);
             // Recursively dig from the next cell
             dig(maze, nextX, nextY, topx, topy, maxx, maxy);
         }
@@ -461,7 +461,7 @@ public class LevelGenerator {
 
     public void putPass(@Nonnull final Position position) {
         final Place place = level.getPlaceAt(position.getX(), position.getY());
-        assert place != null;
+        assert place!=null;
         place.setPlaceType(PlaceType.PASSAGE);
         if ((rnd(10) + 1) < levelNum && rnd(40) == 0) {
             place.removeFlag(PlaceFlag.REAL);
@@ -481,8 +481,8 @@ public class LevelGenerator {
     public void vert(@Nonnull final Room room, int startx) {
         Objects.requireNonNull(room);
         for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY(); y++) {
-            final Place place = level.getPlaceAt(startx, y);
-            assert place != null;
+            final Place place = level.getPlaceAt(startx,y);
+            assert place!=null;
             place.setPlaceType(PlaceType.WALL);
             place.setSymbolType(SymbolType.WALL_VERTICAL);
         }
@@ -497,8 +497,8 @@ public class LevelGenerator {
     public void horiz(@Nonnull final Room room, int starty) {
         Objects.requireNonNull(room);
         for (int x = room.getPosition().getX(); x < room.getPosition().getX() + room.getSize().getX(); x++) {
-            final Place place = level.getPlaceAt(x, starty);
-            assert place != null;
+            final Place place = level.getPlaceAt(x,starty);
+            assert place!=null;
             place.setPlaceType(PlaceType.WALL);
             place.setSymbolType(SymbolType.WALL_HORIZONTAL);
         }
@@ -764,7 +764,7 @@ public class LevelGenerator {
 
         // Get or create the Place at the door's position
         final Place place = level.getPlaceAt(pos.getX(), pos.getY());
-        assert place != null;
+        assert place!=null;
 
         // Determine if it's a secret door based on level and random chance
         if (rnd(10) + 1 < levelNum && rnd(5) == 0) {
@@ -838,10 +838,10 @@ public class LevelGenerator {
 
         // Get the Place at the position
         final Place place = level.getPlaceAt(pos.getX(), pos.getY());
-        assert place != null;
+        assert place!=null;
 
         // Skip if tile is already numbered
-        if (place.getPassageNumber() != null) {
+        if (place.getPassageNumber()!=null) {
             return;
         }
 
@@ -883,7 +883,6 @@ public class LevelGenerator {
 
     /**
      * Picks a valid 'real' non-gone room.
-     *
      * @param rooms array of all rooms.
      * @return index of a 'real' non-gone room.
      */
@@ -900,14 +899,6 @@ public class LevelGenerator {
      */
     private int rnd(final int range) {
         return rogueRandom.rnd(range);
-    }
-
-    public Level getLevel() {
-        return level;
-    }
-
-    public RogueRandom getRogueRandom() {
-        return rogueRandom;
     }
 
     public static class Spot {
@@ -966,9 +957,9 @@ public class LevelGenerator {
          * Increments the passage number by 1.
          */
         public void incrementPnum() {
-            if (this.pnum == null) {
-                this.pnum = 0;
-            } else {
+            if ( this.pnum == null ){
+                this.pnum=0;
+            }else{
                 this.pnum++;
             }
         }
@@ -990,5 +981,13 @@ public class LevelGenerator {
         public void setNewPnum(boolean newPnum) {
             this.newPnum = newPnum;
         }
+    }
+
+    public Level getLevel() {
+        return level;
+    }
+
+    public RogueRandom getRogueRandom() {
+        return rogueRandom;
     }
 }

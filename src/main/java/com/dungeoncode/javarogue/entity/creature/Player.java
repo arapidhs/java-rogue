@@ -16,26 +16,26 @@ import java.util.Objects;
  */
 public class Player extends Creature {
 
-    public final static String[] STATUS_HUNGER_NAMES = {"", "Hungry", "Weak", "Faint"};
+    public final static String[] STATUS_HUNGER_NAMES = {"","Hungry", "Weak", "Faint"};
 
     private final String playerName;
     private final EnumSet<PlayerFlag> playerFlags;
     private final int foodLeft;
     private final Inventory inventory;
-    private final Stats maxStats;
     private Armor currentArmor;
     private Weapon currentWeapon;
     private Ring leftRing;
     private Ring rightRing;
     private int goldAmount;
     private HungryState hungryState;
+    private final Stats maxStats;
     private int currentLevel;
 
     public Player(@Nonnull final Config config) {
         super();
         Objects.requireNonNull(config);
         this.setStats(config.getInitialPlayerStats());
-        this.maxStats = config.getInitialPlayerStats();
+        this.maxStats=config.getInitialPlayerStats();
         this.playerFlags = EnumSet.copyOf(config.getInitialPlayerFlags());
         this.playerName = config.getPlayerName();
         this.foodLeft = config.getFoodLeft();
@@ -51,7 +51,7 @@ public class Player extends Creature {
     public String status() {
         final StringBuilder st = new StringBuilder();
         final Stats stats = getStats();
-        final int clevel = currentLevel;
+        final int clevel=currentLevel;
         int maxHp = stats.getMaxHitPoints();
         int hp = stats.getHitPoints();
         int level = getStats().getLevel();
@@ -124,20 +124,20 @@ public class Player extends Creature {
         this.currentWeapon = currentWeapon;
     }
 
-    public int getCurrentLevel() {
-        return currentLevel;
-    }
-
     public void setCurrentLevel(int currentLevel) {
         this.currentLevel = currentLevel;
     }
 
-    public HungryState getHungryState() {
-        return hungryState;
+    public int getCurrentLevel() {
+        return currentLevel;
     }
 
     public void setHungryState(HungryState hungryState) {
         this.hungryState = hungryState;
+    }
+
+    public HungryState getHungryState() {
+        return hungryState;
     }
 
     public enum HungryState {

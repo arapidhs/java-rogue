@@ -20,7 +20,7 @@ public class PotionInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
-        super(id, ObjectType.POTION, potionType, name, probability, worth, null, null, null);
+        super(id, ObjectType.POTION, potionType, name, probability, worth, null, null,null);
     }
 
     @Override

@@ -28,7 +28,6 @@ public class CommandFunctional implements Command {
      *     Phase.MAIN_TURN
      * ));
      * </pre>
-     *
      * @param action The function to execute, taking a GameState as input.
      * @param phase  The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN).
      */

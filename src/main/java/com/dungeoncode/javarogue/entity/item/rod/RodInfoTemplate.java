@@ -21,7 +21,7 @@ public class RodInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.ROD, rodType, name, probability, worth, null, null, null);
+        super(id, ObjectType.ROD, rodType, name, probability, worth, null, null,null);
 
     }
 

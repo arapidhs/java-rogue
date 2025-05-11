@@ -45,11 +45,11 @@ public abstract class Creature extends Entity {
         this.destination = new Position(x, y);
     }
 
-    public Stats getStats() {
-        return stats;
-    }
-
     public void setStats(Stats stats) {
         this.stats = stats;
+    }
+
+    public Stats getStats() {
+        return stats;
     }
 }

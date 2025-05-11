@@ -58,9 +58,9 @@ public class Room extends Entity {
     }
 
     public void setGoldPosition(final int x, final int y) {
-        if (goldPosition == null) {
-            goldPosition = new Position(x, y);
-        } else {
+        if(goldPosition==null){
+            goldPosition=new Position(x,y);
+        }else {
             goldPosition.setX(x);
             goldPosition.setY(y);
         }

@@ -57,8 +57,8 @@ public class MessageSystem {
      * Clears the current message from the screen if one is displayed.
      * Calls {@link #msg(String)} with an empty string to erase the message line.
      */
-    public void clearMessage() {
-        if (messagePosition > 0) {
+    public void clearMessage(){
+        if(messagePosition>0){
             msg("");
         }
     }

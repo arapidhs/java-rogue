@@ -16,17 +16,12 @@ import com.dungeoncode.javarogue.core.Phase;
  * need additional data to perform their actions, such as item usage (things.c) or
  * level generation (rooms.c).
  * </p>
- *
  * @param <T> The type of parameters required by the command.
  */
 public abstract class CommandParameterized<T> implements Command {
-    /**
-     * The parameters used by the command during execution.
-     */
+    /** The parameters used by the command during execution. */
     private final T params;
-    /**
-     * The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN).
-     */
+    /** The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN). */
     private final Phase phase;
 
     /**
@@ -41,6 +36,19 @@ public abstract class CommandParameterized<T> implements Command {
     protected CommandParameterized(T params, Phase phase) {
         this.params = params;
         this.phase = phase;
+    }
+
+    /**
+     * Returns the phase in which this command executes.
+     * The phase (START_TURN, MAIN_TURN, or END_TURN) ensures proper ordering of command
+     * execution within a game turn, consistent with the C source code's game loop in
+     * main.c.
+     *
+     * @return The execution phase of the command.
+     */
+    @Override
+    public Phase getPhase() {
+        return phase;
     }
 
     /**
@@ -63,17 +71,4 @@ public abstract class CommandParameterized<T> implements Command {
      */
     @Override
     public abstract void execute(GameState gameState);
-
-    /**
-     * Returns the phase in which this command executes.
-     * The phase (START_TURN, MAIN_TURN, or END_TURN) ensures proper ordering of command
-     * execution within a game turn, consistent with the C source code's game loop in
-     * main.c.
-     *
-     * @return The execution phase of the command.
-     */
-    @Override
-    public Phase getPhase() {
-        return phase;
-    }
 }
