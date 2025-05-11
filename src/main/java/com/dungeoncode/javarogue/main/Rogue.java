@@ -41,7 +41,7 @@ public class Rogue {
 
             final InputStream fontStream = Rogue.class.getResourceAsStream("/fonts/Ac437_IBM_VGA_8x16.ttf");
             assert fontStream != null;
-            final Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 20);
+            final Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 26);
             fontStream.close();
             // final Font font = new Font("Monospaced", Font.PLAIN, 16);
 

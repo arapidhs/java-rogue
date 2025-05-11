@@ -31,6 +31,20 @@ public class Inventory {
     }
 
     /**
+     * Checks if the inventory contains an item of the specified object type.
+     * Uses a lambda to find the first matching item.
+     *
+     * @param objectType The type of object to check for.
+     * @return true if an item of the specified type is found, false otherwise.
+     * @throws NullPointerException if objectType is null.
+     */
+    public boolean contains(@Nonnull final ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        return items.stream()
+                .anyMatch(item -> item.getObjectType() == objectType);
+    }
+
+    /**
      * Attempts to add the given item to the inventory.
      *
      * <p>Follows Rogue rules: stackable items may merge, items are ordered by type,

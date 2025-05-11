@@ -52,6 +52,15 @@ public class Room extends Entity {
         roomFlags.remove(roomFlag);
     }
 
+    public void setGoldPosition(final int x, final int y) {
+        if(goldPosition==null){
+            goldPosition=new Position(x,y);
+        }else {
+            goldPosition.setX(x);
+            goldPosition.setY(y);
+        }
+    }
+
     /**
      * Returns the dimensions of the room.
      *
@@ -89,6 +98,10 @@ public class Room extends Entity {
         return goldValue;
     }
 
+    public void setGoldValue(int goldValue) {
+        this.goldValue = goldValue;
+    }
+
     /**
      * Returns the properties of the room.
      *
@@ -117,4 +130,5 @@ public class Room extends Entity {
             this.size.setY(roomSizeY);
         }
     }
+
 }

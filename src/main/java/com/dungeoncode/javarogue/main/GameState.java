@@ -165,11 +165,8 @@ public class GameState {
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
-        this.levelNum = levelNum;
-        if (levelNum > maxLevel) {
-            maxLevel = levelNum;
-        }
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+
+        final LevelGenerator levelGenerator = new LevelGenerator(this);
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
 
@@ -191,6 +188,14 @@ public class GameState {
             }
         }
         return room;
+    }
+
+    public boolean hasAmulet(){
+        return player.getInventory().contains(ObjectType.AMULET);
+    }
+
+    public int goldCalc(final int level){
+        return  rogueRandom.rnd(50+10*level)+2;
     }
 
     private void abort() {
@@ -556,4 +561,7 @@ public class GameState {
         return messageSystem;
     }
 
+    public void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
+    }
 }

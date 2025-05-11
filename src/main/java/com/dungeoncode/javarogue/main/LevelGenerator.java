@@ -11,19 +11,27 @@ public class LevelGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LevelGenerator.class);
 
+    private final GameState gameState;
     private final Config config;
     private final RogueRandom rogueRandom;
     private Level level;
     private int levelNum;
 
-    public LevelGenerator(@Nonnull final Config config, @Nonnull RogueRandom rogueRandom) {
-        this.config = config;
-        this.rogueRandom = rogueRandom;
+    public LevelGenerator(@Nonnull final GameState gameState) {
+        this.gameState=gameState;
+        this.config = gameState.getConfig();
+        this.rogueRandom = gameState.getRogueRandom();
     }
 
     public Level newLevel(final int levelNum) {
 
         initializeLevel(levelNum);
+
+        this.levelNum = levelNum;
+        gameState.setLevelNum(this.levelNum);
+        if (this.levelNum > gameState.getMaxLevel()) {
+            gameState.setMaxLevel(this.levelNum);
+        }
 
         final Room[] rooms = doRooms();
         Arrays.stream(rooms).forEach(level::addRoom);
@@ -263,7 +271,24 @@ public class LevelGenerator {
             }
             drawRoom(room);
 
-            //TODO: Put the gold in
+            if(rogueRandom.rnd(2)==0&&(!gameState.hasAmulet()||levelNum>=gameState.getMaxLevel())) {
+
+                final int goldValue=gameState.goldCalc(levelNum);
+                final Gold gold = new Gold(goldValue);
+                room.setGoldValue(goldValue);
+
+                final Position goldPos = level.findFloor(room, 0, false);
+                assert goldPos!=null;
+                room.setGoldPosition(goldPos.getX(),goldPos.getY());
+
+                final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
+                assert place != null;
+                place.setSymbolType(SymbolType.GOLD);
+
+                level.addItem(gold);
+
+            }
+
             //TODO: Put the monster in
         }
         return rooms;
@@ -310,6 +335,7 @@ public class LevelGenerator {
             for (int y = room.getPosition().getY() + 1; y < room.getPosition().getY() + room.getSize().getY() - 1; y++) {
                 for (int x = room.getPosition().getX() + 1; x < room.getPosition().getX() + room.getSize().getX() - 1; x++) {
                     final Place place = level.getPlaceAt(x,y);
+                    assert place!=null;
                     place.setPlaceType(PlaceType.FLOOR);
                     place.setSymbolType(SymbolType.FLOOR); // '.'
                 }
@@ -952,5 +978,9 @@ public class LevelGenerator {
 
     public Level getLevel() {
         return level;
+    }
+
+    public RogueRandom getRogueRandom() {
+        return rogueRandom;
     }
 }

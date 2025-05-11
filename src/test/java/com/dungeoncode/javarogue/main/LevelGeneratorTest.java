@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -9,7 +10,7 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class LevelGeneratorTest {
+public class LevelGeneratorTest extends RogueBaseTest {
 
     /**
      * Tests the {@link LevelGenerator#vert(Room, int)} method to ensure it correctly draws a vertical wall.
@@ -19,9 +20,7 @@ public class LevelGeneratorTest {
      */
     @Test
     void testVert(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config,rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
         final int levelNum=1;
         levelGenerator.initializeLevel(levelNum);
 
@@ -51,9 +50,7 @@ public class LevelGeneratorTest {
      */
     @Test
     void testHoriz(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config,rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
         final int levelNum=1;
         levelGenerator.initializeLevel(levelNum);
 
@@ -86,10 +83,8 @@ public class LevelGeneratorTest {
     @RepeatedTest(100)
     void testDoor() {
         // Arrange
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
-        final int levelNum = rogueRandom.rnd(config.getAmuletLevel());
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final int levelNum = levelGenerator.getRogueRandom().rnd(config.getAmuletLevel());
         levelGenerator.initializeLevel(levelNum);
 
         final Room room = new Room();
@@ -131,9 +126,7 @@ public class LevelGeneratorTest {
     @RepeatedTest(100)
     void testPutPass() {
         // Arrange
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
         final int levelNum = 10; // High level to increase secret passage chance
         levelGenerator.initializeLevel(levelNum);
 
@@ -162,9 +155,8 @@ public class LevelGeneratorTest {
     @RepeatedTest(50)
     void testRndRoom() {
         // Arrange
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
         final Room[] rooms = new Room[config.getMaxRooms()];
         Arrays.setAll(rooms, k -> new Room());
 
@@ -192,9 +184,7 @@ public class LevelGeneratorTest {
     @Test
     void testAccntMaze() {
         // Arrange
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
         final LevelGenerator.Spot[][] maze = new LevelGenerator.Spot[10][10]; // Arbitrary maze size
         for (int y = 0; y < maze.length; y++) {
             for (int x = 0; x < maze[0].length; x++) {
@@ -246,13 +236,12 @@ public class LevelGeneratorTest {
      */
     @Test
     void testMaze() {
-        // Arrange: Set up config with sufficient dimensions for a 15x6 maze
-        final Config config = new Config();
+        // Arrange: Initialize LevelGenerator and level
+        final LevelGenerator levelGenerator = createLevelGenerator();
 
         // Arrange: Initialize RogueRandom with a specific seed for predictable results
-        final RogueRandom rogueRandom = new RogueRandom(12345L); // Fixed seed 12345L
-        // Arrange: Initialize LevelGenerator and level
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        rogueRandom.reseed(12345L);
         levelGenerator.initializeLevel(rogueRandom.rnd(config.getAmuletLevel()));
         // Arrange: Set up maze parameters (room at (5,5), size 15x6, hardcoded start)
         final Room mazeRoom = new Room();
@@ -291,9 +280,8 @@ public class LevelGeneratorTest {
 
     @RepeatedTest(100)
     void testLevelGeneration(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
         final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
@@ -302,9 +290,8 @@ public class LevelGeneratorTest {
     @Tag("stress")
     @RepeatedTest(10000)
     void testLevelGenerationStressTest(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
         final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
@@ -313,11 +300,18 @@ public class LevelGeneratorTest {
     @Tag("stress")
     @RepeatedTest(10000)
     void testLevelGenerationAtHighLevelsStressTest(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final LevelGenerator levelGenerator = new LevelGenerator(config, rogueRandom);
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
         final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+config.getAmuletLevel()/2;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
     }
+
+    private LevelGenerator createLevelGenerator() {
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config,rogueRandom,screen,new DefaultInitializer(), messageSystem);
+        return new LevelGenerator(gameState);
+    }
+
 }
