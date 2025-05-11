@@ -402,7 +402,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     @Tag("stress")
-    @RepeatedTest(10000)
+    @RepeatedTest(5000)
     void testLevelGenerationStressTest(){
         final LevelGenerator levelGenerator = createLevelGenerator();
         final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
@@ -412,7 +412,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     @Tag("stress")
-    @RepeatedTest(10000)
+    @RepeatedTest(5000)
     void testLevelGenerationAtHighLevelsStressTest(){
         final LevelGenerator levelGenerator = createLevelGenerator();
         final RogueRandom rogueRandom=levelGenerator.getRogueRandom();

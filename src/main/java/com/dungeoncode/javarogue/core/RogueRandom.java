@@ -109,6 +109,24 @@ public class RogueRandom {
     }
 
     /**
+     * Rolls a specified number of dice, each with a given number of sides, and returns the sum.
+     * Each die roll generates a random value from 1 to sides (inclusive).
+     * <p>
+     * Equivalent to the <code>roll</code> function in the C Rogue source.
+     *
+     * @param times The number of dice to roll.
+     * @param sides The number of sides per die.
+     * @return The total sum of the dice rolls.
+     */
+    public int roll(int times, final int sides){
+        int total=0;
+        while(times-->0){
+            total+=rnd(sides)+1;
+        }
+        return total;
+    }
+
+    /**
      * Advances the internal seed according to Rogue's original RNG formula,
      * applying 32-bit overflow simulation after each operation.
      *

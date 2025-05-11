@@ -5,6 +5,7 @@ import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.Templates;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;
@@ -90,5 +91,17 @@ public class RogueRandomTest {
                 "Selected death cause must belong to known templates or default kill name");
     }
 
-
+    @RepeatedTest(100)
+    void testRoll() {
+        final Config config =new Config();
+        final RogueRandom rnd = new RogueRandom(config.getSeed());
+        assertEquals(0,rnd.roll(0,0));
+        assertEquals(0,rnd.roll(0,5));
+        assertEquals(1,rnd.roll(1,0));
+        assertEquals(1,rnd.roll(1,1));
+        assertEquals(2,rnd.roll(2,1));
+        assertEquals(5,rnd.roll(5,1));
+        assertTrue(rnd.roll(2,6)>=2);
+        assertTrue(rnd.roll(3,3)>=3);
+    }
 }
