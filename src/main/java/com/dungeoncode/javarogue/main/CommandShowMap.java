@@ -11,7 +11,7 @@ package com.dungeoncode.javarogue.main;
  * particularly in rooms.c (e.g., init_rooms()), and integrates with Lanterna for rendering,
  * replacing the C code's curses-based display.
  */
-public class ShowMapCommand implements Command {
+public class CommandShowMap implements Command {
 
     /**
      * Executes the command to generate and display a new dungeon level.

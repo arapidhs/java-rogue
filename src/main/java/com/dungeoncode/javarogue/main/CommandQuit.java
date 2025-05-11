@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
-public class QuitCommand implements Command{
+public class CommandQuit implements Command{
 
     @Override
     public void execute(GameState gameState) {

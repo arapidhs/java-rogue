@@ -10,31 +10,31 @@ public class CommandFactory {
             char ch = keyStroke.getCharacter();
             return switch (ch) {
                 case 'h' -> {
-                    yield new DoMoveCommand(new Position(-1, 0)); // move left
+                    yield new CommandParameterizedMove(new Position(-1, 0)); // move left
                 }
                 case 'j' -> {
-                    yield new DoMoveCommand(new Position(0, 1)); // move down
+                    yield new CommandParameterizedMove(new Position(0, 1)); // move down
                 }
                 case 'k' -> {
-                    yield new DoMoveCommand(new Position(0, -1)); // move up
+                    yield new CommandParameterizedMove(new Position(0, -1)); // move up
                 }
                 case 'l' -> {
-                    yield new DoMoveCommand(new Position(1, 0)); /// move right
+                    yield new CommandParameterizedMove(new Position(1, 0)); /// move right
                 }
                 case 'y' -> {
-                    yield new DoMoveCommand(new Position(-1, -1)); /// move up left
+                    yield new CommandParameterizedMove(new Position(-1, -1)); /// move up left
                 }
                 case 'u' -> {
-                    yield new DoMoveCommand(new Position(1, -1)); /// move up right
+                    yield new CommandParameterizedMove(new Position(1, -1)); /// move up right
                 }
                 case 'b' -> {
-                    yield new DoMoveCommand(new Position(-1, 1)); /// move down left
+                    yield new CommandParameterizedMove(new Position(-1, 1)); /// move down left
                 }
                 case 'n' -> {
-                    yield new DoMoveCommand(new Position(1, 1)); /// move down right
+                    yield new CommandParameterizedMove(new Position(1, 1)); /// move down right
                 }
                 case 's' -> {
-                    yield new ShowMapCommand();
+                    yield new CommandShowMap();
                 }
                 default -> {
                     yield null;
@@ -52,7 +52,7 @@ public class CommandFactory {
                 case Home -> {yield fromKeyStroke(KeyStroke.fromString("y"));}
                 case End -> {yield fromKeyStroke(KeyStroke.fromString("b"));}
                 case Escape -> {
-                    yield new QuitCommand();
+                    yield new CommandQuit();
                 }
                 default -> {
                     yield null;

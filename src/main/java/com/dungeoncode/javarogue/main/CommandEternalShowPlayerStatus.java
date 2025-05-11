@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 import java.util.Objects;
 
 /**
- * An {@link EternalCommand} that displays the player's status line during the {@link Phase#UPKEEP_TURN} phase.
+ * An {@link CommandEternal} that displays the player's status line during the {@link Phase#UPKEEP_TURN} phase.
  * Renders the status line (from {@link Player#status()}) either as a message via {@link MessageSystem#msg(String)}
  * if {@link Config#isStatMsg()} is true, or directly on the screen at the configured status line position.
  */
-public class CommandShowPlayerStatus implements EternalCommand {
+public class CommandEternalShowPlayerStatus implements CommandEternal {
 
     @Override
     public void execute(@Nonnull final GameState gameState) {

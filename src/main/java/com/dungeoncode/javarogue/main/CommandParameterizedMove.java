@@ -5,10 +5,10 @@ import com.googlecode.lanterna.SGR;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-public class DoMoveCommand extends ParameterizedCommand<Position> {
+public class CommandParameterizedMove extends CommandParameterized<Position> {
 
     // TODO this is implementing as PoC for testing equivalent void do_move(int dy, int dx)
-    protected DoMoveCommand(@Nonnull final Position params) {
+    protected CommandParameterizedMove(@Nonnull final Position params) {
         super(params, Phase.MAIN_TURN);
     }
 

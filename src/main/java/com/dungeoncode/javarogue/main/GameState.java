@@ -70,8 +70,8 @@ public class GameState {
      * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
      * Commands are handled based on their type:
      * <ul>
-     *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
-     *   <li>{@link EternalCommand}: Executes every turn and remains in the queue.</li>
+     *   <li>{@link CommandTimed}: Decrements the timer and executes when ready, then removed.</li>
+     *   <li>{@link CommandEternal}: Executes every turn and remains in the queue.</li>
      *   <li>Other commands: Executes once and is removed.</li>
      * </ul>
      * This method mirrors the turn-based game loop in the original C Rogue source code (main.c),
@@ -81,7 +81,7 @@ public class GameState {
     public void loop() {
         this.playing = true;
         this.commandFactory = new CommandFactory();
-        addCommand(new CommandShowPlayerStatus());
+        addCommand(new CommandEternalShowPlayerStatus());
         while (true) {
             processPhase(Phase.START_TURN);
             screen.refresh();
@@ -122,8 +122,8 @@ public class GameState {
      * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
      * Handles different command types:
      * <ul>
-     *   <li>{@link TimedCommand}: Decrements the timer and executes when ready, then removed.</li>
-     *   <li>{@link EternalCommand}: Executes every turn and remains in the queue.</li>
+     *   <li>{@link CommandTimed}: Decrements the timer and executes when ready, then removed.</li>
+     *   <li>{@link CommandEternal}: Executes every turn and remains in the queue.</li>
      *   <li>Other commands: Executes once and is removed.</li>
      * </ul>
      * This method supports the turn-based structure of the C Rogue source code (main.c),
@@ -140,15 +140,15 @@ public class GameState {
         }
         commandQueue.forEach(command -> {
             if (command.getPhase() == phase) {
-                if (command instanceof TimedCommand timedCommand) {
-                    timedCommand.decrementTimer();
-                    if (timedCommand.isReadyToExecute()) {
+                if (command instanceof CommandTimed commandTimed) {
+                    commandTimed.decrementTimer();
+                    if (commandTimed.isReadyToExecute()) {
                         command.execute(this);
                         commandQueue.remove(command);
                     }
                 } else {
                     command.execute(this);
-                    if (!(command instanceof EternalCommand)) {
+                    if (!(command instanceof CommandEternal)) {
                         commandQueue.remove(command);
                     }
                 }

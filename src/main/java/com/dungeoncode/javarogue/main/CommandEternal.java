@@ -12,6 +12,6 @@ package com.dungeoncode.javarogue.main;
  * define the recurring action and its phase.
  * </p>
  */
-public interface EternalCommand extends Command {
+public interface CommandEternal extends Command {
 
 }

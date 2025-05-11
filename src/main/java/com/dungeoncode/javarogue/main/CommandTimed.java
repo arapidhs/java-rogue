@@ -10,7 +10,7 @@ package com.dungeoncode.javarogue.main;
  * source code, particularly the fuse and daemon mechanisms in daemon.c, which
  * schedule actions like traps or effects to occur after a set number of turns.
  */
-public interface TimedCommand extends Command {
+public interface CommandTimed extends Command {
     /**
      * Returns the number of turns remaining before the command is ready to execute.
      * This corresponds to the turn counter used in the C source code's fuse system

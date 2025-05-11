@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * command.c), where various actions are triggered based on input or events.
  * </p>
  */
-public class FunctionalCommand implements Command {
+public class CommandFunctional implements Command {
     private final Consumer<GameState> action;
     private final Phase phase;
 
@@ -19,7 +19,7 @@ public class FunctionalCommand implements Command {
      * Constructs a functional command with the specified action and phase.
      * // Example usage in Rogue#main or another context
      * <pre>
-     * gameState.addCommand(new FunctionalCommand(
+     * gameState.addCommand(new CommandFunctional(
      *     gameState -> System.out.println("Stupid command executed! Player is at level " + gameState.getLevelNum()),
      *     Phase.MAIN_TURN
      * ));
@@ -27,7 +27,7 @@ public class FunctionalCommand implements Command {
      * @param action The function to execute, taking a GameState as input.
      * @param phase  The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN).
      */
-    public FunctionalCommand(Consumer<GameState> action, Phase phase) {
+    public CommandFunctional(Consumer<GameState> action, Phase phase) {
         this.action = action;
         this.phase = phase;
     }

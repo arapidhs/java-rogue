@@ -48,7 +48,7 @@ public class TemplatesTest {
         assertEquals(griffinId, griffinTemplate.getId());
         assertEquals(griffinName, griffinTemplate.getName());
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
-        assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
+       assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
     }
 
     /**

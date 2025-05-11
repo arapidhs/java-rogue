@@ -14,7 +14,7 @@ package com.dungeoncode.javarogue.main;
  * </p>
  * @param <T> The type of parameters required by the command.
  */
-public abstract class ParameterizedCommand<T> implements Command {
+public abstract class CommandParameterized<T> implements Command {
     /** The parameters used by the command during execution. */
     private final T params;
     /** The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN). */
@@ -29,7 +29,7 @@ public abstract class ParameterizedCommand<T> implements Command {
      * @param params The parameters required for the command's execution.
      * @param phase  The phase in which the command should execute.
      */
-    protected ParameterizedCommand(T params, Phase phase) {
+    protected CommandParameterized(T params, Phase phase) {
         this.params = params;
         this.phase = phase;
     }

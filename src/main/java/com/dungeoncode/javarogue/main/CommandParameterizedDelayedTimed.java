@@ -14,8 +14,8 @@ package com.dungeoncode.javarogue.main;
  * <p>
  * Example usage: A bomb that explodes after 10 turns, dealing damage.
  * <pre>
- * public class BombDelayedCommand extends DelayedCommand<BombDelayedCommand.BombParams> {
- *     public BombDelayedCommand(int turns, BombParams params, Phase phase) {
+ * public class CommandDelayedBomb extends CommandParameterizedDelayedTimed<CommandDelayedBomb.BombParams> {
+ *     public CommandDelayedBomb(int turns, BombParams params, Phase phase) {
  *         super(turns, params, phase);
  *     }
  *
@@ -29,14 +29,14 @@ package com.dungeoncode.javarogue.main;
  * }
  *
  * // Usage
- * gameState.addCommand(new BombDelayedCommand(
- *     10, new BombDelayedCommand.BombParams(100, "Superbomb"), Phase.END_TURN
+ * gameState.addCommand(new CommandDelayedBomb(
+ *     10, new CommandDelayedBomb.BombParams(100, "Superbomb"), Phase.END_TURN
  * ));
  * </pre>
  * </p>
  * @param <T> The type of parameters for the delayed command.
  */
-public class DelayedCommand<T> extends ParameterizedCommand<T> implements TimedCommand {
+public class CommandParameterizedDelayedTimed<T> extends CommandParameterized<T> implements CommandTimed {
     /** The number of turns remaining before the command executes. */
     private int turnsRemaining;
 
@@ -49,7 +49,7 @@ public class DelayedCommand<T> extends ParameterizedCommand<T> implements TimedC
      * @param params   The parameters required for the command's execution.
      * @param phase    The phase in which the command should execute (START_TURN, MAIN_TURN, or END_TURN).
      */
-    public DelayedCommand(int turns, T params, Phase phase) {
+    public CommandParameterizedDelayedTimed(int turns, T params, Phase phase) {
         super(params, phase);
         this.turnsRemaining = turns;
     }
