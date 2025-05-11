@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.ui;
 
 import com.dungeoncode.javarogue.core.Config;
+import com.dungeoncode.javarogue.main.Rogue;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.TerminalPosition;
 import com.googlecode.lanterna.TextCharacter;
@@ -33,6 +34,7 @@ public class RogueScreen extends TerminalScreen {
 
         if (getTerminal() instanceof SwingTerminalFrame swingTerminalFrame) {
             swingTerminalFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+            swingTerminalFrame.setIconImage(Rogue.ICON_ROGUE_64);
         }
 
         textGraphics = newTextGraphics();

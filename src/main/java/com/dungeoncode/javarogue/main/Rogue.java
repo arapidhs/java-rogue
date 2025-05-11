@@ -19,12 +19,15 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.dungeoncode.javarogue.core.Messages.*;
@@ -41,7 +44,13 @@ public class Rogue {
     private static final String PASSWORD_SALT = "mT";
     private static final String PASSWORD_HASH = "62851374aa4abd12095d7246ae1e3c273ab5619e9967be902dc0847047d333ae";
 
+    private static final String PATH_FONT_IBM_VGA_8x16="/fonts/Ac437_IBM_VGA_8x16.ttf";
+    private static final String PATH_ROGUE_ICON_64="/icons/icon-java-rogue-64.png";
+
+    public static BufferedImage ICON_ROGUE_64 = null;
+
     public static void main(String[] args) {
+
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
 
@@ -49,7 +58,10 @@ public class Rogue {
         MessageSystem messageSystem;
         try {
 
-            final InputStream fontStream = Rogue.class.getResourceAsStream("/fonts/Ac437_IBM_VGA_8x16.ttf");
+            final BufferedImage icon = ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
+            ICON_ROGUE_64=icon;
+
+            final InputStream fontStream = Rogue.class.getResourceAsStream(PATH_FONT_IBM_VGA_8x16);
             assert fontStream != null;
             final Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 26);
             fontStream.close();
