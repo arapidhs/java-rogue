@@ -195,18 +195,20 @@ public class GameStateTest extends RogueBaseTest {
         final AtomicInteger startExecutions = new AtomicInteger(0);
         gameState.addCommand(new CommandFunctional(
                 gs -> {
-                    gs.setGoldAmount(gs.getGoldAmount() + startGoldIncrease);
+                    gs.getPlayer().setGoldAmount(gs.getPlayer().getGoldAmount() + startGoldIncrease);
                     startExecutions.incrementAndGet();
+                    return true;
                 }, Phase.START_TURN));
 
         // Test MAIN_TURN phase with CommandTimed
         final int initialTimer = 2;
         final int mainGoldIncrease = 10;
         final AtomicInteger mainTimer = new AtomicInteger(initialTimer);
-        gameState.addCommand(new CommandParameterizedDelayedTimed<Integer>(initialTimer, 0, Phase.MAIN_TURN) {
+        gameState.addCommand(new CommandParameterizedDelayedTimed<>(initialTimer, 0, Phase.MAIN_TURN) {
             @Override
-            public void execute(GameState gs) {
-                gs.setGoldAmount(gs.getGoldAmount() + mainGoldIncrease);
+            public boolean execute(GameState gs) {
+                gs.getPlayer().setGoldAmount(gs.getPlayer().getGoldAmount() + mainGoldIncrease);
+                return true;
             }
 
             @Override
@@ -237,8 +239,9 @@ public class GameStateTest extends RogueBaseTest {
             }
 
             @Override
-            public void execute(GameState gameState) {
+            public boolean execute(GameState gameState) {
                 executions.incrementAndGet();
+                return true;
             }
 
             @Override
@@ -252,7 +255,7 @@ public class GameStateTest extends RogueBaseTest {
         final int expectedStartExecutions = 1;
         final int expectedQueueSizeAfterStart = 2;
         gameState.processPhase(Phase.START_TURN);
-        assertEquals(startGoldIncrease, gameState.getGoldAmount()); // START_TURN command executed
+        assertEquals(startGoldIncrease, gameState.getPlayer().getGoldAmount()); // START_TURN command executed
         assertEquals(expectedStartExecutions, startExecutions.get()); // START_TURN command executed once
         assertEquals(expectedQueueSizeAfterStart, gameState.getCommandQueue().size()); // START_TURN command removed
 
@@ -260,7 +263,7 @@ public class GameStateTest extends RogueBaseTest {
         final int expectedMainTimerAfterFirst = initialTimer - 1;
         final int expectedQueueSizeAfterMain = 2;
         gameState.processPhase(Phase.MAIN_TURN);
-        assertEquals(startGoldIncrease, gameState.getGoldAmount()); // No MAIN_TURN execution yet
+        assertEquals(startGoldIncrease, gameState.getPlayer().getGoldAmount()); // No MAIN_TURN execution yet
         assertEquals(expectedMainTimerAfterFirst, mainTimer.get()); // CommandTimed timer decremented
         assertEquals(expectedQueueSizeAfterMain, gameState.getCommandQueue().size()); // No commands removed
 
@@ -268,7 +271,7 @@ public class GameStateTest extends RogueBaseTest {
         final int expectedGoldAfterMainSecond = startGoldIncrease + mainGoldIncrease;
         final int expectedMainTimerAfterSecond = 0;
         gameState.processPhase(Phase.MAIN_TURN);
-        assertEquals(expectedGoldAfterMainSecond, gameState.getGoldAmount()); // CommandTimed executed
+        assertEquals(expectedGoldAfterMainSecond, gameState.getPlayer().getGoldAmount()); // CommandTimed executed
         assertEquals(expectedMainTimerAfterSecond, mainTimer.get()); // CommandTimed timer at 0
         assertEquals(1, gameState.getCommandQueue().size()); // CommandTimed removed
 

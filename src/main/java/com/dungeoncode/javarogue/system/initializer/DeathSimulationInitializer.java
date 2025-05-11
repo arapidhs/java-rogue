@@ -2,6 +2,7 @@ package com.dungeoncode.javarogue.system.initializer;
 
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.entity.creature.Player;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 
 import javax.annotation.Nonnull;
@@ -38,9 +39,11 @@ public class DeathSimulationInitializer implements Initializer {
     public void initialize(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         final RogueRandom rogueRandom = gameState.getRogueRandom();
+        final Player player = new Player(gameState.getConfig());
 
+        gameState.setPlayer(player);
         gameState.setGameEndReason(GameEndReason.KILLED);
-        gameState.setGoldAmount(rogueRandom.rnd(100) + 1);
+        player.setGoldAmount(rogueRandom.rnd(100) + 1);
         gameState.setLevelNum(rogueRandom.rnd(100) + 1);
 
         final String defaultKillName = gameState.getConfig().getDefaultKillName();

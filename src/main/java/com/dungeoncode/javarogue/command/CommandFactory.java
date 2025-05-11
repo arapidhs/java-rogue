@@ -40,6 +40,9 @@ public class CommandFactory {
                 case 's' -> {
                     yield new CommandShowMap();
                 }
+                case 'Q' -> {
+                    yield new CommandQuit(true);
+                }
                 default -> {
                     yield null;
                 }
@@ -55,9 +58,6 @@ public class CommandFactory {
                 case PageDown -> {yield fromKeyStroke(KeyStroke.fromString("n"));}
                 case Home -> {yield fromKeyStroke(KeyStroke.fromString("y"));}
                 case End -> {yield fromKeyStroke(KeyStroke.fromString("b"));}
-                case Escape -> {
-                    yield new CommandQuit();
-                }
                 default -> {
                     yield null;
                 }

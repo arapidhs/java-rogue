@@ -595,7 +595,6 @@ public class LevelGenerator {
      * @throws IllegalArgumentException If room indices are invalid.
      * @throws IllegalStateException    If destination room index is out of bounds.
      */
-    // TODO unit test for conn
     public void conn(final int r1, final int r2, @Nonnull final Room[] rooms) {
         // Validate input parameters
         Objects.requireNonNull(rooms);
@@ -846,7 +845,6 @@ public class LevelGenerator {
      *
      * @param passages Array of passages to reset and store exit positions.
      */
-    // TODO unit test for passnum
     private void passnum(@Nonnull final Passage[] passages) {
         // Validate input
         Objects.requireNonNull(passages);

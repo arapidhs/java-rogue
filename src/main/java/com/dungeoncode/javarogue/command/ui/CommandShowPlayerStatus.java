@@ -18,16 +18,18 @@ import java.util.Objects;
 public class CommandShowPlayerStatus implements CommandEternal {
 
     @Override
-    public void execute(@Nonnull final GameState gameState) {
+    public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         final String statusLine=gameState.getPlayer().status();
         final Config config = gameState.getConfig();
         if(config.isStatMsg()){
+            gameState.getMessageSystem().clearMessagePosition();
             gameState.getMessageSystem().msg(statusLine);
         } else {
             gameState.getScreen().clearLine(config.getStatLine());
             gameState.getScreen().putString(0,config.getStatLine(),statusLine);
         }
+        return true;
     }
 
     @Override

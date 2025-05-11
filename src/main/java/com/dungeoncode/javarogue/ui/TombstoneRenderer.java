@@ -72,7 +72,7 @@ public class TombstoneRenderer {
         screen.putString(center(playerName), 14, playerName);
 
         // Print gold (row 15, centered)
-        final String goldText = String.format("%d Au", gameState.getGoldAmount());
+        final String goldText = String.format("%d Au", gameState.getPlayer().getGoldAmount());
         screen.putString(center(goldText), 15, goldText);
 
         // Print year (row 18, column 26)

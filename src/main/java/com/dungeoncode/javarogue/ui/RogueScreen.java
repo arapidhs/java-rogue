@@ -44,7 +44,7 @@ public class RogueScreen extends TerminalScreen {
         setCursorPosition(null);
     }
 
-    public void clearAndRefresh() throws IOException {
+    public void clearAndRefresh() {
         clear();
         refresh();
     }
@@ -95,9 +95,8 @@ public class RogueScreen extends TerminalScreen {
      * Waits for the user to input the specified character, or newline/carriage return if specified.
      *
      * @param ch The character to wait for (e.g., '\n' for newline, ' ' for space).
-     * @throws IOException If an I/O error occurs while reading input.
      */
-    public void waitFor(char ch) throws IOException {
+    public void waitFor(char ch) {
         while (true) {
             final KeyStroke key = readInput();
             if ((ch == '\n' || ch == '\r') && key.getKeyType() == KeyType.Enter) {
@@ -148,7 +147,7 @@ public class RogueScreen extends TerminalScreen {
         return password.toString();
     }
 
-    public String readString() throws IOException {
+    public String readString() {
         final StringBuilder input = new StringBuilder();
         while (true) {
             KeyStroke key = readInput();

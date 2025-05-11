@@ -78,7 +78,7 @@ public class DefaultInitializer implements Initializer {
 
         gameState.setGameEndReason(null);
         gameState.setDeathSource(null);
-        gameState.setGoldAmount(0);
+        gameState.getPlayer().setGoldAmount(0);
 
     }
 

@@ -4,8 +4,9 @@ import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.command.CommandFactory;
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
+import com.dungeoncode.javarogue.command.status.CommandSetupPlayerTimesPerTurn;
+import com.dungeoncode.javarogue.command.system.CommandQuit;
 import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
-import com.dungeoncode.javarogue.command.ui.CommandShowMap;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
 import com.dungeoncode.javarogue.entity.Position;
 import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
@@ -28,6 +29,7 @@ import com.dungeoncode.javarogue.world.*;
 import com.dungeoncode.javarogue.world.generation.LevelGenerator;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,10 +54,21 @@ public class GameState {
     private DeathSource deathSource;
     private int maxLevel;
     private int levelNum;
-    private int goldAmount;
     private Level currentLevel;
     private boolean playing;
     private CommandFactory commandFactory;
+
+    /**
+     * Command count, number of times to repeat last command.
+     * Equivalent of count variable in original Rogue code.
+     **/
+    private int count;
+
+    /**
+     * Fighting is to the death!
+     * Equivalent of bool to_death = FALSE; in original Rogue code.
+     */
+    private boolean toDeath;
 
     public GameState(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom, @Nonnull RogueScreen screen,
                      @Nullable final Initializer initializer, final @Nonnull MessageSystem messageSystem) {
@@ -82,31 +95,32 @@ public class GameState {
     }
 
     /**
-     * Executes the main game loop, processing turns until the game ends. Each turn consists of four phases:
+     * Executes the main game loop, processing turns until the game ends. Each turn consists of five phases:
      * <ul>
-     *   <li><b>START_TURN</b>: Executes commands for pre-player actions (e.g., monster movement).</li>
-     *   <li><b>UPKEEP_TURN</b>: Executes commands for status updates (e.g., player status display).</li>
-     *   <li><b>MAIN_TURN</b>: Reads player input, queues the resulting command, and executes MAIN_TURN commands.</li>
-     *   <li><b>END_TURN</b>: Executes commands for post-player actions (e.g., status effects).</li>
+     *   <li><b>START_TURN</b>: Executes pre-player actions (e.g., monster movement, setting player move count).</li>
+     *   <li><b>UPKEEP_TURN</b>: Executes status updates (e.g., player status display).</li>
+     *   <li><b>INPUT_CLEANUP_TURN</b>: Executes cleanup after player input (e.g., clearing messages).</li>
+     *   <li><b>MAIN_TURN</b>: Processes player input and executes player commands, repeating based on the player's move count.</li>
+     *   <li><b>END_TURN</b>: Executes post-player actions (e.g., status effects).</li>
      * </ul>
      * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
      * Commands are handled based on their type:
      * <ul>
-     *   <li>{@link CommandTimed}: Decrements the timer and executes when ready, then removed.</li>
-     *   <li>{@link CommandEternal}: Executes every turn and remains in the queue.</li>
-     *   <li>Other commands: Executes once and is removed.</li>
+     *   <li>{@link CommandTimed}: Decrements timer, executes when ready, then removed if successful.</li>
+     *   <li>{@link CommandEternal}: Executes every turn, remains in the queue.</li>
+     *   <li>Other commands: Executes once, removed if successful.</li>
      * </ul>
-     * This method mirrors the turn-based game loop in the original C Rogue source code (main.c),
-     * with pre-player actions (monsters.c), player input processing (command.c), and post-player
-     * updates (daemon.c), ensuring proper command ordering and persistence.
+     * Player commands are executed up to the player's move count (set by {@link CommandSetupPlayerTimesPerTurn}, default 1, increased by {@link CreatureFlag#ISHASTE}).
+     * Retries input on {@link KeyType#Escape} (e.g., from Ctrl+C) or if no command is executed.
+     * Mirrors the turn-based loop in C Rogue (main.c), with pre-player actions (monsters.c), player input (command.c), and post-player updates (daemon.c).
      */
     public void loop() {
         this.playing = true;
         this.commandFactory = new CommandFactory();
 
+        addCommand(new CommandSetupPlayerTimesPerTurn());
         addCommand(new CommandShowPlayerStatus());
         addCommand(new CommandClearMessage());
-        addCommand(new CommandShowMap());
 
         while (playing) {
 
@@ -116,23 +130,51 @@ public class GameState {
             processPhase(Phase.UPKEEP_TURN);
             screen.refresh();
 
-            final KeyStroke keyStroke = screen.readInput();
-            final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
-            if (playerCommand != null) {
-                addCommand(playerCommand);
-            }
+            KeyStroke keyStroke;
+            boolean commandExecuted = false;
 
-            processPhase(Phase.INPUT_CLEANUP_TURN);
-            screen.refresh();
+            do {
 
+                keyStroke = readChar();
 
-            processPhase(Phase.MAIN_TURN);
-            screen.refresh();
+                processPhase(Phase.INPUT_CLEANUP_TURN);
+
+                if (!keyStroke.getKeyType().equals(KeyType.Escape)) {
+                    final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
+                    if (playerCommand != null) {
+                        commandExecuted = playerCommand.execute(this);
+                        if (commandExecuted) {
+                            player.setNtimes(player.getNtimes() - 1);
+                        }
+                        screen.refresh();
+                    }
+                }
+            } while (player.getNtimes() > 0 || !commandExecuted || keyStroke.getKeyType().equals(KeyType.Escape));
 
             processPhase(Phase.END_TURN);
             screen.refresh();
-
         }
+    }
+
+    /**
+     * Reads a keystroke from the terminal, handling Ctrl+C by executing a quit command.
+     * Returns the keystroke or an {@link KeyType#Escape} keystroke if Ctrl+C is pressed.
+     * <p>
+     * Equivalent to the <code>readchar</code> function in the C Rogue source, adapted for
+     * Lanterna to process terminal input and handle interrupts.
+     * </p>
+     *
+     * @return The read keystroke, or an Escape keystroke for Ctrl+C.
+     * @throws RuntimeException if an I/O error occurs during input reading.
+     */
+    private KeyStroke readChar() {
+        final KeyStroke keyStroke = screen.readInput();
+        if (keyStroke.isCtrlDown() && keyStroke.getCharacter() != null && keyStroke.getCharacter() == 'c') {
+            final CommandQuit commandQuit = new CommandQuit(false);
+            commandQuit.execute(this);
+            return new KeyStroke(KeyType.Escape);
+        }
+        return keyStroke;
     }
 
     public void addCommand(@Nonnull final Command command) {
@@ -501,7 +543,9 @@ public class GameState {
     }
 
     public void death() {
-        this.goldAmount -= this.goldAmount / 10;
+        int goldAmount= player.getGoldAmount();
+        goldAmount -= goldAmount / 10;
+        player.setGoldAmount(goldAmount);
     }
 
     public void look(final boolean wakeUp) {
@@ -538,14 +582,6 @@ public class GameState {
 
     public void setLevelNum(final int levelNum) {
         this.levelNum = levelNum;
-    }
-
-    public int getGoldAmount() {
-        return goldAmount;
-    }
-
-    public void setGoldAmount(final int goldAmount) {
-        this.goldAmount = goldAmount;
     }
 
     public DeathSource getDeathSource() {
@@ -587,5 +623,13 @@ public class GameState {
 
     public Map<Phase, Boolean> getPhaseActivity() {
         return phaseActivity;
+    }
+
+    public void setCount(final int count) {
+        this.count = count;
+    }
+
+    public void setToDeath(final boolean toDeath) {
+        this.toDeath = toDeath;
     }
 }

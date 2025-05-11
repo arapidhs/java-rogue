@@ -62,7 +62,7 @@ public class ScoreManager {
      *              If non-null, it is considered for insertion into the score table.
      * @throws IOException If reading input or writing the score file fails.
      */
-    public void score(@Nullable final GameState state) throws IOException {
+    public void score(@Nullable final GameState state) {
 
         final GameEndReason gameEndReason = state == null ? null : state.getGameEndReason();
 
@@ -91,18 +91,18 @@ public class ScoreManager {
         if (state != null && getConfig().isScoring()) {
 
             final boolean isHighScore = scoreEntries.size() < getConfig().getNumScores()
-                    || state.getGoldAmount() > scoreEntries.get(scoreEntries.size() - 1).score;
+                    || state.getPlayer().getGoldAmount() > scoreEntries.get(scoreEntries.size() - 1).score;
 
             if (isHighScore) {
 
                 final int userId = getConfig().getUserId();
-                final long monsterId = state.getDeathSource().type().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().templateId() : 0;
-                final long killTypeId = state.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().templateId() : 0;
+                final long monsterId = state.getDeathSource() !=null && state.getDeathSource().type().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().templateId() : 0;
+                final long killTypeId = state.getDeathSource() !=null && state.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().templateId() : 0;
 
                 // Construct new score entry
                 final ScoreEntry newEntry = new ScoreEntry(
                         userId,
-                        state.getGoldAmount(),
+                        state.getPlayer().getGoldAmount(),
                         state.getGameEndReason(),
                         monsterId,
                         killTypeId,
@@ -260,93 +260,100 @@ public class ScoreManager {
         return screen.getConfig();
     }
 
-    public List<ScoreEntry> readScoreFile() throws IOException {
-        final List<ScoreEntry> entries = new ArrayList<>();
-        final File scoreFile = new File(getConfig().getJavaRogueDirName(), getConfig().getScoreFileName());
+    public List<ScoreEntry> readScoreFile() {
+        try {
+            final List<ScoreEntry> entries = new ArrayList<>();
+            final File scoreFile = new File(getConfig().getJavaRogueDirName(), getConfig().getScoreFileName());
 
-        if (!scoreFile.exists()) {
-            return entries;
-        }
-
-        try (FileInputStream fis = new FileInputStream(scoreFile)) {
-            for (int i = 0; i < getConfig().getNumScores(); i++) {
-                final byte[] nameBytes = new byte[getConfig().getMaxStringLength()];
-                final byte[] scoreLineBytes = new byte[100];
-
-                final int readName = fis.read(nameBytes);
-                final int readScoreLine = fis.read(scoreLineBytes);
-                if (readName != nameBytes.length || readScoreLine != scoreLineBytes.length) {
-                    break;
-                }
-
-                RogueUtils.xorCrypt(nameBytes,
-                        getConfig().getEncryptionKeyPrimary(),
-                        getConfig().getEncryptionKeySecondary());
-
-                RogueUtils.xorCrypt(scoreLineBytes,
-                        getConfig().getEncryptionKeyPrimary(),
-                        getConfig().getEncryptionKeySecondary());
-
-                final String name = new String(nameBytes, StandardCharsets.UTF_8).trim();
-                final String scoreLine = new String(scoreLineBytes, StandardCharsets.UTF_8).trim();
-
-                final Scanner scanner = new Scanner(scoreLine);
-                final int uid = scanner.nextInt();
-                final int score = scanner.nextInt();
-                final int gameEndReasonId = scanner.nextInt();
-                final int monster = scanner.nextInt();
-                final int killtypeId = scanner.nextInt();
-                final int level = scanner.nextInt();
-                final int time = Integer.parseInt(scanner.next(), 16);
-
-                entries.add(
-                        new ScoreEntry(uid, score, GameEndReason.fromId(gameEndReasonId), monster, killtypeId, level,
-                                time, name));
+            if (!scoreFile.exists()) {
+                return entries;
             }
+
+            try (FileInputStream fis = new FileInputStream(scoreFile)) {
+                for (int i = 0; i < getConfig().getNumScores(); i++) {
+                    final byte[] nameBytes = new byte[getConfig().getMaxStringLength()];
+                    final byte[] scoreLineBytes = new byte[100];
+
+                    final int readName = fis.read(nameBytes);
+                    final int readScoreLine = fis.read(scoreLineBytes);
+                    if (readName != nameBytes.length || readScoreLine != scoreLineBytes.length) {
+                        break;
+                    }
+
+                    RogueUtils.xorCrypt(nameBytes,
+                            getConfig().getEncryptionKeyPrimary(),
+                            getConfig().getEncryptionKeySecondary());
+
+                    RogueUtils.xorCrypt(scoreLineBytes,
+                            getConfig().getEncryptionKeyPrimary(),
+                            getConfig().getEncryptionKeySecondary());
+
+                    final String name = new String(nameBytes, StandardCharsets.UTF_8).trim();
+                    final String scoreLine = new String(scoreLineBytes, StandardCharsets.UTF_8).trim();
+
+                    final Scanner scanner = new Scanner(scoreLine);
+                    final int uid = scanner.nextInt();
+                    final int score = scanner.nextInt();
+                    final int gameEndReasonId = scanner.nextInt();
+                    final int monster = scanner.nextInt();
+                    final int killtypeId = scanner.nextInt();
+                    final int level = scanner.nextInt();
+                    final int time = Integer.parseInt(scanner.next(), 16);
+
+                    entries.add(
+                            new ScoreEntry(uid, score, GameEndReason.fromId(gameEndReasonId), monster, killtypeId, level,
+                                    time, name));
+                }
+            }
+            return entries;
+        } catch (Exception ex){
+            throw new RuntimeException(ex);
         }
-        return entries;
     }
 
-    public void writeScoreFile(@Nullable final List<ScoreEntry> entries) throws IOException {
+    public void writeScoreFile(@Nullable final List<ScoreEntry> entries) {
+        try {
+            if (entries == null || entries.isEmpty())
+                return;
 
-        if (entries == null || entries.isEmpty())
-            return;
+            final File scoreFile = getFile();
 
-        final File scoreFile = getFile();
+            try (FileOutputStream fos = new FileOutputStream(scoreFile, false)) {
+                for (ScoreEntry entry : entries) {
 
-        try (FileOutputStream fos = new FileOutputStream(scoreFile, false)) {
-            for (ScoreEntry entry : entries) {
+                    // 1. Name (encrypted, padded to MAXSTR)
+                    byte[] nameBytes = new byte[getConfig().getMaxStringLength()];
+                    byte[] rawName = entry.name.getBytes(StandardCharsets.UTF_8);
+                    System.arraycopy(rawName, 0, nameBytes, 0, Math.min(rawName.length, nameBytes.length));
 
-                // 1. Name (encrypted, padded to MAXSTR)
-                byte[] nameBytes = new byte[getConfig().getMaxStringLength()];
-                byte[] rawName = entry.name.getBytes(StandardCharsets.UTF_8);
-                System.arraycopy(rawName, 0, nameBytes, 0, Math.min(rawName.length, nameBytes.length));
+                    RogueUtils.xorCrypt(nameBytes,
+                            getConfig().getEncryptionKeyPrimary(),
+                            getConfig().getEncryptionKeySecondary());
+                    fos.write(nameBytes);
 
-                RogueUtils.xorCrypt(nameBytes,
-                        getConfig().getEncryptionKeyPrimary(),
-                        getConfig().getEncryptionKeySecondary());
-                fos.write(nameBytes);
+                    // 2. Score line (encrypted, padded to 100 bytes)
+                    String formatted = String.format(" %d %d %d %d %d %d %x \n",
+                            entry.userId,
+                            entry.score,
+                            entry.gameEndReason.getId(),
+                            entry.monsterId,
+                            entry.killTypeId,
+                            entry.level,
+                            entry.time);
 
-                // 2. Score line (encrypted, padded to 100 bytes)
-                String formatted = String.format(" %d %d %d %d %d %d %x \n",
-                        entry.userId,
-                        entry.score,
-                        entry.gameEndReason.getId(),
-                        entry.monsterId,
-                        entry.killTypeId,
-                        entry.level,
-                        entry.time);
+                    byte[] scoreLineBytes = new byte[100];
+                    byte[] rawLine = formatted.getBytes(StandardCharsets.UTF_8);
+                    System.arraycopy(rawLine, 0, scoreLineBytes, 0, Math.min(rawLine.length, scoreLineBytes.length));
 
-                byte[] scoreLineBytes = new byte[100];
-                byte[] rawLine = formatted.getBytes(StandardCharsets.UTF_8);
-                System.arraycopy(rawLine, 0, scoreLineBytes, 0, Math.min(rawLine.length, scoreLineBytes.length));
+                    RogueUtils.xorCrypt(scoreLineBytes,
+                            getConfig().getEncryptionKeyPrimary(),
+                            getConfig().getEncryptionKeySecondary());
 
-                RogueUtils.xorCrypt(scoreLineBytes,
-                        getConfig().getEncryptionKeyPrimary(),
-                        getConfig().getEncryptionKeySecondary());
-
-                fos.write(scoreLineBytes);
+                    fos.write(scoreLineBytes);
+                }
             }
+        } catch (Exception ex){
+            throw new RuntimeException(ex);
         }
     }
 

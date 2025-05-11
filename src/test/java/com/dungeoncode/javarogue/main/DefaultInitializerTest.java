@@ -81,7 +81,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
 
         assertNull(gameState.getGameEndReason());
         assertNull(gameState.getDeathSource());
-        assertEquals(0,gameState.getGoldAmount());
+        assertEquals(0,gameState.getPlayer().getGoldAmount());
 
     }
 

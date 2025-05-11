@@ -21,7 +21,7 @@ public class CommandPlayerMove extends CommandParameterized<Position> {
     }
 
     @Override
-    public void execute(@Nonnull final GameState gameState) {
+    public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         final int dx=getParams().getX();
         final int dy=getParams().getY();
@@ -30,15 +30,15 @@ public class CommandPlayerMove extends CommandParameterized<Position> {
         final int newx=px+dx;
         final int newy=py+dy;
         if(newx<0||newx>=gameState.getConfig().getTerminalCols()||newy<=0||newy>=gameState.getConfig().getTerminalRows()-1){
-            return;
+            return false;
         }
         final Place place = gameState.getCurrentLevel().getPlaceAt(newx, newy);
         assert place!=null;
         if(place.isType(PlaceType.WALL)||place.isType(PlaceType.EMPTY)){
-            return;
+            return false;
         }
         if(place.isType(PlaceType.PASSAGE)&&!place.isReal()){
-            return;
+            return false;
         }
 
         final RogueScreen screen = gameState.getScreen();
@@ -52,6 +52,7 @@ public class CommandPlayerMove extends CommandParameterized<Position> {
         if(place.isType(PlaceType.PASSAGE)){
             screen.disableModifiers(SGR.REVERSE);
         }
+        return true;
     }
 
     @Override

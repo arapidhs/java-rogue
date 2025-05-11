@@ -121,7 +121,7 @@ public class Rogue {
                         deathLine.append(killerName);
                     }
 
-                    deathLine.append(' ').append("with").append(' ').append(gameState.getGoldAmount()).append(' ').append("gold");
+                    deathLine.append(' ').append("with").append(' ').append(gameState.getPlayer().getGoldAmount()).append(' ').append("gold");
 
                     screen.putString(0, screen.getRows() - 2, deathLine.toString());
                 }
@@ -204,7 +204,7 @@ public class Rogue {
      *
      * @param screen The RogueScreen to close, may be null.
      */
-    private static void exit(@Nullable RogueScreen screen) {
+    public static void exit(@Nullable RogueScreen screen) {
         closeScreen(screen);
         System.exit(0);
     }

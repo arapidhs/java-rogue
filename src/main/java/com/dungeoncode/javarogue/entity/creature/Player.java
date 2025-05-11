@@ -31,6 +31,13 @@ public class Player extends Creature {
     private final Stats maxStats;
     private int currentLevel;
 
+    /**
+     * Number of times the player can act (execute a command) in a turn.
+     * Equivalent of <pre>register int ntimes = 1; Number of player moves</pre>
+     * from the original Rogue source code.
+     */
+    private int ntimes;
+
     public Player(@Nonnull final Config config) {
         super();
         Objects.requireNonNull(config);
@@ -136,8 +143,20 @@ public class Player extends Creature {
         this.hungryState = hungryState;
     }
 
-    public HungryState getHungryState() {
-        return hungryState;
+    public int getGoldAmount() {
+        return goldAmount;
+    }
+
+    public int getNtimes() {
+        return ntimes;
+    }
+
+    public void setNtimes(int ntimes) {
+        this.ntimes = ntimes;
+    }
+
+    public void setGoldAmount(int goldAmount) {
+        this.goldAmount = goldAmount;
     }
 
     public enum HungryState {

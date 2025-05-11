@@ -97,45 +97,41 @@ public class MessageSystem {
      * @throws RuntimeException If an I/O error occurs during screen operations or input reading.
      */
     public boolean endmsg() {
-        try {
-            if (config.isMessageSave()) {
-                lastMessage = messageBuffer.toString();
-            }
-            if (messagePosition > 0) {
+        if (config.isMessageSave()) {
+            lastMessage = messageBuffer.toString();
+        }
+        if (messagePosition > 0) {
 
-                gameState.look(false);
-                screen.enableModifiers(SGR.REVERSE);
-                screen.putString(messagePosition, 0, MSG_MORE);
-                screen.disableModifiers(SGR.REVERSE);
-                screen.refresh(Screen.RefreshType.DELTA);
+            gameState.look(false);
+            screen.enableModifiers(SGR.REVERSE);
+            screen.putString(messagePosition, 0, MSG_MORE);
+            screen.disableModifiers(SGR.REVERSE);
+            screen.refresh(Screen.RefreshType.DELTA);
 
-                if (!config.isMessageAllowEscape()) {
-                    screen.waitFor(' ');
-                } else {
-                    while (true) {
-                        final KeyStroke key = screen.readInput();
-                        if (key.getKeyType() == KeyType.Character && key.getCharacter() == ' ') {
-                            break;
-                        }
-                        if (key.getKeyType() == KeyType.Escape) {
-                            messageBuffer.setLength(0);
-                            messagePosition = 0;
-                            return false;
-                        }
+            if (!config.isMessageAllowEscape()) {
+                screen.waitFor(' ');
+            } else {
+                while (true) {
+                    final KeyStroke key = screen.readInput();
+                    if (key.getKeyType() == KeyType.Character && key.getCharacter() == ' ') {
+                        break;
+                    }
+                    if (key.getKeyType() == KeyType.Escape) {
+                        messageBuffer.setLength(0);
+                        messagePosition = 0;
+                        return false;
                     }
                 }
             }
-
-            capitalizeMessageBuffer();
-            screen.clearLine(0);
-            screen.putString(0, 0, messageBuffer.toString());
-            messagePosition = messageBuffer.length();
-            messageBuffer.setLength(0);
-            screen.refresh(Screen.RefreshType.DELTA);
-            return true;
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
         }
+
+        capitalizeMessageBuffer();
+        screen.clearLine(0);
+        screen.putString(0, 0, messageBuffer.toString());
+        messagePosition = messageBuffer.length();
+        messageBuffer.setLength(0);
+        screen.refresh(Screen.RefreshType.DELTA);
+        return true;
     }
 
     private void capitalizeMessageBuffer() {
@@ -148,6 +144,10 @@ public class MessageSystem {
     public void setGameState(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         this.gameState = gameState;
+    }
+
+    public void clearMessagePosition() {
+        this.messagePosition=0;
     }
 
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class ScoreManagerTest extends RogueBaseTest {
 
     @Test
-    void testReadWrite() throws IOException {
+    void testReadWrite() {
 
         Mockito.when(screen.getConfig()).thenReturn(config);
         final ScoreManager scoreManager = new ScoreManager(screen);

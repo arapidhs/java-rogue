@@ -39,7 +39,7 @@ import com.dungeoncode.javarogue.core.Phase;
  * </p>
  * @param <T> The type of parameters for the delayed command.
  */
-public class CommandParameterizedDelayedTimed<T> extends CommandParameterized<T> implements CommandTimed {
+public abstract class CommandParameterizedDelayedTimed<T> extends CommandParameterized<T> implements CommandTimed {
     /** The number of turns remaining before the command executes. */
     private int turnsRemaining;
 
@@ -103,7 +103,5 @@ public class CommandParameterizedDelayedTimed<T> extends CommandParameterized<T>
      * @param gameState The current game state to be modified by the command.
      */
     @Override
-    public void execute(GameState gameState) {
-        // Default implementation; override in subclasses for specific behavior
-    }
+    public abstract boolean execute(GameState gameState);
 }

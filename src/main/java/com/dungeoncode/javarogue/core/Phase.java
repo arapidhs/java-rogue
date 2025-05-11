@@ -1,30 +1,30 @@
 package com.dungeoncode.javarogue.core;
 
 /**
- * Defines the phases of a game turn in the Rogue game, determining the order of command execution.
- * Each phase represents a distinct stage: pre-player actions (START_TURN), status updates (UPKEEP_TURN),
- * input cleanup (INPUT_CLEANUP_TURN), player actions (MAIN_TURN), and post-player actions (END_TURN).
+ * Defines the phases of a game turn in the Rogue game, controlling the order of command execution.
+ * Each phase represents a distinct stage: pre-player actions, status updates, input cleanup,
+ * player actions, and post-player actions.
  * <p>
- * Mirrors the turn-based loop in the C Rogue source (main.c), with pre-player actions (monsters.c),
- * player input (command.c), and post-player updates (player.c, daemon.c).
+ * Mirrors the turn-based structure of the C Rogue source (main.c), with pre-player actions
+ * (monsters.c), player input processing (command.c), and post-player updates (player.c, daemon.c).
  * </p>
  */
 public enum Phase {
     /**
-     * Phase for pre-player actions, such as monster movement or environmental updates.
+     * Phase for pre-player actions, such as monster movement or setting player move count.
      * Corresponds to pre-player logic in C Rogue, like m_move() in monsters.c.
      */
     START_TURN,
 
     /**
      * Phase for status updates, such as displaying the player status line.
-     * Introduced to handle upkeep tasks between pre-player and player actions.
+     * Handles upkeep tasks before player input.
      */
     UPKEEP_TURN,
 
     /**
-     * Phase for cleanup tasks after player input but before main turn commands, such as clearing messages.
-     * Introduced to ensure a clean UI state before executing player actions.
+     * Phase for cleanup after player input, such as clearing messages, before executing main commands.
+     * Ensures a clean UI state for player actions.
      */
     INPUT_CLEANUP_TURN,
 

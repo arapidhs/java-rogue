@@ -70,5 +70,5 @@ public abstract class CommandParameterized<T> implements Command {
      * @param gameState The current game state to be modified by the command.
      */
     @Override
-    public abstract void execute(GameState gameState);
+    public abstract boolean execute(GameState gameState);
 }

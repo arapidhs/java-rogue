@@ -4,46 +4,52 @@ import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 
-import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
- * A command that executes a provided function on the game state. This allows
- * dynamic creation of commands using lambdas or method references without
+ * A command that executes a provided predicate on the game state, returning a boolean result.
+ * This allows dynamic creation of commands using lambdas or method references without
  * defining new command classes, suitable for simple or one-off actions.
  * <p>
- * Inspired by the flexible action handling in the C Rogue source code (e.g.,
- * command.c), where various actions are triggered based on input or events.
+ * Inspired by the flexible action handling in the C Rogue source code (e.g., command.c),
+ * where various actions are triggered based on input or events.
  * </p>
  */
 public class CommandFunctional implements Command {
-    private final Consumer<GameState> action;
+    private final Predicate<GameState> action;
     private final Phase phase;
 
     /**
-     * Constructs a functional command with the specified action and phase.
-     * // Example usage in Rogue#main or another context
+     * Constructs a functional command with the specified predicate and phase.
+     * <p>Example usage:</p>
      * <pre>
      * gameState.addCommand(new CommandFunctional(
-     *     gameState -> System.out.println("Stupid command executed! Player is at level " + gameState.getLevelNum()),
+     *     gameState -> {
+     *         gameState.setGoldAmount(gameState.getGoldAmount() + 10);
+     *         return true;
+     *     },
      *     Phase.MAIN_TURN
      * ));
      * </pre>
-     * @param action The function to execute, taking a GameState as input.
-     * @param phase  The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN).
+     *
+     * @param action The predicate to execute, taking a GameState and returning a boolean.
+     * @param phase  The phase in which the command executes (e.g., START_TURN, MAIN_TURN, END_TURN).
      */
-    public CommandFunctional(Consumer<GameState> action, Phase phase) {
+    public CommandFunctional(Predicate<GameState> action, Phase phase) {
         this.action = action;
         this.phase = phase;
     }
 
     /**
-     * Executes the command by applying the provided function to the game state.
+     * Executes the command by applying the provided predicate to the game state.
+     * Returns the boolean result of the predicate, indicating success or failure.
      *
-     * @param gameState The current game state to be modified by the function.
+     * @param gameState The current game state to be modified by the predicate.
+     * @return The result of the predicate (true for success, false for failure).
      */
     @Override
-    public void execute(GameState gameState) {
-        action.accept(gameState);
+    public boolean execute(GameState gameState) {
+        return action.test(gameState);
     }
 
     /**

@@ -29,8 +29,9 @@ public class CommandShowMap implements Command {
      *                  and rendering.
      */
     @Override
-    public void execute(GameState gameState) {
+    public boolean execute(GameState gameState) {
         gameState.showMap();
+        return true;
     }
 
     /**

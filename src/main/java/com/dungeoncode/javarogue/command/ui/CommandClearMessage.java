@@ -11,9 +11,10 @@ import static com.dungeoncode.javarogue.core.Phase.*;
 
 public class CommandClearMessage implements CommandEternal {
     @Override
-    public void execute(@Nonnull final GameState gameState) {
+    public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         gameState.getMessageSystem().clearMessage();
+        return true;
     }
 
     @Override
