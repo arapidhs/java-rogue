@@ -1,6 +1,25 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.Phase;
+import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.entity.creature.Player;
+import com.dungeoncode.javarogue.entity.item.Inventory;
+import com.dungeoncode.javarogue.entity.item.Item;
+import com.dungeoncode.javarogue.entity.item.ItemData;
+import com.dungeoncode.javarogue.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.entity.item.armor.Armor;
+import com.dungeoncode.javarogue.entity.item.armor.ArmorType;
+import com.dungeoncode.javarogue.entity.item.potion.PotionType;
+import com.dungeoncode.javarogue.entity.item.ring.RingType;
+import com.dungeoncode.javarogue.entity.item.rod.RodType;
+import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
+import com.dungeoncode.javarogue.entity.item.weapon.Weapon;
+import com.dungeoncode.javarogue.entity.item.weapon.WeaponType;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
+import com.dungeoncode.javarogue.ui.MessageSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

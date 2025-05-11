@@ -1,5 +1,20 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.entity.item.Inventory;
+import com.dungeoncode.javarogue.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.entity.item.armor.Armor;
+import com.dungeoncode.javarogue.entity.item.armor.ArmorType;
+import com.dungeoncode.javarogue.entity.item.food.Food;
+import com.dungeoncode.javarogue.entity.item.potion.Potion;
+import com.dungeoncode.javarogue.entity.item.potion.PotionType;
+import com.dungeoncode.javarogue.entity.item.scroll.Scroll;
+import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
+import com.dungeoncode.javarogue.entity.item.weapon.Weapon;
+import com.dungeoncode.javarogue.entity.item.weapon.WeaponType;
+import com.dungeoncode.javarogue.entity.item.weapon.WeaponsFactory;
+import com.dungeoncode.javarogue.ui.SymbolType;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

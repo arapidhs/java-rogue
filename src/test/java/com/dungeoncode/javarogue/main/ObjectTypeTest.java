@@ -1,5 +1,22 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.entity.item.ObjectType;
+import com.dungeoncode.javarogue.entity.item.amulet.Amulet;
+import com.dungeoncode.javarogue.entity.item.armor.Armor;
+import com.dungeoncode.javarogue.entity.item.armor.ArmorType;
+import com.dungeoncode.javarogue.entity.item.food.Food;
+import com.dungeoncode.javarogue.entity.item.gold.Gold;
+import com.dungeoncode.javarogue.entity.item.potion.Potion;
+import com.dungeoncode.javarogue.entity.item.potion.PotionType;
+import com.dungeoncode.javarogue.entity.item.ring.Ring;
+import com.dungeoncode.javarogue.entity.item.ring.RingType;
+import com.dungeoncode.javarogue.entity.item.rod.Rod;
+import com.dungeoncode.javarogue.entity.item.rod.RodType;
+import com.dungeoncode.javarogue.entity.item.scroll.Scroll;
+import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
+import com.dungeoncode.javarogue.entity.item.weapon.Weapon;
+import com.dungeoncode.javarogue.entity.item.weapon.WeaponType;
+import com.dungeoncode.javarogue.ui.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

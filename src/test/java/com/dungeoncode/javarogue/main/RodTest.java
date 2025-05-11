@@ -1,5 +1,9 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.entity.item.rod.Rod;
+import com.dungeoncode.javarogue.entity.item.rod.RodType;
+import com.dungeoncode.javarogue.ui.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

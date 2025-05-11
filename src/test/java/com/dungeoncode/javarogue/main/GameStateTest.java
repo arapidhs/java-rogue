@@ -1,6 +1,28 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.command.core.CommandEternal;
+import com.dungeoncode.javarogue.command.core.CommandFunctional;
+import com.dungeoncode.javarogue.command.core.CommandParameterizedDelayedTimed;
+import com.dungeoncode.javarogue.command.core.CommandTimed;
+import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.Phase;
+import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.entity.creature.Monster;
+import com.dungeoncode.javarogue.entity.creature.Player;
+import com.dungeoncode.javarogue.entity.item.Inventory;
+import com.dungeoncode.javarogue.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.entity.item.food.Food;
+import com.dungeoncode.javarogue.entity.item.scroll.Scroll;
+import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.ui.MessageSystem;
+import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.world.Level;
+import com.dungeoncode.javarogue.world.Passage;
+import com.dungeoncode.javarogue.world.Room;
+import com.dungeoncode.javarogue.world.RoomFlag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;

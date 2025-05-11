@@ -1,5 +1,10 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.template.KillTypeTemplate;
+import com.dungeoncode.javarogue.template.MonsterTemplate;
+import com.dungeoncode.javarogue.template.Templates;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashSet;

@@ -1,6 +1,11 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
+import com.dungeoncode.javarogue.system.death.GameEndReason;
+import com.dungeoncode.javarogue.ui.MessageSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
