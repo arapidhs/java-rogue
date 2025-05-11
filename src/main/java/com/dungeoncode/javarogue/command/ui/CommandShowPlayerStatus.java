@@ -25,6 +25,7 @@ public class CommandShowPlayerStatus implements CommandEternal {
         if(config.isStatMsg()){
             gameState.getMessageSystem().msg(statusLine);
         } else {
+            gameState.getScreen().clearLine(config.getStatLine());
             gameState.getScreen().putString(0,config.getStatLine(),statusLine);
         }
     }

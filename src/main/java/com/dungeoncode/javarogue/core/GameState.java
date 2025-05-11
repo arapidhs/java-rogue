@@ -4,6 +4,8 @@ import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.command.CommandFactory;
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
+import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
+import com.dungeoncode.javarogue.command.ui.CommandShowMap;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
 import com.dungeoncode.javarogue.config.Config;
 import com.dungeoncode.javarogue.entity.Position;
@@ -30,10 +32,10 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Queue;
+import javax.swing.*;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameState {
@@ -105,38 +107,34 @@ public class GameState {
     public void loop() {
         this.playing = true;
         this.commandFactory = new CommandFactory();
+
         addCommand(new CommandShowPlayerStatus());
-        while (true) {
+        addCommand(new CommandClearMessage());
+        addCommand(new CommandShowMap());
+
+        while (playing) {
+
             processPhase(Phase.START_TURN);
             screen.refresh();
-            if (!playing) {
-                break;
-            }
 
             processPhase(Phase.UPKEEP_TURN);
             screen.refresh();
-            if (!playing) {
-                break;
-            }
 
-            KeyStroke keyStroke = screen.readInput();
+            final KeyStroke keyStroke = screen.readInput();
             final Command playerCommand = commandFactory.fromKeyStroke(keyStroke);
             if (playerCommand != null) {
                 addCommand(playerCommand);
             }
-            getMessageSystem().clearMessage();
+
+            processPhase(Phase.INPUT_CLEANUP_TURN);
+            screen.refresh();
+
 
             processPhase(Phase.MAIN_TURN);
             screen.refresh();
-            if (!playing) {
-                break;
-            }
 
             processPhase(Phase.END_TURN);
             screen.refresh();
-            if (!playing) {
-                break;
-            }
 
         }
     }
@@ -247,6 +245,12 @@ public class GameState {
 
     //TODO: method to show map for debugging purpose only
     public void showMap() {
+        Random random = new Random();
+//        if(random.nextBoolean()){
+//            screen.enableModifiers(SGR.BOLD);
+//        } else {
+//            screen.disableModifiers(SGR.BOLD);
+//        }
         for (int x = 0; x < config.getTerminalCols(); x++) {
             for (int y = 1; y < config.getTerminalRows() - 1; y++) {
                 final Place place = currentLevel.getPlaceAt(x, y);

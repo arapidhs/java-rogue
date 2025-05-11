@@ -7,12 +7,15 @@ import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.googlecode.lanterna.terminal.swing.SwingTerminalFrame;
 
 import javax.annotation.Nonnull;
+import javax.swing.*;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -47,9 +50,19 @@ public class RogueScreen extends TerminalScreen {
     }
 
     public void refresh(){
+        refresh(RefreshType.AUTOMATIC);
+    }
+
+    public void refresh(final Screen.RefreshType refreshType){
         try {
-            super.refresh();
-        } catch (IOException e) {
+            SwingUtilities.invokeAndWait(() -> {
+                try {
+                    super.refresh(refreshType);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
     }

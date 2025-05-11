@@ -6,6 +6,7 @@ import com.dungeoncode.javarogue.core.GameState;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -45,7 +46,6 @@ public class MessageSystem {
         if (message.isEmpty()) {
             screen.clearLine(0);
             messagePosition = 0;
-            screen.refresh();
             return true;
         } else {
             doadd(message);
@@ -106,7 +106,7 @@ public class MessageSystem {
                 screen.enableModifiers(SGR.REVERSE);
                 screen.putString(messagePosition, 0, MSG_MORE);
                 screen.disableModifiers(SGR.REVERSE);
-                screen.refresh();
+                screen.refresh(Screen.RefreshType.DELTA);
 
                 if (!config.isMessageAllowEscape()) {
                     screen.waitFor(' ');
@@ -130,7 +130,7 @@ public class MessageSystem {
             screen.putString(0, 0, messageBuffer.toString());
             messagePosition = messageBuffer.length();
             messageBuffer.setLength(0);
-            screen.refresh();
+            screen.refresh(Screen.RefreshType.DELTA);
             return true;
         } catch (IOException ex) {
             throw new RuntimeException(ex);
