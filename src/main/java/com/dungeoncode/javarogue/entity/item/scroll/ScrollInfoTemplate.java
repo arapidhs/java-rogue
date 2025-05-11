@@ -21,7 +21,7 @@ public class ScrollInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("probability") final double probability,
             @JsonProperty("worth") final int worth) {
 
-        super(id, ObjectType.SCROLL, scrollType, name, probability, worth, null, null,null);
+        super(id, ObjectType.SCROLL, scrollType, name, probability, worth, null, null, null);
     }
 
     @Override

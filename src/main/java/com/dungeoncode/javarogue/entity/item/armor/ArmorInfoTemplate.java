@@ -24,7 +24,7 @@ public class ArmorInfoTemplate extends ObjectInfoTemplate {
             @JsonProperty("worth") final int worth,
             @JsonProperty("armorClass") final int armorClass) {
 
-        super(id, ObjectType.ARMOR, armorType, name, probability, worth, null, null,null);
+        super(id, ObjectType.ARMOR, armorType, name, probability, worth, null, null, null);
         this.armorClass = armorClass;
     }
 

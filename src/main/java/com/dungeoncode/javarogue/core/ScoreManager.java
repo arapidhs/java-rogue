@@ -487,9 +487,9 @@ public class ScoreManager {
          * @param name          Player name.
          */
         public ScoreEntry(final int userId, final int score, final GameEndReason gameEndReason,
-                   final long monsterId, final long killTypeId,
-                   final int level, final long time,
-                   final String name) {
+                          final long monsterId, final long killTypeId,
+                          final int level, final long time,
+                          final String name) {
             this.userId = userId;
             this.score = score;
             this.gameEndReason = gameEndReason;

@@ -47,14 +47,30 @@ public class CommandFactory {
         } else {
             final KeyType keyType = keyStroke.getKeyType();
             return switch (keyType) {
-                case ArrowUp -> {yield fromKeyStroke(KeyStroke.fromString("k"));}
-                case ArrowDown -> {yield fromKeyStroke(KeyStroke.fromString("j"));}
-                case ArrowLeft -> {yield fromKeyStroke(KeyStroke.fromString("h"));}
-                case ArrowRight -> {yield fromKeyStroke(KeyStroke.fromString("l"));}
-                case PageUp -> {yield fromKeyStroke(KeyStroke.fromString("u"));}
-                case PageDown -> {yield fromKeyStroke(KeyStroke.fromString("n"));}
-                case Home -> {yield fromKeyStroke(KeyStroke.fromString("y"));}
-                case End -> {yield fromKeyStroke(KeyStroke.fromString("b"));}
+                case ArrowUp -> {
+                    yield fromKeyStroke(KeyStroke.fromString("k"));
+                }
+                case ArrowDown -> {
+                    yield fromKeyStroke(KeyStroke.fromString("j"));
+                }
+                case ArrowLeft -> {
+                    yield fromKeyStroke(KeyStroke.fromString("h"));
+                }
+                case ArrowRight -> {
+                    yield fromKeyStroke(KeyStroke.fromString("l"));
+                }
+                case PageUp -> {
+                    yield fromKeyStroke(KeyStroke.fromString("u"));
+                }
+                case PageDown -> {
+                    yield fromKeyStroke(KeyStroke.fromString("n"));
+                }
+                case Home -> {
+                    yield fromKeyStroke(KeyStroke.fromString("y"));
+                }
+                case End -> {
+                    yield fromKeyStroke(KeyStroke.fromString("b"));
+                }
                 case Escape -> {
                     yield new CommandQuit();
                 }

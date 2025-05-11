@@ -31,7 +31,7 @@ public class Item extends Entity {
         this.count = count;
         this.itemFlags = EnumSet.noneOf(ItemFlag.class);
         final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(objectType);
-        assert objectInfoTemplate!=null;
+        assert objectInfoTemplate != null;
         setSymbolType(objectInfoTemplate.getSymbolType());
     }
 
@@ -63,8 +63,8 @@ public class Item extends Entity {
         return itemSubType;
     }
 
-    public  SymbolType getInventoryKey() {
-        return  inventoryKey;
+    public SymbolType getInventoryKey() {
+        return inventoryKey;
     }
 
     public void setInventoryKey(final SymbolType inventoryKey) {

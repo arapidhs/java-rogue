@@ -6,7 +6,7 @@ import com.dungeoncode.javarogue.entity.item.ObjectType;
 
 public class Gold extends Item {
 
-    private static final int GOLDGRP=1;
+    private static final int GOLDGRP = 1;
 
     public Gold(final int goldValue) {
         super(ObjectType.GOLD, null, 1);

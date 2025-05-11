@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.core;
 
-import com.dungeoncode.javarogue.command.*;
+import com.dungeoncode.javarogue.command.Command;
+import com.dungeoncode.javarogue.command.CommandFactory;
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
@@ -47,6 +48,7 @@ public class GameState {
     private final WeaponsFactory weaponsFactory;
     private final ItemData itemData;
     private final Map<Phase, Boolean> phaseActivity;
+    private final Queue<Command> commandQueue = new ConcurrentLinkedQueue<>();
     private Player player;
     private GameEndReason gameEndReason;
     private DeathSource deathSource;
@@ -55,8 +57,6 @@ public class GameState {
     private int goldAmount;
     private Level currentLevel;
     private boolean playing;
-
-    private final Queue<Command> commandQueue = new ConcurrentLinkedQueue<>();
     private CommandFactory commandFactory;
 
     public GameState(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom, @Nonnull RogueScreen screen,
@@ -72,7 +72,7 @@ public class GameState {
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
         this.itemData = new ItemData(config, rogueRandom);
-        phaseActivity=new HashMap<>();
+        phaseActivity = new HashMap<>();
         init();
     }
 
@@ -141,6 +141,11 @@ public class GameState {
         }
     }
 
+    public void addCommand(@Nonnull final Command command) {
+        Objects.requireNonNull(command);
+        commandQueue.offer(command);
+    }
+
     /**
      * Processes all commands in the queue for the specified phase, if the phase is active.
      * Phases can be enabled or disabled using {@link #enablePhase(Phase)} and {@link #disablePhase(Phase)}.
@@ -180,9 +185,8 @@ public class GameState {
         });
     }
 
-    public void addCommand(@Nonnull final Command command) {
-        Objects.requireNonNull(command);
-        commandQueue.offer(command);
+    public MessageSystem getMessageSystem() {
+        return messageSystem;
     }
 
     // TODO newLevel unit test
@@ -195,41 +199,17 @@ public class GameState {
         setCurrentLevel(level);
 
         final Position pos = level.findFloor(null, 0, true);
-        assert pos!=null;
+        assert pos != null;
         player.setPosition(pos.getX(), pos.getY());
         enterRoom(pos.getX(), pos.getY());
-        screen.putChar(pos.getX(),pos.getY(), SymbolMapper.getSymbol(player.getClass()));
+        screen.putChar(pos.getX(), pos.getY(), SymbolMapper.getSymbol(player.getClass()));
         screen.refresh();
     }
 
-    @Nullable
-    public Room roomIn(final int x, final int y) {
-        final Room room = currentLevel.roomIn(x, y);
-        if(room==null){
-            messageSystem.msg(String.format("in some bizarre place (%d, %d)",x,y));
-            if(config.isMaster()){
-                abort();
-            }
-        }
-        return room;
-    }
-
-    public boolean hasAmulet(){
-        return player.getInventory().contains(ObjectType.AMULET);
-    }
-
-    public int goldCalc(final int level){
-        return  rogueRandom.rnd(50+10*level)+2;
-    }
-
-    private void abort() {
-        System.exit(1);
-    }
-
     // TODO temporary testing method, this should be the equivalent of enter_room(coord *cp)
-    public void enterRoom(final int posX, final int posY){
-        final Room room = roomIn(posX,posY);
-        if (room!=null && !room.hasFlag(RoomFlag.DARK)){
+    public void enterRoom(final int posX, final int posY) {
+        final Room room = roomIn(posX, posY);
+        if (room != null && !room.hasFlag(RoomFlag.DARK)) {
             for (int y = room.getY(); y < room.getY() + room.getSize().getY(); y++) {
                 for (int x = room.getX(); x < room.getX() + room.getSize().getX(); x++) {
                     final Place place = currentLevel.getPlaceAt(x, y);
@@ -241,6 +221,30 @@ public class GameState {
         }
     }
 
+    @Nullable
+    public Room roomIn(final int x, final int y) {
+        final Room room = currentLevel.roomIn(x, y);
+        if (room == null) {
+            messageSystem.msg(String.format("in some bizarre place (%d, %d)", x, y));
+            if (config.isMaster()) {
+                abort();
+            }
+        }
+        return room;
+    }
+
+    private void abort() {
+        System.exit(1);
+    }
+
+    public boolean hasAmulet() {
+        return player.getInventory().contains(ObjectType.AMULET);
+    }
+
+    public int goldCalc(final int level) {
+        return rogueRandom.rnd(50 + 10 * level) + 2;
+    }
+
     //TODO: method to show map for debugging purpose only
     public void showMap() {
         for (int x = 0; x < config.getTerminalCols(); x++) {
@@ -250,10 +254,10 @@ public class GameState {
                 if (!place.isReal()) {
                     screen.enableModifiers(SGR.BOLD);
                 }
-                if(place.isType(PlaceType.PASSAGE)) {
+                if (place.isType(PlaceType.PASSAGE)) {
                     screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
                 } else {
-                    screen.putChar(x,y,SymbolMapper.getSymbol(place.getSymbolType()));
+                    screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
                 }
                 if (!place.isReal()) {
                     screen.disableModifiers(SGR.BOLD);
@@ -353,32 +357,10 @@ public class GameState {
     }
 
     /**
-     * Returns the symbol type to render at the player's current position, based on the place and room visibility.
-     * <p>
-     * Equivalent to C function <code>char floor_at()</code> in the Rogue source.
-     * <p>
-     * If the place at the player's position is a floor, returns the room's symbol type via {@link #floorCh()}
-     * if visible (e.g., lit room or non-blind state). Otherwise, returns the place's symbol type.
-     * Returns null if no place exists at the position.
-     *
-     * @return The symbol type to render at the player's position, or null if no place exists.
-     */
-    public SymbolType floorAt(){
-        final Place place = currentLevel.getPlaceAt(player.getX(), player.getY());
-        if(place!=null){
-            if(place.getSymbolType().equals(SymbolType.FLOOR)){
-                return floorCh();
-            };
-            return place.getSymbolType();
-        }
-        return null;
-    }
-
-    /**
      * Sets the display SymbolType for the given map coordinates on the current level.
      *
-     * @param x      the x-coordinate
-     * @param y      the y-coordinate
+     * @param x          the x-coordinate
+     * @param y          the y-coordinate
      * @param symbolType the Symbol Type to place at the specified coordinates
      * @see SymbolType
      */
@@ -475,6 +457,28 @@ public class GameState {
     }
 
     /**
+     * Returns the symbol type to render at the player's current position, based on the place and room visibility.
+     * <p>
+     * Equivalent to C function <code>char floor_at()</code> in the Rogue source.
+     * <p>
+     * If the place at the player's position is a floor, returns the room's symbol type via {@link #floorCh()}
+     * if visible (e.g., lit room or non-blind state). Otherwise, returns the place's symbol type.
+     * Returns null if no place exists at the position.
+     *
+     * @return The symbol type to render at the player's position, or null if no place exists.
+     */
+    public SymbolType floorAt() {
+        final Place place = currentLevel.getPlaceAt(player.getX(), player.getY());
+        if (place != null) {
+            if (place.getSymbolType().equals(SymbolType.FLOOR)) {
+                return floorCh();
+            }
+            return place.getSymbolType();
+        }
+        return null;
+    }
+
+    /**
      * Enables the specified phase, allowing its commands to be processed in the game loop.
      *
      * @param phase The phase to enable (START_TURN, MAIN_TURN, or END_TURN).
@@ -491,7 +495,7 @@ public class GameState {
      * @param phase The phase to disable (START_TURN, MAIN_TURN, or END_TURN).
      * @throws NullPointerException if phase is null.
      */
-    public void disablePhase(@Nonnull final  Phase phase) {
+    public void disablePhase(@Nonnull final Phase phase) {
         Objects.requireNonNull(phase);
         phaseActivity.put(phase, false);
     }
@@ -522,6 +526,10 @@ public class GameState {
 
     public int getMaxLevel() {
         return maxLevel;
+    }
+
+    public void setMaxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
     }
 
     public int getLevelNum() {
@@ -579,13 +587,5 @@ public class GameState {
 
     public Map<Phase, Boolean> getPhaseActivity() {
         return phaseActivity;
-    }
-
-    public MessageSystem getMessageSystem() {
-        return messageSystem;
-    }
-
-    public void setMaxLevel(int maxLevel) {
-        this.maxLevel = maxLevel;
     }
 }
