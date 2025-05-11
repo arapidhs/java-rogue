@@ -1,9 +1,8 @@
-package com.dungeoncode.javarogue.config;
+package com.dungeoncode.javarogue.core;
 
-import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.core.RogueUtils;
 import com.dungeoncode.javarogue.entity.creature.PlayerFlag;
 import com.dungeoncode.javarogue.entity.creature.Stats;
+import com.dungeoncode.javarogue.main.Options;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;

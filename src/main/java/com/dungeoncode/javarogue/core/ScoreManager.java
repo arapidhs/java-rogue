@@ -1,6 +1,5 @@
 package com.dungeoncode.javarogue.core;
 
-import com.dungeoncode.javarogue.config.Config;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
@@ -23,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.dungeoncode.javarogue.config.Messages.*;
+import static com.dungeoncode.javarogue.core.Messages.*;
 
 public class ScoreManager {
 

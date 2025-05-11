@@ -1,4 +1,4 @@
-package com.dungeoncode.javarogue.config;
+package com.dungeoncode.javarogue.main;
 
 import picocli.CommandLine;
 

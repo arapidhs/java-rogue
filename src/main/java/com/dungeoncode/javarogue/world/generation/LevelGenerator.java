@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.world.generation;
 
-import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.entity.Position;
@@ -279,26 +279,41 @@ public class LevelGenerator {
             drawRoom(room);
 
             if(rogueRandom.rnd(2)==0&&(!gameState.hasAmulet()||levelNum>=gameState.getMaxLevel())) {
-
-                final int goldValue=gameState.goldCalc(levelNum);
-                final Gold gold = new Gold(goldValue);
-                room.setGoldValue(goldValue);
-
-                final Position goldPos = level.findFloor(room, 0, false);
-                assert goldPos!=null;
-                room.setGoldPosition(goldPos.getX(),goldPos.getY());
-
-                final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
-                assert place != null;
-                place.setSymbolType(SymbolType.GOLD);
-
-                level.addItem(gold);
-
+                addGold(room);
             }
 
             //TODO: Put the monster in
         }
         return rooms;
+    }
+
+    /**
+     * Adds gold to a specified room, placing it at a valid floor position.
+     * Calculates gold value based on level, sets room gold properties,
+     * updates the place's symbol, and adds the gold item to the level.
+     * <p>
+     * Based on gold placement logic in the C Rogue source.
+     *
+     * @param room The room to place gold in.
+     * @return The position where the gold is placed.
+     * @throws AssertionError if no valid floor position is found or place is null.
+     */
+    public Position addGold(@Nonnull final Room room) {
+        Objects.requireNonNull(room);
+        final int goldValue=gameState.goldCalc(levelNum);
+        final Gold gold = new Gold(goldValue);
+        room.setGoldValue(goldValue);
+
+        final Position goldPos = level.findFloor(room, 0, false);
+        assert goldPos!=null;
+        gold.setPosition(goldPos.getX(),goldPos.getY());
+        room.setGoldPosition(goldPos.getX(),goldPos.getY());
+
+        final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
+        assert place != null;
+        place.setSymbolType(SymbolType.GOLD);
+        level.addItem(gold);
+        return goldPos;
     }
 
     public void setMazeRoomDimensions(@Nonnull final Room room, final int maxRoomX, final int maxRoomY,

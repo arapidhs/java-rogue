@@ -4,7 +4,7 @@ import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandFunctional;
 import com.dungeoncode.javarogue.command.core.CommandParameterizedDelayedTimed;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
-import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.core.RogueRandom;

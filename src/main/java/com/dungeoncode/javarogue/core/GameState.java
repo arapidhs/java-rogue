@@ -7,7 +7,6 @@ import com.dungeoncode.javarogue.command.core.CommandTimed;
 import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
 import com.dungeoncode.javarogue.command.ui.CommandShowMap;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
-import com.dungeoncode.javarogue.config.Config;
 import com.dungeoncode.javarogue.entity.Position;
 import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.entity.creature.Monster;
@@ -32,9 +31,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.swing.*;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 

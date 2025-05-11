@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.entity.creature;
 
-import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.entity.item.Inventory;
 import com.dungeoncode.javarogue.entity.item.armor.Armor;
 import com.dungeoncode.javarogue.entity.item.ring.Ring;

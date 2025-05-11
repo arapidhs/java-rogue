@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.template;
 
-import com.dungeoncode.javarogue.config.Messages;
+import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.core.Template;
 import com.dungeoncode.javarogue.entity.item.ItemSubtype;
 import com.dungeoncode.javarogue.entity.item.ObjectType;

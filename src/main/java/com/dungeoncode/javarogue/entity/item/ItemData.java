@@ -1,7 +1,7 @@
 package com.dungeoncode.javarogue.entity.item;
 
-import com.dungeoncode.javarogue.config.Config;
-import com.dungeoncode.javarogue.config.Messages;
+import com.dungeoncode.javarogue.core.Config;
+import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.core.RogueUtils;
 import com.dungeoncode.javarogue.entity.creature.Player;

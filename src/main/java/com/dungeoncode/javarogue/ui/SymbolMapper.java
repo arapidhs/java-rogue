@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.ui;
 
-import com.dungeoncode.javarogue.config.Messages;
+import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.entity.creature.Player;
 import com.dungeoncode.javarogue.entity.item.amulet.Amulet;
 import com.dungeoncode.javarogue.entity.item.armor.Armor;

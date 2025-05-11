@@ -3,6 +3,8 @@ package com.dungeoncode.javarogue.main;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.entity.Position;
+import com.dungeoncode.javarogue.entity.item.Item;
+import com.dungeoncode.javarogue.entity.item.gold.Gold;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.ui.MessageSystem;
@@ -156,6 +158,40 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     /**
+     * Tests the {@link LevelGenerator#addGold(Room)} method to ensure gold is correctly placed in a room.
+     * Verifies that:
+     * <ul>
+     *   <li>Gold item is created and placed at a valid floor position.</li>
+     *   <li>Gold is an instance of {@link Gold} with correct position and value (>1).</li>
+     *   <li>Room's gold position and value match the gold item.</li>
+     *   <li>The place at the gold's position has {@link SymbolType#GOLD}.</li>
+     * </ul>
+     * Uses a fixed seed (100) and level 1 for consistent generation.
+     */
+    @Test
+    void testAddGold() {
+        final long seed=100;
+        final LevelGenerator levelGenerator = createLevelGenerator(seed);
+        final int levelNum=1;
+        final Level level = levelGenerator.newLevel(levelNum);
+        final Room room = level.rndRoom();
+        final Position goldPos = levelGenerator.addGold(room);
+
+        final Item gold = level.findItemAt(goldPos.getX(), goldPos.getY());
+        assertNotNull(gold);
+        assertInstanceOf(Gold.class, gold);
+        assertEquals(goldPos,gold.getPosition());
+        assertEquals(goldPos,room.getGoldPosition());
+        assertTrue(gold.getGoldValue()>1);
+        assertEquals(gold.getGoldValue(),room.getGoldValue());
+
+        final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
+        assertNotNull(place);
+        assertEquals(SymbolType.GOLD,place.getSymbolType());
+
+    }
+
+    /**
      * Tests the {@link LevelGenerator#rndRoom(Room[])} method to ensure it selects a random non-gone room.
      * Verifies that the returned room index corresponds to a room without the {@link RoomFlag#GONE} flag
      * and is within the valid range of the rooms array.
@@ -245,11 +281,12 @@ public class LevelGeneratorTest extends RogueBaseTest {
     @Test
     void testMaze() {
         // Arrange: Initialize LevelGenerator and level
-        final LevelGenerator levelGenerator = createLevelGenerator();
+        final LevelGenerator levelGenerator = createLevelGenerator(); //726652449
 
         // Arrange: Initialize RogueRandom with a specific seed for predictable results
         final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
         rogueRandom.reseed(12345L);
+
         levelGenerator.initializeLevel(rogueRandom.rnd(config.getAmuletLevel()));
         // Arrange: Set up maze parameters (room at (5,5), size 15x6, hardcoded start)
         final Room mazeRoom = new Room();
@@ -316,7 +353,16 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     private LevelGenerator createLevelGenerator() {
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        return createLevelGenerator(0);
+    }
+
+    private LevelGenerator createLevelGenerator(final long seed) {
+        final RogueRandom rogueRandom;
+        if(seed>0){
+            rogueRandom = new RogueRandom(seed);
+        }else{
+            rogueRandom=new RogueRandom(config.getSeed());
+        }
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config,rogueRandom,screen,new DefaultInitializer(), messageSystem);
         return new LevelGenerator(gameState);

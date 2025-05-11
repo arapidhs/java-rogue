@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.entity.Position;
 import com.dungeoncode.javarogue.entity.item.Item;

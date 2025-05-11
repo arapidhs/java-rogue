@@ -1,7 +1,5 @@
 package com.dungeoncode.javarogue.core;
 
-import com.dungeoncode.javarogue.config.Config;
-import com.dungeoncode.javarogue.config.Messages;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
@@ -121,4 +119,7 @@ public class RogueRandom {
         return (int) ((seed >> 16) & 0xFFFF);
     }
 
+    public long getSeed() {
+        return seed;
+    }
 }

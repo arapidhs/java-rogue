@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.entity.item.weapon;
 
-import com.dungeoncode.javarogue.config.Messages;
+import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.entity.item.ObjectType;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;

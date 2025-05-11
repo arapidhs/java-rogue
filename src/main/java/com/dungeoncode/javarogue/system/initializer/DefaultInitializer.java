@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.system.initializer;
 
-import com.dungeoncode.javarogue.config.Config;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.entity.creature.Player;

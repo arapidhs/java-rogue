@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.entity.item.ring;
 
-import com.dungeoncode.javarogue.config.Messages;
+import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.entity.item.ObjectType;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.fasterxml.jackson.annotation.JsonCreator;

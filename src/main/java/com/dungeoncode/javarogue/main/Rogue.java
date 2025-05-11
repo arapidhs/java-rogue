@@ -1,7 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.config.Config;
-import com.dungeoncode.javarogue.config.Options;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.*;
 import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
 import com.dungeoncode.javarogue.system.death.DeathSource;
@@ -29,7 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import static com.dungeoncode.javarogue.config.Messages.*;
+import static com.dungeoncode.javarogue.core.Messages.*;
 
 /**
  * Main entry point for the Rogue game, responsible for initializing the terminal, processing command-line options,
