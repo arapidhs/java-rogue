@@ -297,7 +297,7 @@ public class TemplatesTest {
         assertEquals(14, Templates.getTemplates(RingInfoTemplate.class).size());
 
         final long dexId = 8;
-        final RingType dexType = RingType.DEXTERITY;
+        final RingType dexType = RingType.R_ADDHIT;
         final String dexName = "dexterity";
         final int dexWorth = 440;
         final double dexProbability = 8;

@@ -22,8 +22,8 @@ public class Ring extends Item {
             return "";
         }
         final RingType type = getItemSubType();
-        if (type == RingType.PROTECTION || type == RingType.ADD_STRENGTH ||
-                type == RingType.INCREASE_DAMAGE || type == RingType.DEXTERITY) {
+        if (type == RingType.R_PROTECT || type == RingType.R_ADDSTR ||
+                type == RingType.R_ADDDAM || type == RingType.R_ADDHIT) {
             final int bonus = getArmorClass();
             return String.format(" [%s]", bonus < 0 ? Integer.toString(bonus) : "+" + bonus);
         }

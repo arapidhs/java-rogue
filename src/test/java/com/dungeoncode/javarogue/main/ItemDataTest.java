@@ -62,12 +62,12 @@ public class ItemDataTest {
         assertNotNull(itemData.getRodMaterial(RodType.SLOW_MONSTER));
 
         // Check base worth of ADORNMENT ring template
-        final RingInfoTemplate adornmentRingTemplate = (RingInfoTemplate) Templates.findTemplateBySubType(RingType.ADORNMENT);
+        final RingInfoTemplate adornmentRingTemplate = (RingInfoTemplate) Templates.findTemplateBySubType(RingType.R_NOP);
         final int ringTemplateValue = adornmentRingTemplate.getWorth();
         assertTrue(ringTemplateValue > 0);
 
         // Ensure ADORNMENT ring’s worth includes stone value
-        final int ringStoneWorth = itemData.getRingWorth(RingType.ADORNMENT);
+        final int ringStoneWorth = itemData.getRingWorth(RingType.R_NOP);
         assertTrue(ringStoneWorth > ringTemplateValue);
     }
 
@@ -80,20 +80,20 @@ public class ItemDataTest {
 
         // Initial state: no subtypes are known
         assertFalse(itemData.isKnown(ScrollType.HOLD_MONSTER));
-        assertFalse(itemData.isKnown(RingType.DEXTERITY));
+        assertFalse(itemData.isKnown(RingType.R_ADDHIT));
 
         // Mark subtypes as known
         itemData.setKnown(ScrollType.HOLD_MONSTER, true);
-        itemData.setKnown(RingType.DEXTERITY, true);
+        itemData.setKnown(RingType.R_ADDHIT, true);
 
         // Verify known status is updated
         assertTrue(itemData.isKnown(ScrollType.HOLD_MONSTER));
-        assertTrue(itemData.isKnown(RingType.DEXTERITY));
+        assertTrue(itemData.isKnown(RingType.R_ADDHIT));
 
         // Re-initialize to reset known status
         itemData.init();
         assertFalse(itemData.isKnown(ScrollType.HOLD_MONSTER));
-        assertFalse(itemData.isKnown(RingType.DEXTERITY));
+        assertFalse(itemData.isKnown(RingType.R_ADDHIT));
     }
 
     /**
@@ -108,20 +108,20 @@ public class ItemDataTest {
 
         // Initial state: no guess names set
         assertNull(itemData.getGuessName(ScrollType.HOLD_MONSTER));
-        assertNull(itemData.getGuessName(RingType.DEXTERITY));
+        assertNull(itemData.getGuessName(RingType.R_ADDHIT));
 
         // Assign guess names
         itemData.setGuessName(ScrollType.HOLD_MONSTER, guessNameHoldMonster);
-        itemData.setGuessName(RingType.DEXTERITY, guessNameDexterityRing);
+        itemData.setGuessName(RingType.R_ADDHIT, guessNameDexterityRing);
 
         // Verify guess names are correctly stored
         assertEquals(guessNameHoldMonster, itemData.getGuessName(ScrollType.HOLD_MONSTER));
-        assertEquals(guessNameDexterityRing, itemData.getGuessName(RingType.DEXTERITY));
+        assertEquals(guessNameDexterityRing, itemData.getGuessName(RingType.R_ADDHIT));
 
         // Re-initialize to clear guess names
         itemData.init();
         assertNull(itemData.getGuessName(ScrollType.HOLD_MONSTER));
-        assertNull(itemData.getGuessName(RingType.DEXTERITY));
+        assertNull(itemData.getGuessName(RingType.R_ADDHIT));
     }
 
     /**
@@ -268,7 +268,7 @@ public class ItemDataTest {
         boolean dropCapital = true;
 
         // Create a PROTECTION ring for testing
-        final Ring item = new Ring(RingType.PROTECTION);
+        final Ring item = new Ring(RingType.R_PROTECT);
         final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
         // Verify unknown single ring starts with "a" or "an" and ends with "ring"
@@ -323,7 +323,7 @@ public class ItemDataTest {
 
         // Test known ADORNMENT ring without armor class bonus
         itemData.init();
-        final Ring ringItem = new Ring(RingType.ADORNMENT);
+        final Ring ringItem = new Ring(RingType.R_NOP);
         final String ringRealName = Templates.findTemplateBySubType(ringItem.getItemSubType()).getName();
         itemData.setKnown(ringItem.getItemSubType(), true);
 

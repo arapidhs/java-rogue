@@ -41,7 +41,7 @@ public class ObjectTypeTest {
         assertEquals(ObjectType.FOOD,food.getObjectType());
         assertEquals(SymbolType.FOOD,food.getSymbolType());
 
-        final Ring ring = new Ring(RingType.ADORNMENT);
+        final Ring ring = new Ring(RingType.R_NOP);
         assertEquals(ObjectType.RING,ring.getObjectType());
         assertEquals(SymbolType.RING,ring.getSymbolType());
 

@@ -13,7 +13,7 @@ public class RingTest {
 
     @Test
     void testNum() {
-        final Ring ring = new Ring(RingType.PROTECTION);
+        final Ring ring = new Ring(RingType.R_PROTECT);
         ring.setArmorClass(3);
 
         //  ring is not known
@@ -25,7 +25,7 @@ public class RingTest {
         assertEquals(knownRingNum, ring.num());
 
         // ring type does not have armor class (not applicable)
-        final Ring adornmentRing = new Ring(RingType.ADORNMENT);
+        final Ring adornmentRing = new Ring(RingType.R_NOP);
         adornmentRing.addFlag(ItemFlag.ISKNOW);
         assertTrue(adornmentRing.num().isEmpty());
 
