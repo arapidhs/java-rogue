@@ -183,7 +183,7 @@ public class GameState {
         return messageSystem;
     }
 
-    // TODO newLevel unit test
+    // TODO game state newLevel unit test
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
@@ -200,7 +200,7 @@ public class GameState {
         screen.refresh();
     }
 
-    // TODO temporary testing method, this should be the equivalent of enter_room(coord *cp)
+    // TODO temp enterRoom testing method, this should be the equivalent of enter_room(coord *cp)
     public void enterRoom(final int posX, final int posY) {
         final Room room = roomIn(posX, posY);
         if (room != null && !room.hasFlag(RoomFlag.DARK)) {

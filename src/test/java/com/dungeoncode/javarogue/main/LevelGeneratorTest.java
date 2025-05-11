@@ -348,7 +348,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
      * generation to match the expected maze layout.
      */
     @Test
-    void testMaze() {
+    void testDoMaze() {
         // Arrange: Initialize LevelGenerator and level
         final LevelGenerator levelGenerator = createLevelGenerator(); //726652449
 

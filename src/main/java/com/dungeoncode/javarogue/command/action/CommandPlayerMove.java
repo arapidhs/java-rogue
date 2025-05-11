@@ -15,7 +15,7 @@ import java.util.Objects;
 
 public class CommandPlayerMove extends CommandParameterized<Position> {
 
-    // TODO this is implementing as PoC for testing equivalent void do_move(int dy, int dx)
+    // TODO this is implemented as PoC for testing equivalent void do_move(int dy, int dx)
     public CommandPlayerMove(@Nonnull final Position params) {
         super(params, Phase.MAIN_TURN);
     }
