@@ -46,6 +46,7 @@ public class MessageSystem {
         if (message.isEmpty()) {
             screen.clearLine(0);
             messagePosition = 0;
+            screen.refresh(Screen.RefreshType.DELTA);
             return true;
         } else {
             doadd(message);

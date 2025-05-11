@@ -158,6 +158,75 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     /**
+     * Tests the {@link LevelGenerator#drawRoom(Room)} method for a normal (non-maze) room.
+     * Verifies that:
+     * <ul>
+     *   <li>Left and right walls are vertical ({@link SymbolType#WALL_VERTICAL}, {@link PlaceType#WALL}).</li>
+     *   <li>Top and bottom walls are horizontal ({@link SymbolType#WALL_HORIZONTAL}, {@link PlaceType#WALL}).</li>
+     *   <li>Interior tiles are floors ({@link SymbolType#FLOOR}, {@link PlaceType#FLOOR}).</li>
+     * </ul>
+     * Uses a room at position (5,7) with size 4x6 on level 1.
+     */
+    @Test
+    void testDrawRoomNormal() {
+        // Arrange: Set up level generator and room
+        final LevelGenerator levelGenerator = createLevelGenerator();
+        final int levelNum = 1;
+        levelGenerator.initializeLevel(levelNum);
+
+        final Room room = new Room();
+        final int roomX = 5;
+        final int roomY = 7;
+        final int roomSizeX = 4;
+        final int roomSizeY = 6;
+        room.setPosition(roomX, roomY);
+        room.setSize(roomSizeX, roomSizeY);
+
+        // Act: Draw the room
+        levelGenerator.drawRoom(room);
+
+        // Assert: Verify left and right vertical walls
+        for (int y = roomY + 1; y <= roomY + roomSizeY - 2; y++) {
+            // Check left wall
+            Place place = levelGenerator.getLevel().getPlaceAt(roomX, y);
+            assertNotNull(place); // Ensure place exists
+            assertTrue(place.isType(PlaceType.WALL)); // Verify wall type
+            assertEquals(SymbolType.WALL_VERTICAL, place.getSymbolType()); // Verify vertical wall symbol
+
+            // Check right wall
+            place = levelGenerator.getLevel().getPlaceAt(roomX + roomSizeX - 1, y);
+            assertNotNull(place); // Ensure place exists
+            assertTrue(place.isType(PlaceType.WALL)); // Verify wall type
+            assertEquals(SymbolType.WALL_VERTICAL, place.getSymbolType()); // Verify vertical wall symbol
+        }
+
+        // Assert: Verify top and bottom horizontal walls
+        for (int x = roomX; x <= roomX + roomSizeX - 1; x++) {
+            // Check top wall
+            Place place = levelGenerator.getLevel().getPlaceAt(x, roomY);
+            assertNotNull(place); // Ensure place exists
+            assertTrue(place.isType(PlaceType.WALL)); // Verify wall type
+            assertEquals(SymbolType.WALL_HORIZONTAL, place.getSymbolType()); // Verify horizontal wall symbol
+
+            // Check bottom wall
+            place = levelGenerator.getLevel().getPlaceAt(x, roomY + roomSizeY - 1);
+            assertNotNull(place); // Ensure place exists
+            assertTrue(place.isType(PlaceType.WALL)); // Verify wall type
+            assertEquals(SymbolType.WALL_HORIZONTAL, place.getSymbolType()); // Verify horizontal wall symbol
+        }
+
+        // Assert: Verify interior floor tiles
+        for (int x = roomX + 1; x <= roomX + roomSizeX - 2; x++) {
+            for (int y = roomY + 1; y <= roomY + roomSizeY - 2; y++) {
+                final Place place = levelGenerator.getLevel().getPlaceAt(x, y);
+                assertNotNull(place); // Ensure place exists
+                assertTrue(place.isType(PlaceType.FLOOR)); // Verify floor type
+                assertEquals(SymbolType.FLOOR, place.getSymbolType()); // Verify floor symbol
+            }
+        }
+    }
+
+    /**
      * Tests the {@link LevelGenerator#addGold(Room)} method to ensure gold is correctly placed in a room.
      * Verifies that:
      * <ul>

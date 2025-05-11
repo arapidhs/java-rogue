@@ -339,7 +339,17 @@ public class LevelGenerator {
         return config.getTerminalCols() / 3;
     }
 
-    // todo unit test for drawing a normal room since doMaze is already covered
+    /**
+     * Draws a room on the level by setting wall and floor tiles.
+     * For maze rooms, generates a maze using {@link #doMaze(Room)}.
+     * For regular rooms, draws vertical and horizontal walls and fills the interior with floor tiles.
+     * <p>
+     * Based on room drawing logic in the C Rogue source.
+     *
+     * @param room The room to draw.
+     * @throws NullPointerException if room is null.
+     * @throws AssertionError if a place is null.
+     */
     public void drawRoom(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         if (room.hasFlag(RoomFlag.MAZE)) {
@@ -365,6 +375,16 @@ public class LevelGenerator {
         }
     }
 
+    /**
+     * Generates a maze within the specified room using a recursive backtracking algorithm.
+     * Initializes a maze grid, selects a random starting cell, places an initial passage,
+     * and digs passages to create the maze structure.
+     * <p>
+     * Based on maze generation logic in the C Rogue source.
+     *
+     * @param room The room to generate the maze in.
+     * @throws NullPointerException if room is null.
+     */
     public void doMaze(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         final Spot[][] maze = initializeMaze();
@@ -379,6 +399,13 @@ public class LevelGenerator {
         dig(maze, startx, starty, topx, topy, maxx, maxy);
     }
 
+    /**
+     * Sets the dimensions and position of a maze room, adjusting for level boundaries.
+     * Configures the room's size to fit within the specified maximum dimensions and positions
+     * it at the given coordinates, with adjustments to avoid edge cases (e.g., x=1 or y=0).
+     * <p>
+     * Based on maze room setup logic in the C Rogue source.
+     */
     public Spot[][] initializeMaze() {
         final Spot[][] maze = new Spot[getMaxRoomY()][getMaxRoomX()];
         // Initialize maze array with Spot objects
@@ -474,6 +501,18 @@ public class LevelGenerator {
         }
     }
 
+    /**
+     * Places a passage at the specified position on the level.
+     * Sets the place type to {@link PlaceType#PASSAGE} and, with a level-dependent probability,
+     * marks it as a secret passage (non-{@link PlaceFlag#REAL} and {@link SymbolType#EMPTY}).
+     * Otherwise, sets the symbol to {@link SymbolType#PASSAGE}.
+     * <p>
+     * Based on passage placement logic in the C Rogue source.
+     *
+     * @param position The position to place the passage.
+     * @throws NullPointerException if position is null.
+     * @throws AssertionError if the place at the position is null.
+     */
     public void putPass(@Nonnull final Position position) {
         final Place place = level.getPlaceAt(position.getX(), position.getY());
         assert place!=null;
