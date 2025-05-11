@@ -96,8 +96,8 @@ public class ScoreManager {
             if (isHighScore) {
 
                 final int userId = getConfig().getUserId();
-                final long monsterId = state.getDeathSource() !=null && state.getDeathSource().type().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().templateId() : 0;
-                final long killTypeId = state.getDeathSource() !=null && state.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().templateId() : 0;
+                final long monsterId = state.getDeathSource() != null && state.getDeathSource().type().equals(DeathSource.Type.MONSTER) ? state.getDeathSource().templateId() : 0;
+                final long killTypeId = state.getDeathSource() != null && state.getDeathSource().type().equals(DeathSource.Type.KILL_TYPE) ? state.getDeathSource().templateId() : 0;
 
                 // Construct new score entry
                 final ScoreEntry newEntry = new ScoreEntry(
@@ -306,7 +306,7 @@ public class ScoreManager {
                 }
             }
             return entries;
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -352,7 +352,7 @@ public class ScoreManager {
                     fos.write(scoreLineBytes);
                 }
             }
-        } catch (Exception ex){
+        } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -493,9 +493,9 @@ public class ScoreManager {
          * @param name          Player name.
          */
         public ScoreEntry(final int userId, final int score, final GameEndReason gameEndReason,
-                   final long monsterId, final long killTypeId,
-                   final int level, final long time,
-                   final String name) {
+                          final long monsterId, final long killTypeId,
+                          final int level, final long time,
+                          final String name) {
             this.userId = userId;
             this.score = score;
             this.gameEndReason = gameEndReason;

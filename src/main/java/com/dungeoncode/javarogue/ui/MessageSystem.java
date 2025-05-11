@@ -1,15 +1,14 @@
 package com.dungeoncode.javarogue.ui;
 
 import com.dungeoncode.javarogue.core.Config;
-import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.Messages;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 
 import javax.annotation.Nonnull;
-import java.io.IOException;
 import java.util.Objects;
 
 public class MessageSystem {
@@ -58,8 +57,8 @@ public class MessageSystem {
      * Clears the current message from the screen if one is displayed.
      * Calls {@link #msg(String)} with an empty string to erase the message line.
      */
-    public void clearMessage(){
-        if(messagePosition>0){
+    public void clearMessage() {
+        if (messagePosition > 0) {
             msg("");
         }
     }
@@ -147,7 +146,7 @@ public class MessageSystem {
     }
 
     public void clearMessagePosition() {
-        this.messagePosition=0;
+        this.messagePosition = 0;
     }
 
 }

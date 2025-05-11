@@ -19,11 +19,11 @@ public class Passage extends Room {
         getExits().add(new Position(x, y));
     }
 
-    public void setPassageNumber(final int passageNumber) {
-        this.passageNumber = passageNumber;
-    }
-
     public int getPassageNumber() {
         return passageNumber;
+    }
+
+    public void setPassageNumber(final int passageNumber) {
+        this.passageNumber = passageNumber;
     }
 }

@@ -20,14 +20,14 @@ public class CommandShowPlayerStatus implements CommandEternal {
     @Override
     public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
-        final String statusLine=gameState.getPlayer().status();
+        final String statusLine = gameState.getPlayer().status();
         final Config config = gameState.getConfig();
-        if(config.isStatMsg()){
+        if (config.isStatMsg()) {
             gameState.getMessageSystem().clearMessagePosition();
             gameState.getMessageSystem().msg(statusLine);
         } else {
             gameState.getScreen().clearLine(config.getStatLine());
-            gameState.getScreen().putString(0,config.getStatLine(),statusLine);
+            gameState.getScreen().putString(0, config.getStatLine(), statusLine);
         }
         return true;
     }

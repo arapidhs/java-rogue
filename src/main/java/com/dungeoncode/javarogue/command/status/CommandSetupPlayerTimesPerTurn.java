@@ -17,15 +17,15 @@ import java.util.Objects;
  */
 public class CommandSetupPlayerTimesPerTurn implements CommandEternal {
 
-    public static final int INITIAL_MOVES_PER_TURN =1;
+    public static final int INITIAL_MOVES_PER_TURN = 1;
 
     @Override
     public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         final Player player = gameState.getPlayer();
         player.setNtimes(INITIAL_MOVES_PER_TURN);
-        if (player.hasFlag(CreatureFlag.ISHASTE)){
-            player.setNtimes(player.getNtimes()+1);
+        if (player.hasFlag(CreatureFlag.ISHASTE)) {
+            player.setNtimes(player.getNtimes() + 1);
         }
         return true;
     }

@@ -1,6 +1,5 @@
 package com.dungeoncode.javarogue.command.system;
 
-import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.command.core.CommandParameterized;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
 import com.dungeoncode.javarogue.core.GameState;

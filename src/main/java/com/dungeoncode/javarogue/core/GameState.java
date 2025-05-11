@@ -156,27 +156,6 @@ public class GameState {
         }
     }
 
-    /**
-     * Reads a keystroke from the terminal, handling Ctrl+C by executing a quit command.
-     * Returns the keystroke or an {@link KeyType#Escape} keystroke if Ctrl+C is pressed.
-     * <p>
-     * Equivalent to the <code>readchar</code> function in the C Rogue source, adapted for
-     * Lanterna to process terminal input and handle interrupts.
-     * </p>
-     *
-     * @return The read keystroke, or an Escape keystroke for Ctrl+C.
-     * @throws RuntimeException if an I/O error occurs during input reading.
-     */
-    private KeyStroke readChar() {
-        final KeyStroke keyStroke = screen.readInput();
-        if (keyStroke.isCtrlDown() && keyStroke.getCharacter() != null && keyStroke.getCharacter() == 'c') {
-            final CommandQuit commandQuit = new CommandQuit(false);
-            commandQuit.execute(this);
-            return new KeyStroke(KeyType.Escape);
-        }
-        return keyStroke;
-    }
-
     public void addCommand(@Nonnull final Command command) {
         Objects.requireNonNull(command);
         commandQueue.offer(command);
@@ -219,6 +198,27 @@ public class GameState {
                 }
             }
         });
+    }
+
+    /**
+     * Reads a keystroke from the terminal, handling Ctrl+C by executing a quit command.
+     * Returns the keystroke or an {@link KeyType#Escape} keystroke if Ctrl+C is pressed.
+     * <p>
+     * Equivalent to the <code>readchar</code> function in the C Rogue source, adapted for
+     * Lanterna to process terminal input and handle interrupts.
+     * </p>
+     *
+     * @return The read keystroke, or an Escape keystroke for Ctrl+C.
+     * @throws RuntimeException if an I/O error occurs during input reading.
+     */
+    private KeyStroke readChar() {
+        final KeyStroke keyStroke = screen.readInput();
+        if (keyStroke.isCtrlDown() && keyStroke.getCharacter() != null && keyStroke.getCharacter() == 'c') {
+            final CommandQuit commandQuit = new CommandQuit(false);
+            commandQuit.execute(this);
+            return new KeyStroke(KeyType.Escape);
+        }
+        return keyStroke;
     }
 
     public MessageSystem getMessageSystem() {
@@ -543,7 +543,7 @@ public class GameState {
     }
 
     public void death() {
-        int goldAmount= player.getGoldAmount();
+        int goldAmount = player.getGoldAmount();
         goldAmount -= goldAmount / 10;
         player.setGoldAmount(goldAmount);
     }

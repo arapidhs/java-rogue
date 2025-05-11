@@ -37,10 +37,13 @@ import com.dungeoncode.javarogue.core.Phase;
  * ));
  * </pre>
  * </p>
+ *
  * @param <T> The type of parameters for the delayed command.
  */
 public abstract class CommandParameterizedDelayedTimed<T> extends CommandParameterized<T> implements CommandTimed {
-    /** The number of turns remaining before the command executes. */
+    /**
+     * The number of turns remaining before the command executes.
+     */
     private int turnsRemaining;
 
     /**
@@ -48,9 +51,9 @@ public abstract class CommandParameterizedDelayedTimed<T> extends CommandParamet
      * The turn count is stored as a timer for tracking turns remaining, and the parameters are used
      * to customize the command's action, aligning with the C source code's fuse mechanism in daemon.c.
      *
-     * @param turns    The number of turns to wait before executing the command.
-     * @param params   The parameters required for the command's execution.
-     * @param phase    The phase in which the command should execute (START_TURN, MAIN_TURN, or END_TURN).
+     * @param turns  The number of turns to wait before executing the command.
+     * @param params The parameters required for the command's execution.
+     * @param phase  The phase in which the command should execute (START_TURN, MAIN_TURN, or END_TURN).
      */
     public CommandParameterizedDelayedTimed(int turns, T params, Phase phase) {
         super(params, phase);

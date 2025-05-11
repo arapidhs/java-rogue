@@ -109,6 +109,17 @@ public class RogueRandom {
     }
 
     /**
+     * Advances the internal seed according to Rogue's original RNG formula,
+     * applying 32-bit overflow simulation after each operation.
+     *
+     * @return a pseudo-random 16-bit integer between 0 and 65535
+     */
+    private int nextRaw() {
+        seed = (seed * 11109 + 13849) & 0xFFFFFFFFL; // Simulate 32-bit signed integer overflow
+        return (int) ((seed >> 16) & 0xFFFF);
+    }
+
+    /**
      * Rolls a specified number of dice, each with a given number of sides, and returns the sum.
      * Each die roll generates a random value from 1 to sides (inclusive).
      * <p>
@@ -118,23 +129,12 @@ public class RogueRandom {
      * @param sides The number of sides per die.
      * @return The total sum of the dice rolls.
      */
-    public int roll(int times, final int sides){
-        int total=0;
-        while(times-->0){
-            total+=rnd(sides)+1;
+    public int roll(int times, final int sides) {
+        int total = 0;
+        while (times-- > 0) {
+            total += rnd(sides) + 1;
         }
         return total;
-    }
-
-    /**
-     * Advances the internal seed according to Rogue's original RNG formula,
-     * applying 32-bit overflow simulation after each operation.
-     *
-     * @return a pseudo-random 16-bit integer between 0 and 65535
-     */
-    private int nextRaw() {
-        seed = (seed * 11109 + 13849) & 0xFFFFFFFFL; // Simulate 32-bit signed integer overflow
-        return (int) ((seed >> 16) & 0xFFFF);
     }
 
     public long getSeed() {

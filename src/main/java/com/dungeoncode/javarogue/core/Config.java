@@ -43,8 +43,8 @@ public class Config {
     private static final int DEFAULT_PLAYER_MAX_PACK = 23;
     private static final int DEFAULT_MIN_ARMOR_CLASS = 10;
     private static final boolean DEFAULT_INVENTORY_DESCRIBE = true;
-    private static final int DEFAULT_AMULET_LEVEL=26;
-    private static final boolean DEFAULT_STATUS_AS_MESSAGE=false;
+    private static final int DEFAULT_AMULET_LEVEL = 26;
+    private static final boolean DEFAULT_STATUS_AS_MESSAGE = false;
 
     /**
      * The equivalent of HUNGERTIME	1300
@@ -103,6 +103,9 @@ public class Config {
     private final int maxRooms;
     private final int maxGoneRooms;
     private final int maxPassages;
+    private final int amuletLevel;
+    private final boolean statMsg;
+    private final int statLine;
     private boolean master;
     private boolean wizard;
     private boolean terse;
@@ -119,9 +122,6 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
-    private final int amuletLevel;
-    private final boolean statMsg;
-    private final int statLine;
 
     public Config() {
         this(null);
@@ -170,9 +170,9 @@ public class Config {
         this.maxRooms = DEFAULT_MAX_ROOMS;
         this.maxGoneRooms = DEFAULT_MAX_GONE_ROOMS;
         this.maxPassages = DEFAULT_MAX_PASSAGES;
-        this.amuletLevel=DEFAULT_AMULET_LEVEL;
-        this.statMsg=DEFAULT_STATUS_AS_MESSAGE;
-        this.statLine=this.terminalRows-1;
+        this.amuletLevel = DEFAULT_AMULET_LEVEL;
+        this.statMsg = DEFAULT_STATUS_AS_MESSAGE;
+        this.statLine = this.terminalRows - 1;
     }
 
     private Stats loadInitialPlayerStats() {

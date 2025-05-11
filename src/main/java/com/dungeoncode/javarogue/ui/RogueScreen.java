@@ -29,7 +29,7 @@ public class RogueScreen extends TerminalScreen {
     public RogueScreen(@Nonnull final Terminal terminal, @Nonnull final Config config) throws IOException {
         super(terminal);
         this.config = config;
-        this.windows=new ArrayList<>();
+        this.windows = new ArrayList<>();
 
         if (getTerminal() instanceof SwingTerminalFrame swingTerminalFrame) {
             swingTerminalFrame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -49,11 +49,11 @@ public class RogueScreen extends TerminalScreen {
         refresh();
     }
 
-    public void refresh(){
+    public void refresh() {
         refresh(RefreshType.AUTOMATIC);
     }
 
-    public void refresh(final Screen.RefreshType refreshType){
+    public void refresh(final Screen.RefreshType refreshType) {
         try {
             SwingUtilities.invokeAndWait(() -> {
                 try {
@@ -67,7 +67,7 @@ public class RogueScreen extends TerminalScreen {
         }
     }
 
-    public KeyStroke readInput(){
+    public KeyStroke readInput() {
         try {
             return super.readInput();
         } catch (IOException e) {
@@ -101,7 +101,7 @@ public class RogueScreen extends TerminalScreen {
             final KeyStroke key = readInput();
             if ((ch == '\n' || ch == '\r') && key.getKeyType() == KeyType.Enter) {
                 return;
-            } else if ( key.getCharacter()!=null && key.getCharacter() == ch) {
+            } else if (key.getCharacter() != null && key.getCharacter() == ch) {
                 return;
             }
         }
@@ -185,18 +185,18 @@ public class RogueScreen extends TerminalScreen {
     public void addWindow(@Nonnull final String name,
                           final int x, final int y,
                           final int cols, final int rows) {
-            this.windows.add(new Window(name,x,y,cols,rows));
+        this.windows.add(new Window(name, x, y, cols, rows));
     }
 
-    private static class Window{
+    private static class Window {
         private final String name;
         private final TerminalPosition size;
         private final TerminalPosition topLeft;
 
-        Window(@Nonnull String name, final int x,  final int y, final int cols, final int rows){
-            this.name=name;
-            this.topLeft=new TerminalPosition(x,y);
-            this.size=new TerminalPosition(cols,rows);
+        Window(@Nonnull String name, final int x, final int y, final int cols, final int rows) {
+            this.name = name;
+            this.topLeft = new TerminalPosition(x, y);
+            this.size = new TerminalPosition(cols, rows);
         }
     }
 

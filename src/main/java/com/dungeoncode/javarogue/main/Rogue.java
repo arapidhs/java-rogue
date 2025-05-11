@@ -1,9 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.*;
-import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
 import com.dungeoncode.javarogue.system.death.DeathSource;
+import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
@@ -175,7 +174,7 @@ public class Rogue {
         } catch (Exception ex) {
             LOGGER.error(ex.getMessage(), ex);
             System.exit(1);
-        } catch (StackOverflowError stackOverflowError){
+        } catch (StackOverflowError stackOverflowError) {
             LOGGER.error("Stack Overflow!");
             System.exit(1);
         } finally {

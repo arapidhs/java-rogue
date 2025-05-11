@@ -66,7 +66,7 @@ public class ObjectInfoTemplate extends AbstractTemplate {
         this.worth = worth;
         this.stackable = stackable;
         this.itemFlags = itemFlags != null ? EnumSet.copyOf(itemFlags) : EnumSet.noneOf(ItemFlag.class);
-        this.symbolType=symbolType;
+        this.symbolType = symbolType;
     }
 
     @Override

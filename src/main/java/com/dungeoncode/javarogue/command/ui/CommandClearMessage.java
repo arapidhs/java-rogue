@@ -7,7 +7,7 @@ import com.dungeoncode.javarogue.core.Phase;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import static com.dungeoncode.javarogue.core.Phase.*;
+import static com.dungeoncode.javarogue.core.Phase.INPUT_CLEANUP_TURN;
 
 public class CommandClearMessage implements CommandEternal {
     @Override
