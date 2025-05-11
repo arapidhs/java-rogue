@@ -37,10 +37,10 @@ public class TemplatesTest {
         final long griffinId = 7;
         final String griffinName = "griffin";
         final int griffinExperience = 2000;
-        final EnumSet<StatusEffect> griffinStatusEffects = EnumSet.of(
-                StatusEffect.IS_MEAN,
-                StatusEffect.IS_FLYING,
-                StatusEffect.IS_REGENERATING
+        final EnumSet<CreatureFlag> griffinCreatureFlags = EnumSet.of(
+                CreatureFlag.ISMEAN,
+                CreatureFlag.ISFLY,
+                CreatureFlag.ISREGEN
         );
 
         final MonsterTemplate griffinTemplate = Templates.getTemplate(MonsterTemplate.class, griffinId);
@@ -48,7 +48,7 @@ public class TemplatesTest {
         assertEquals(griffinId, griffinTemplate.getId());
         assertEquals(griffinName, griffinTemplate.getName());
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
-        assertEquals(griffinStatusEffects, griffinTemplate.getStatusEffects());
+        assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
     }
 
     /**

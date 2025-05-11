@@ -3,8 +3,8 @@
     "id": 1,
     "name": "aquator",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -20,8 +20,8 @@
     "id": 2,
     "name": "bat",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_FLYING"
+    "creatureFlags": [
+      "ISFLY"
     ],
     "stats": {
       "strength": 10,
@@ -37,7 +37,7 @@
     "id": 3,
     "name": "centaur",
     "dropProbability": 15,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 17,
@@ -52,8 +52,8 @@
     "id": 4,
     "name": "dragon",
     "dropProbability": 100,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -69,8 +69,8 @@
     "id": 5,
     "name": "emu",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -86,8 +86,8 @@
     "id": 6,
     "name": "venus flytrap",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -103,10 +103,10 @@
     "id": 7,
     "name": "griffin",
     "dropProbability": 20,
-    "statusEffects": [
-      "IS_MEAN",
-      "IS_FLYING",
-      "IS_REGENERATING"
+    "creatureFlags": [
+      "ISMEAN",
+      "ISFLY",
+      "ISREGEN"
     ],
     "stats": {
       "strength": 10,
@@ -122,8 +122,8 @@
     "id": 8,
     "name": "hobgoblin",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -139,7 +139,7 @@
     "id": 9,
     "name": "ice monster",
     "dropProbability": 0,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 5,
@@ -154,7 +154,7 @@
     "id": 10,
     "name": "jabberwock",
     "dropProbability": 70,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 3000,
@@ -169,9 +169,9 @@
     "id": 11,
     "name": "kestrel",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN",
-      "IS_FLYING"
+    "creatureFlags": [
+      "ISMEAN",
+      "ISFLY"
     ],
     "stats": {
       "strength": 10,
@@ -187,7 +187,7 @@
     "id": 12,
     "name": "leprechaun",
     "dropProbability": 0,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 10,
@@ -202,8 +202,8 @@
     "id": 13,
     "name": "medusa",
     "dropProbability": 40,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -219,7 +219,7 @@
     "id": 14,
     "name": "nymph",
     "dropProbability": 100,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 37,
@@ -234,8 +234,8 @@
     "id": 15,
     "name": "orc",
     "dropProbability": 15,
-    "statusEffects": [
-      "IS_GREEDY"
+    "creatureFlags": [
+      "ISGREED"
     ],
     "stats": {
       "strength": 10,
@@ -251,8 +251,8 @@
     "id": 16,
     "name": "phantom",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_INVISIBLE"
+    "creatureFlags": [
+      "ISINVIS"
     ],
     "stats": {
       "strength": 10,
@@ -268,8 +268,8 @@
     "id": 17,
     "name": "quagga",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -285,8 +285,8 @@
     "id": 18,
     "name": "rattlesnake",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -302,8 +302,8 @@
     "id": 19,
     "name": "snake",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -319,9 +319,9 @@
     "id": 20,
     "name": "troll",
     "dropProbability": 50,
-    "statusEffects": [
-      "IS_REGENERATING",
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISREGEN",
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -337,8 +337,8 @@
     "id": 21,
     "name": "black unicorn",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -354,9 +354,9 @@
     "id": 22,
     "name": "vampire",
     "dropProbability": 20,
-    "statusEffects": [
-      "IS_REGENERATING",
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISREGEN",
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
@@ -372,7 +372,7 @@
     "id": 23,
     "name": "wraith",
     "dropProbability": 0,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 55,
@@ -387,7 +387,7 @@
     "id": 24,
     "name": "xeroc",
     "dropProbability": 30,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 100,
@@ -402,7 +402,7 @@
     "id": 25,
     "name": "yeti",
     "dropProbability": 30,
-    "statusEffects": [],
+    "creatureFlags": [],
     "stats": {
       "strength": 10,
       "experience": 50,
@@ -417,8 +417,8 @@
     "id": 26,
     "name": "zombie",
     "dropProbability": 0,
-    "statusEffects": [
-      "IS_MEAN"
+    "creatureFlags": [
+      "ISMEAN"
     ],
     "stats": {
       "strength": 10,
