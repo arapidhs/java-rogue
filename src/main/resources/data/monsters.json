@@ -2,7 +2,7 @@
   {
     "id": 1,
     "name": "aquator",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -19,7 +19,7 @@
   {
     "id": 2,
     "name": "bat",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISFLY"
     ],
@@ -36,7 +36,7 @@
   {
     "id": 3,
     "name": "centaur",
-    "dropProbability": 15,
+    "carryProbability": 15,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -51,7 +51,7 @@
   {
     "id": 4,
     "name": "dragon",
-    "dropProbability": 100,
+    "carryProbability": 100,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -68,7 +68,7 @@
   {
     "id": 5,
     "name": "emu",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -85,7 +85,7 @@
   {
     "id": 6,
     "name": "venus flytrap",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -102,7 +102,7 @@
   {
     "id": 7,
     "name": "griffin",
-    "dropProbability": 20,
+    "carryProbability": 20,
     "creatureFlags": [
       "ISMEAN",
       "ISFLY",
@@ -121,7 +121,7 @@
   {
     "id": 8,
     "name": "hobgoblin",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -138,7 +138,7 @@
   {
     "id": 9,
     "name": "ice monster",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -153,7 +153,7 @@
   {
     "id": 10,
     "name": "jabberwock",
-    "dropProbability": 70,
+    "carryProbability": 70,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -168,7 +168,7 @@
   {
     "id": 11,
     "name": "kestrel",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN",
       "ISFLY"
@@ -186,7 +186,7 @@
   {
     "id": 12,
     "name": "leprechaun",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -201,7 +201,7 @@
   {
     "id": 13,
     "name": "medusa",
-    "dropProbability": 40,
+    "carryProbability": 40,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -218,7 +218,7 @@
   {
     "id": 14,
     "name": "nymph",
-    "dropProbability": 100,
+    "carryProbability": 100,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -233,7 +233,7 @@
   {
     "id": 15,
     "name": "orc",
-    "dropProbability": 15,
+    "carryProbability": 15,
     "creatureFlags": [
       "ISGREED"
     ],
@@ -250,7 +250,7 @@
   {
     "id": 16,
     "name": "phantom",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISINVIS"
     ],
@@ -267,7 +267,7 @@
   {
     "id": 17,
     "name": "quagga",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -284,7 +284,7 @@
   {
     "id": 18,
     "name": "rattlesnake",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -301,7 +301,7 @@
   {
     "id": 19,
     "name": "snake",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -318,7 +318,7 @@
   {
     "id": 20,
     "name": "troll",
-    "dropProbability": 50,
+    "carryProbability": 50,
     "creatureFlags": [
       "ISREGEN",
       "ISMEAN"
@@ -336,7 +336,7 @@
   {
     "id": 21,
     "name": "black unicorn",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],
@@ -353,7 +353,7 @@
   {
     "id": 22,
     "name": "vampire",
-    "dropProbability": 20,
+    "carryProbability": 20,
     "creatureFlags": [
       "ISREGEN",
       "ISMEAN"
@@ -371,7 +371,7 @@
   {
     "id": 23,
     "name": "wraith",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -386,7 +386,7 @@
   {
     "id": 24,
     "name": "xeroc",
-    "dropProbability": 30,
+    "carryProbability": 30,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -401,7 +401,7 @@
   {
     "id": 25,
     "name": "yeti",
-    "dropProbability": 30,
+    "carryProbability": 30,
     "creatureFlags": [],
     "stats": {
       "strength": 10,
@@ -416,7 +416,7 @@
   {
     "id": 26,
     "name": "zombie",
-    "dropProbability": 0,
+    "carryProbability": 0,
     "creatureFlags": [
       "ISMEAN"
     ],

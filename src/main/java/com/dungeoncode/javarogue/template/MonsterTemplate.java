@@ -13,7 +13,7 @@ public class MonsterTemplate extends AbstractTemplate {
 
     private final long id;
     private final String name;
-    private final int dropProbability;
+    private final int carryProbability;
     private final EnumSet<CreatureFlag> creatureFlags;
     private final Stats stats;
 
@@ -21,7 +21,7 @@ public class MonsterTemplate extends AbstractTemplate {
     public MonsterTemplate(
             @JsonProperty("id") final long id,
             @JsonProperty("name") @Nonnull final String name,
-            @JsonProperty("dropProbability") final int dropProbability,
+            @JsonProperty("carryProbability") final int carryProbability,
             @JsonProperty("creatureFlags") final EnumSet<CreatureFlag> creatureFlags,
             @JsonProperty("stats") @Nonnull final Stats stats) {
 
@@ -32,7 +32,7 @@ public class MonsterTemplate extends AbstractTemplate {
 
         this.id = id;
         this.name = name;
-        this.dropProbability = dropProbability;
+        this.carryProbability = carryProbability;
         this.creatureFlags = creatureFlags == null
                 ? EnumSet.noneOf(CreatureFlag.class)
                 : EnumSet.copyOf(creatureFlags);
@@ -54,4 +54,9 @@ public class MonsterTemplate extends AbstractTemplate {
     public Stats getStats() {
         return stats;
     }
+
+    public int getCarryProbability() {
+        return carryProbability;
+    }
+
 }

@@ -47,6 +47,7 @@ public class TemplatesTest {
         final long griffinId = 7;
         final String griffinName = "griffin";
         final int griffinExperience = 2000;
+        final int griffinCarryProbability = 20;
         final EnumSet<CreatureFlag> griffinCreatureFlags = EnumSet.of(
                 CreatureFlag.ISMEAN,
                 CreatureFlag.ISFLY,
@@ -58,7 +59,8 @@ public class TemplatesTest {
         assertEquals(griffinId, griffinTemplate.getId());
         assertEquals(griffinName, griffinTemplate.getName());
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
-       assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
+        assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
+        assertEquals(griffinCarryProbability, griffinTemplate.getCarryProbability());
     }
 
     /**
