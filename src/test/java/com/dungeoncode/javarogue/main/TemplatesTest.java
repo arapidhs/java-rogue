@@ -268,7 +268,7 @@ public class TemplatesTest {
         assertEquals(14, Templates.getTemplates(RodInfoTemplate.class).size());
 
         final long slowMonsterId = 9;
-        final RodType type = RodType.SLOW_MONSTER;
+        final RodType type = RodType.WS_SLOW_M;
         final String name = "slow monster";
         final int worth = 350;
         final double probability = 11;

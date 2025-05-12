@@ -28,6 +28,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -58,8 +59,8 @@ public class ItemDataTest {
 
         // Verify all RodTypes have assigned forms (wand or staff)
         Arrays.stream(RodType.values())
-                .forEach(rodType -> assertNotNull(itemData.getRodForm(rodType)));
-        assertNotNull(itemData.getRodMaterial(RodType.SLOW_MONSTER));
+                .forEach(rodType -> assertNotNull(itemData.getRodFormAsString(rodType)));
+        assertNotNull(itemData.getRodMaterial(RodType.WS_SLOW_M));
 
         // Check base worth of ADORNMENT ring template
         final RingInfoTemplate adornmentRingTemplate = (RingInfoTemplate) Templates.findTemplateBySubType(RingType.R_NOP);
@@ -196,7 +197,7 @@ public class ItemDataTest {
         boolean dropCapital = true;
 
         // Create a SLOW_MONSTER rod for testing
-        final Rod item = new Rod(RodType.SLOW_MONSTER);
+        final Rod item = new Rod(RodType.WS_SLOW_M);
         final String realName = Templates.findTemplateBySubType(item.getItemSubType()).getName();
 
         // Verify unknown single rod starts with "a" or "an" and ends with "staff" or "wand"
@@ -242,7 +243,7 @@ public class ItemDataTest {
 
         // Test known rod with specific charges to verify charge display
         itemData.init();
-        final Rod rodItem = new Rod(RodType.SLOW_MONSTER);
+        final Rod rodItem = new Rod(RodType.WS_SLOW_M);
         final String rodRealName = Templates.findTemplateBySubType(rodItem.getItemSubType()).getName();
         final int charges = 3;
         rodItem.setCharges(charges);
@@ -558,6 +559,38 @@ public class ItemDataTest {
         final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(ObjectType.AMULET);
         assertNotNull(objectInfoTemplate);
         assertEquals(objectInfoTemplate.getName(), name);
+    }
+
+    /**
+     * Repeatedly tests the {@link ItemData#fixStick(Rod)} method to ensure correct rod configuration.
+     * Verifies that light rods ({@link RodType#WS_LIGHT}) have 10-19 charges and non-light rods
+     * ({@link RodType#WS_SLOW_M}) have 3-7 charges, all rods have "1x1" throw damage, and wield
+     * damage is either "1x1" (wand) or "2x3" (staff), using a fixed seed for reproducible results.
+     */
+    @RepeatedTest(50)
+    void testFixStick() {
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final ItemData itemData = new ItemData(config,rogueRandom);
+        itemData.init();
+
+        final String wieldDamage="1x1";
+        final String wieldDamageStaff="2x3";
+        final String throwDamage="1x1";
+
+        final Rod lightRod = new Rod(RodType.WS_LIGHT);
+        itemData.fixStick(lightRod);
+        assertTrue(lightRod.getCharges()>9);
+        assertEquals(throwDamage,lightRod.getThrowDamage());
+        assertTrue(Objects.equals(wieldDamage,lightRod.getWieldDamage()) ||
+                Objects.equals(wieldDamageStaff,lightRod.getWieldDamage()));
+
+        final Rod slowRod = new Rod(RodType.WS_SLOW_M);
+        itemData.fixStick(slowRod);
+        assertTrue(slowRod.getCharges()<9);
+        assertEquals(throwDamage,slowRod.getThrowDamage());
+        assertTrue(Objects.equals(wieldDamage,slowRod.getWieldDamage()) ||
+                Objects.equals(wieldDamageStaff,slowRod.getWieldDamage()));
     }
 
 }

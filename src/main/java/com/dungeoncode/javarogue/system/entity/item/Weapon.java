@@ -10,8 +10,6 @@ import javax.annotation.Nonnull;
  */
 public class Weapon extends Item {
 
-    private final String wieldDamage;
-    private final String throwDamage;
     private final WeaponType launchWeapon;
     private int hitPlus;
     private int damagePlus;
@@ -24,8 +22,8 @@ public class Weapon extends Item {
     public Weapon(@Nonnull Enum<WeaponType> weaponType) {
         super(ObjectType.WEAPON, weaponType, 1);
         final WeaponInfoTemplate weaponInfoTemplate = (WeaponInfoTemplate) Templates.findTemplateBySubType(weaponType);
-        this.wieldDamage = weaponInfoTemplate.getWieldDamage();
-        this.throwDamage = weaponInfoTemplate.getThrowDamage();
+        setWieldDamage(weaponInfoTemplate.getWieldDamage());
+        setThrowDamage(weaponInfoTemplate.getThrowDamage());
         this.launchWeapon = weaponInfoTemplate.getLaunchWeapon();
         weaponInfoTemplate.getItemFlags().forEach(this::addFlag);
     }
@@ -47,24 +45,6 @@ public class Weapon extends Item {
      */
     public WeaponType getWeaponType() {
         return (WeaponType) super.getItemSubType();
-    }
-
-    /**
-     * Returns the damage dealt when the weapon is wielded.
-     *
-     * @return The wield damage string (e.g., "2x4").
-     */
-    public String getWieldDamage() {
-        return wieldDamage;
-    }
-
-    /**
-     * Returns the damage dealt when the weapon is thrown.
-     *
-     * @return The throw damage string (e.g., "1x3").
-     */
-    public String getThrowDamage() {
-        return throwDamage;
     }
 
     /**

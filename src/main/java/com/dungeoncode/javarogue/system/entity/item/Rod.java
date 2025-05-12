@@ -33,4 +33,7 @@ public class Rod extends Item {
         this.charges = charges;
     }
 
+    public int getCharges() {
+        return charges;
+    }
 }

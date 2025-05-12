@@ -49,7 +49,7 @@ public class ObjectTypeTest {
         assertEquals(ObjectType.WEAPON,weapon.getObjectType());
         assertEquals(SymbolType.WEAPON,weapon.getSymbolType());
 
-        final Rod rod = new Rod(RodType.SLOW_MONSTER);
+        final Rod rod = new Rod(RodType.WS_SLOW_M);
         assertEquals(ObjectType.ROD,rod.getObjectType());
         assertEquals(SymbolType.ROD,rod.getSymbolType());
 

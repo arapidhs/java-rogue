@@ -36,7 +36,7 @@ public class ItemData {
     private static final String WOODS_JSON_PATH = "/data/woods.json";
 
     private final Config config;
-    private final RogueRandom random;
+    private final RogueRandom rogueRandom;
     private final int maxScrollGeneratedNameLength;
     private final Map<Enum<? extends ItemSubtype>, String> itemSubTypeNames;
     private final Map<RingType, Integer> ringWorthMap;
@@ -47,14 +47,14 @@ public class ItemData {
     /**
      * Constructs an ItemData instance with a random number generator for future name generation.
      *
-     * @param random The RogueRandom instance for random operations.
+     * @param rogueRandom The RogueRandom instance for random operations.
      * @param config The Config instance.
      */
-    public ItemData(@Nonnull final Config config, @Nonnull final RogueRandom random) {
+    public ItemData(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom) {
         Objects.requireNonNull(config);
-        Objects.requireNonNull(random);
+        Objects.requireNonNull(rogueRandom);
         this.config = config;
-        this.random = random;
+        this.rogueRandom = rogueRandom;
         this.maxScrollGeneratedNameLength = config.getMaxScrollItemGeneratedNameLength();
         this.itemSubTypeNames = new HashMap<>();
         this.ringWorthMap = new HashMap<>();
@@ -89,14 +89,14 @@ public class ItemData {
             for (ScrollType scrollType : ScrollType.values()) {
                 StringBuilder nameBuilder = new StringBuilder();
                 // 2 to 4 words, per C code
-                int numWords = random.rnd(3) + 2;
+                int numWords = rogueRandom.rnd(3) + 2;
 
                 while (numWords-- > 0) {
                     // 1 to 3 syllables per word
-                    int numSyllables = random.rnd(3) + 1;
+                    int numSyllables = rogueRandom.rnd(3) + 1;
                     while (numSyllables-- > 0) {
                         // Randomly select a syllable
-                        String syllable = syllables.get(random.rnd(syllables.size()));
+                        String syllable = syllables.get(rogueRandom.rnd(syllables.size()));
                         // Check if adding syllable exceeds max length (including space)
                         if (nameBuilder.length() + syllable.length() + 1 > maxScrollGeneratedNameLength) {
                             break;
@@ -138,7 +138,7 @@ public class ItemData {
             // Assign a unique color to each PotionType
             for (PotionType potionType : PotionType.values()) {
                 // Randomly select an available color
-                int index = random.rnd(availableColors.size());
+                int index = rogueRandom.rnd(availableColors.size());
                 final String color = availableColors.remove(index);
                 // Assign the color to the PotionType
                 setName(potionType, color);
@@ -159,7 +159,7 @@ public class ItemData {
             final List<Stone> availableStones = new ArrayList<>(stones);
 
             for (RingType ringType : RingType.values()) {
-                int index = random.rnd(availableStones.size());
+                int index = rogueRandom.rnd(availableStones.size());
                 final Stone stone = availableStones.remove(index);
                 setName(ringType, stone.name);
                 final RingInfoTemplate template = (RingInfoTemplate) Templates.findTemplateBySubType(ringType);
@@ -189,15 +189,15 @@ public class ItemData {
                 RodForm form;
                 String material;
                 while (true) {
-                    if (random.rnd(2) == 0 && !availableMetals.isEmpty()) {
+                    if (rogueRandom.rnd(2) == 0 && !availableMetals.isEmpty()) {
                         // Select wand with random metal
-                        int index = random.rnd(availableMetals.size());
+                        int index = rogueRandom.rnd(availableMetals.size());
                         material = availableMetals.remove(index);
                         form = RodForm.WAND;
                         break;
                     } else if (!availableWoods.isEmpty()) {
                         // Select staff with random wood
-                        int index = random.rnd(availableWoods.size());
+                        int index = rogueRandom.rnd(availableWoods.size());
                         material = availableWoods.remove(index);
                         form = RodForm.STAFF;
                         break;
@@ -207,6 +207,32 @@ public class ItemData {
             }
         } catch (Exception e) {
             throw new RuntimeException(Messages.ERROR_FAILED_TO_LOAD_DATA_FROM_JSON, e);
+        }
+    }
+
+    /**
+     * Configures a rod (wand or staff) by setting its wield damage, throw damage, and charges.
+     * Staffs receive stronger wield damage ("2x3"), while wands get weaker ("1x1"). All rods
+     * have minimal throw damage ("1x1"). Charges are set to 10-19 for light rods or 3-7 for others.
+     * <p>
+     * Equivalent to the <code>fix_stick</code> function in the C Rogue source (things.c).
+     * </p>
+     *
+     * @param rod The rod to configure.
+     * @throws NullPointerException if rod is null.
+     */
+    public void fixStick(@Nonnull Rod rod){
+        Objects.requireNonNull(rod);
+        if(Objects.equals(getRodForm(rod.getItemSubType()),RodForm.STAFF)){
+            rod.setWieldDamage("2x3");
+        } else {
+            rod.setWieldDamage("1x1");
+        }
+        rod.setThrowDamage("1x1");
+        if(rod.isType(RodType.WS_LIGHT)){
+            rod.setCharges(rogueRandom.rnd(10)+10);
+        } else {
+            rod.setCharges(rogueRandom.rnd(5)+3);
         }
     }
 
@@ -404,7 +430,7 @@ public class ItemData {
 
         // Determine type, appearance, and effect based on object type
         if (objectType.equals(ObjectType.ROD)) {
-            type = getRodForm((RodType) itemSubType);
+            type = getRodFormAsString((RodType) itemSubType);
             which = getRodMaterial((RodType) itemSubType);
             effect = ((Rod) item).chargeStr(config.isTerse());
         } else {
@@ -487,11 +513,26 @@ public class ItemData {
      * @return The form as a String ("wand" or "staff"), or null if not set.
      */
     @Nonnull
-    public String getRodForm(@Nonnull final RodType rodType) {
+    public String getRodFormAsString(@Nonnull final RodType rodType) {
         Objects.requireNonNull(rodType);
         final RodFormData data = rodFormData.get(rodType);
         if (data == null) throw new IllegalArgumentException();
         return data.form == RodForm.WAND ? FORM_WAND : FORM_STAFF;
+    }
+
+    /**
+     * Returns the RodForm for the specified RodType.
+     *
+     * @param rodType The RodType to query.
+     * @return The RodForm for the corresponding type.
+     * @throws IllegalArgumentException if no form for the given type is set.
+     */
+    @Nonnull
+    public RodForm getRodForm(@Nonnull final RodType rodType) {
+        Objects.requireNonNull(rodType);
+        final RodFormData data = rodFormData.get(rodType);
+        if (data == null) throw new IllegalArgumentException();
+        return data.form;
     }
 
     /**

@@ -13,7 +13,7 @@ public class RodTest {
 
     @Test
     void testChargeStr() {
-        final Rod rod = new Rod(RodType.SLOW_MONSTER);
+        final Rod rod = new Rod(RodType.WS_SLOW_M);
 
         // item is not known
         assertTrue(rod.chargeStr(true).isEmpty());

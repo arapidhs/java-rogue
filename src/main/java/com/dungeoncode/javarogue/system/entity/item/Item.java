@@ -16,6 +16,8 @@ public class Item extends Entity {
     private final Enum<? extends ItemSubtype> itemSubType;
     private final EnumSet<ItemFlag> itemFlags;
     private int count;
+    private String wieldDamage;
+    private String throwDamage;
 
     private SymbolType inventoryKey;
     private int group;
@@ -33,6 +35,10 @@ public class Item extends Entity {
         final ObjectInfoTemplate objectInfoTemplate = Templates.findTemplateByObjectType(objectType);
         assert objectInfoTemplate != null;
         setSymbolType(objectInfoTemplate.getSymbolType());
+    }
+
+    public boolean isType(@Nonnull final Enum<? extends ItemSubtype> itemSubType){
+        return Objects.equals(this.itemSubType,itemSubType);
     }
 
     public void addFlag(@Nonnull final ItemFlag itemFlag) {
@@ -101,5 +107,31 @@ public class Item extends Entity {
 
     public void setGoldValue(int goldValue) {
         this.goldValue = goldValue;
+    }
+
+    /**
+     * Returns the damage dealt when the weapon is wielded.
+     *
+     * @return The wield damage string (e.g., "2x4").
+     */
+    public String getWieldDamage() {
+        return wieldDamage;
+    }
+
+    /**
+     * Returns the damage dealt when the weapon is thrown.
+     *
+     * @return The throw damage string (e.g., "1x3").
+     */
+    public String getThrowDamage() {
+        return throwDamage;
+    }
+
+    public void setWieldDamage(String wieldDamage) {
+        this.wieldDamage = wieldDamage;
+    }
+
+    public void setThrowDamage(String throwDamage) {
+        this.throwDamage = throwDamage;
     }
 }

@@ -110,7 +110,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
                 .forEach(ringType -> assertTrue(itemData.getRingWorth(ringType) > 0));
 
         Arrays.stream(RodType.values())
-                .forEach(rodType -> assertNotNull(itemData.getRodForm(rodType)));
+                .forEach(rodType -> assertNotNull(itemData.getRodFormAsString(rodType)));
 
     }
 
