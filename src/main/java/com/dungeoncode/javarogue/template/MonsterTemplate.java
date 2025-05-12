@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.template;
 
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Stats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,6 +13,7 @@ import java.util.Objects;
 public class MonsterTemplate extends AbstractTemplate {
 
     private final long id;
+    private final MonsterType monsterType;
     private final String name;
     private final int carryProbability;
     private final EnumSet<CreatureFlag> creatureFlags;
@@ -20,6 +22,7 @@ public class MonsterTemplate extends AbstractTemplate {
     @JsonCreator
     public MonsterTemplate(
             @JsonProperty("id") final long id,
+            @JsonProperty("monsterType") @Nonnull final MonsterType monsterType,
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("carryProbability") final int carryProbability,
             @JsonProperty("creatureFlags") final EnumSet<CreatureFlag> creatureFlags,
@@ -27,10 +30,12 @@ public class MonsterTemplate extends AbstractTemplate {
 
         super(id);
 
+        Objects.requireNonNull(monsterType);
         Objects.requireNonNull(name);
         Objects.requireNonNull(stats);
 
         this.id = id;
+        this.monsterType=monsterType;
         this.name = name;
         this.carryProbability = carryProbability;
         this.creatureFlags = creatureFlags == null
@@ -59,4 +64,7 @@ public class MonsterTemplate extends AbstractTemplate {
         return carryProbability;
     }
 
+    public MonsterType getMonsterType() {
+        return monsterType;
+    }
 }

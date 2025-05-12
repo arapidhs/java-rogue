@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.template.ArmorInfoTemplate;
 import com.dungeoncode.javarogue.template.PotionInfoTemplate;
@@ -45,6 +46,7 @@ public class TemplatesTest {
         assertEquals(26, Templates.getTemplates(MonsterTemplate.class).size());
 
         final long griffinId = 7;
+        final MonsterType griffinType = MonsterType.GRIFFIN;
         final String griffinName = "griffin";
         final int griffinExperience = 2000;
         final int griffinCarryProbability = 20;
@@ -57,6 +59,7 @@ public class TemplatesTest {
         final MonsterTemplate griffinTemplate = Templates.getTemplate(MonsterTemplate.class, griffinId);
         assertNotNull(griffinTemplate);
         assertEquals(griffinId, griffinTemplate.getId());
+        assertEquals(griffinType, griffinTemplate.getMonsterType());
         assertEquals(griffinName, griffinTemplate.getName());
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
         assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());

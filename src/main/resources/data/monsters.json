@@ -1,6 +1,7 @@
 [
   {
     "id": 1,
+    "monsterType": "AQUATOR",
     "name": "aquator",
     "carryProbability": 0,
     "creatureFlags": [
@@ -18,6 +19,7 @@
   },
   {
     "id": 2,
+    "monsterType": "BAT",
     "name": "bat",
     "carryProbability": 0,
     "creatureFlags": [
@@ -35,6 +37,7 @@
   },
   {
     "id": 3,
+    "monsterType": "CENTAUR",
     "name": "centaur",
     "carryProbability": 15,
     "creatureFlags": [],
@@ -50,6 +53,7 @@
   },
   {
     "id": 4,
+    "monsterType": "DRAGON",
     "name": "dragon",
     "carryProbability": 100,
     "creatureFlags": [
@@ -67,6 +71,7 @@
   },
   {
     "id": 5,
+    "monsterType": "EMU",
     "name": "emu",
     "carryProbability": 0,
     "creatureFlags": [
@@ -84,6 +89,7 @@
   },
   {
     "id": 6,
+    "monsterType": "VENUS_FLYTRAP",
     "name": "venus flytrap",
     "carryProbability": 0,
     "creatureFlags": [
@@ -101,6 +107,7 @@
   },
   {
     "id": 7,
+    "monsterType": "GRIFFIN",
     "name": "griffin",
     "carryProbability": 20,
     "creatureFlags": [
@@ -120,6 +127,7 @@
   },
   {
     "id": 8,
+    "monsterType": "HOBGOBLIN",
     "name": "hobgoblin",
     "carryProbability": 0,
     "creatureFlags": [
@@ -137,6 +145,7 @@
   },
   {
     "id": 9,
+    "monsterType": "ICE_MONSTER",
     "name": "ice monster",
     "carryProbability": 0,
     "creatureFlags": [],
@@ -152,6 +161,7 @@
   },
   {
     "id": 10,
+    "monsterType": "JABBERWOCK",
     "name": "jabberwock",
     "carryProbability": 70,
     "creatureFlags": [],
@@ -167,6 +177,7 @@
   },
   {
     "id": 11,
+    "monsterType": "KESTREL",
     "name": "kestrel",
     "carryProbability": 0,
     "creatureFlags": [
@@ -185,6 +196,7 @@
   },
   {
     "id": 12,
+    "monsterType": "LEPRECHAUN",
     "name": "leprechaun",
     "carryProbability": 0,
     "creatureFlags": [],
@@ -200,6 +212,7 @@
   },
   {
     "id": 13,
+    "monsterType": "MEDUSA",
     "name": "medusa",
     "carryProbability": 40,
     "creatureFlags": [
@@ -217,6 +230,7 @@
   },
   {
     "id": 14,
+    "monsterType": "NYMPH",
     "name": "nymph",
     "carryProbability": 100,
     "creatureFlags": [],
@@ -232,6 +246,7 @@
   },
   {
     "id": 15,
+    "monsterType": "ORC",
     "name": "orc",
     "carryProbability": 15,
     "creatureFlags": [
@@ -249,6 +264,7 @@
   },
   {
     "id": 16,
+    "monsterType": "PHANTOM",
     "name": "phantom",
     "carryProbability": 0,
     "creatureFlags": [
@@ -266,6 +282,7 @@
   },
   {
     "id": 17,
+    "monsterType": "QUAGGA",
     "name": "quagga",
     "carryProbability": 0,
     "creatureFlags": [
@@ -283,6 +300,7 @@
   },
   {
     "id": 18,
+    "monsterType": "RATTLESNAKE",
     "name": "rattlesnake",
     "carryProbability": 0,
     "creatureFlags": [
@@ -300,6 +318,7 @@
   },
   {
     "id": 19,
+    "monsterType": "SNAKE",
     "name": "snake",
     "carryProbability": 0,
     "creatureFlags": [
@@ -317,6 +336,7 @@
   },
   {
     "id": 20,
+    "monsterType": "TROLL",
     "name": "troll",
     "carryProbability": 50,
     "creatureFlags": [
@@ -335,6 +355,7 @@
   },
   {
     "id": 21,
+    "monsterType": "BLACK_UNICORN",
     "name": "black unicorn",
     "carryProbability": 0,
     "creatureFlags": [
@@ -352,6 +373,7 @@
   },
   {
     "id": 22,
+    "monsterType": "VAMPIRE",
     "name": "vampire",
     "carryProbability": 20,
     "creatureFlags": [
@@ -370,6 +392,7 @@
   },
   {
     "id": 23,
+    "monsterType": "WRAITH",
     "name": "wraith",
     "carryProbability": 0,
     "creatureFlags": [],
@@ -385,6 +408,7 @@
   },
   {
     "id": 24,
+    "monsterType": "XEROC",
     "name": "xeroc",
     "carryProbability": 30,
     "creatureFlags": [],
@@ -400,6 +424,7 @@
   },
   {
     "id": 25,
+    "monsterType": "YETI",
     "name": "yeti",
     "carryProbability": 30,
     "creatureFlags": [],
@@ -415,6 +440,7 @@
   },
   {
     "id": 26,
+    "monsterType": "ZOMBIE",
     "name": "zombie",
     "carryProbability": 0,
     "creatureFlags": [

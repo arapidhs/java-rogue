@@ -1,0 +1,30 @@
+package com.dungeoncode.javarogue.system.entity.creature;
+
+public enum MonsterType {
+    AQUATOR,
+    BAT,
+    CENTAUR,
+    DRAGON,
+    EMU,
+    VENUS_FLYTRAP,
+    GRIFFIN,
+    HOBGOBLIN,
+    ICE_MONSTER,
+    JABBERWOCK,
+    KESTREL,
+    LEPRECHAUN,
+    MEDUSA,
+    NYMPH,
+    ORC,
+    PHANTOM,
+    QUAGGA,
+    RATTLESNAKE,
+    SNAKE,
+    TROLL,
+    BLACK_UNICORN,
+    VAMPIRE,
+    WRAITH,
+    XEROC,
+    YETI,
+    ZOMBIE
+}
