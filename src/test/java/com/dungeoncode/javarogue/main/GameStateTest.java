@@ -19,10 +19,8 @@ import com.dungeoncode.javarogue.system.entity.item.ScrollType;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
-import com.dungeoncode.javarogue.system.world.Level;
-import com.dungeoncode.javarogue.system.world.Passage;
-import com.dungeoncode.javarogue.system.world.Room;
-import com.dungeoncode.javarogue.system.world.RoomFlag;
+import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
+import com.dungeoncode.javarogue.system.world.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -446,6 +444,63 @@ public class GameStateTest extends RogueBaseTest {
         assertNotNull(room);
         assertFalse(room instanceof Passage);
         assertEquals(SymbolType.FLOOR,gameState.floorAt());
+    }
+
+    /**
+     * Tests the {@link GameState#seeMonst(Monster)} method to ensure correct monster visibility logic.
+     * Verifies that visibility is false when the player is blind, the monster is invisible without
+     * CANSEE, the monster is in a different room and not close, or the room is dark and the monster
+     * is not adjacent. Confirms visibility is true when the monster is adjacent, in the same row/column,
+     * or in the same non-dark room, using a fixed seed (100) for reproducible results.
+     */
+    @Test
+    void testSeeMonst(){
+        final long seed=100;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+
+        final Player player=gameState.getPlayer();
+        final int px=player.getX();
+        final int py=player.getY();
+        final Monster monster = new Monster();
+
+        player.addFlag(CreatureFlag.ISBLIND);
+        assertFalse(gameState.seeMonst(monster));
+        player.removeFlag(CreatureFlag.ISBLIND);
+
+        monster.addFlag(CreatureFlag.ISINVIS);
+        assertFalse(gameState.seeMonst(monster));
+
+        player.addFlag(CreatureFlag.CANSEE);
+        int dx=2;
+        int dy=0;// monster is two squares away horizontally, not in the same room
+        monster.setPosition(px+dx,py+dy);
+        assertFalse(gameState.seeMonst(monster));
+
+        dx=1; // monster is adjacent to the player and in different room
+        monster.setPosition(px+dx,py+dy);
+        assertTrue(gameState.seeMonst(monster));
+
+        dy=1; // adjacent diagonally
+        monster.setPosition(px+dx,py+dy);
+        assertTrue(gameState.seeMonst(monster));
+
+        dx=2; // monster is distant but in the same room
+        dy=2;
+        monster.setRoom(player.getRoom());
+        monster.setPosition(px+dx,py+dy);
+        assertTrue(gameState.seeMonst(monster));
+
+        // room is dark and monster not adjacent
+        player.getRoom().addFlag(RoomFlag.DARK);
+        assertFalse(gameState.seeMonst(monster));
+
+        dx=1; // room is dark and monster is adjacent
+        dy=1;
+        monster.setRoom(player.getRoom());
+        monster.setPosition(px+dx,py+dy);
+        assertTrue(gameState.seeMonst(monster));
     }
 
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {

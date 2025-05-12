@@ -88,7 +88,7 @@ public class RogueUtils {
      * @param x2 The x-coordinate of the second point.
      * @return The squared distance between the points.
      */
-    public int dist(int y1, int x1, int y2, int x2) {
+    public static int dist(int x1, int y1, int x2, int y2) {
         return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
     }
 

@@ -2,6 +2,7 @@ package com.dungeoncode.javarogue.system.entity.creature;
 
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.world.Room;
 
 import javax.annotation.Nonnull;
 import java.util.EnumSet;
@@ -15,6 +16,7 @@ public abstract class Creature extends Entity {
     private final EnumSet<CreatureFlag> creatureFlags;
     private Stats stats;
     private Position destination;
+    private Room room;
 
     protected Creature() {
         super();
@@ -51,5 +53,13 @@ public abstract class Creature extends Entity {
 
     public void setStats(Stats stats) {
         this.stats = stats;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

@@ -58,6 +58,7 @@ public class Config {
     private static final boolean DEFAULT_MESSAGE_ALLOW_ESCAPE = false;
     private static final int DEFAULT_LEVEL_MAX_WIDTH = 80;
     private static final int DEFAULT_LEVEL_MAX_HEIGHT = 32;
+    private static final int DEFAULT_LEVEL_LAM_DIST = 3;
     private final int maxStringLength;
     private final String javaRogueDirName;
     private final String scoreFileName;
@@ -122,6 +123,13 @@ public class Config {
     private boolean scoring;
     private boolean allowMultipleScores;
 
+    /**
+     * The squared distance threshold for proximity checks,
+     * defining the range within which monsters can react to the player (e.g., chasing or visibility).
+     * Mirrors the <code>LAMPDIST</code> constant in the C Rogue source (set to 3).
+     */
+    private final int lampDist;
+
     public Config() {
         this(null);
     }
@@ -172,6 +180,7 @@ public class Config {
         this.amuletLevel = DEFAULT_AMULET_LEVEL;
         this.statMsg = DEFAULT_STATUS_AS_MESSAGE;
         this.statLine = this.terminalRows - 1;
+        this.lampDist=DEFAULT_LEVEL_LAM_DIST;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -419,5 +428,9 @@ public class Config {
 
     public int getStatLine() {
         return statLine;
+    }
+
+    public int getLampDist() {
+        return lampDist;
     }
 }

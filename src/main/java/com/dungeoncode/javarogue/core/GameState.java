@@ -8,25 +8,16 @@ import com.dungeoncode.javarogue.command.status.CommandSetupPlayerMovesPerTurn;
 import com.dungeoncode.javarogue.command.system.CommandQuit;
 import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
+import com.dungeoncode.javarogue.system.*;
+import com.dungeoncode.javarogue.system.death.DeathSource;
+import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
-import com.dungeoncode.javarogue.system.entity.item.Item;
-import com.dungeoncode.javarogue.system.entity.item.ItemData;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.ObjectType;
-import com.dungeoncode.javarogue.system.entity.item.ScrollType;
-import com.dungeoncode.javarogue.system.entity.item.WeaponsFactory;
-import com.dungeoncode.javarogue.system.death.DeathSource;
-import com.dungeoncode.javarogue.system.death.GameEndReason;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
-import com.dungeoncode.javarogue.system.MessageSystem;
-import com.dungeoncode.javarogue.system.RogueScreen;
-import com.dungeoncode.javarogue.system.SymbolMapper;
-import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.world.*;
-import com.dungeoncode.javarogue.system.LevelGenerator;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -224,6 +215,51 @@ public class GameState {
         return keyStroke;
     }
 
+    /**
+     * Determines if the player can see the specified monster, considering blindness,
+     * invisibility, proximity, and room visibility.
+     * <p>
+     * Returns false if the player is blind, the monster is invisible and the player
+     * cannot see invisible creatures, the monster is in a different room, or the room
+     * is dark. Returns true if the monster is within the lamp distance (checked via
+     * squared distance) and either in the same row/column or accessible via steppable
+     * tiles, or if in the same non-dark room.
+     * </p>
+     * <p>
+     * Equivalent to the <code>see_monst</code> function in the C Rogue source, with
+     * adjusted step logic to check for walls and empty spaces.
+     * </p>
+     *
+     * @param monster The monster to check visibility for.
+     * @return True if the player can see the monster, false otherwise.
+     * @throws NullPointerException if monster is null.
+     */
+    public boolean seeMonst(@Nonnull final Monster monster) {
+        Objects.requireNonNull(monster);
+        if (player.hasFlag(CreatureFlag.ISBLIND)) {
+            return false;
+        }
+        if (monster.hasFlag(CreatureFlag.ISINVIS) && !player.hasFlag(CreatureFlag.CANSEE)) {
+            return false;
+        }
+        final int px = player.getX();
+        final int py = player.getY();
+        final int mx = monster.getX();
+        final int my = monster.getY();
+        final int dist = RogueUtils.dist(mx, my, px, py);
+        if(dist<config.getLampDist()){
+            final Place placepm = currentLevel.getPlaceAt(px,my);
+            final Place placemp = currentLevel.getPlaceAt(mx,py);
+            assert placemp != null;
+            assert placepm != null;
+            return my == py || mx == px || placepm.isStepOk() || placemp.isStepOk();
+        }
+        if(!Objects.equals(monster.getRoom(),player.getRoom())){
+            return false;
+        }
+        return !monster.getRoom().hasFlag(RoomFlag.DARK);
+    }
+
     public MessageSystem getMessageSystem() {
         return messageSystem;
     }
@@ -248,6 +284,7 @@ public class GameState {
     // TODO temp enterRoom testing method, this should be the equivalent of enter_room(coord *cp)
     public void enterRoom(final int posX, final int posY) {
         final Room room = roomIn(posX, posY);
+        player.setRoom(room);
         if (room != null && !room.hasFlag(RoomFlag.DARK)) {
             for (int y = room.getY(); y < room.getY() + room.getSize().getY(); y++) {
                 for (int x = room.getX(); x < room.getX() + room.getSize().getX(); x++) {
