@@ -309,6 +309,24 @@ public class TemplatesTest {
         assertEquals(dexCumulative, template.getCumulativeProbability());
     }
 
+    @Test
+    void testGetTemplates(){
+        final Set<ObjectInfoTemplate> objectInfoTemplates = Templates.getTemplates(ObjectInfoTemplate.class);
+        final int objectInfoTemplatesCount=9;
+        assertEquals(objectInfoTemplatesCount,objectInfoTemplates.size());
+
+        final Set<ArmorInfoTemplate> armorTemplates = Templates.getTemplates(ArmorInfoTemplate.class);
+        final int armorTemplatesCount=8;
+        assertEquals(armorTemplatesCount,armorTemplates.size());
+
+        ObjectType objectType=null;
+        Set<Template> templates = Templates.getTemplates(objectType);
+        assertEquals(objectInfoTemplatesCount,templates.size());
+
+        objectType=ObjectType.ARMOR;
+        templates = Templates.getTemplates(objectType);
+        assertEquals(armorTemplatesCount,templates.size());
+    }
 
     /**
      * Verifies that cumulative probability handling works correctly:

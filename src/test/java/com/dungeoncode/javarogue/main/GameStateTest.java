@@ -595,23 +595,6 @@ public class GameStateTest extends RogueBaseTest {
         assertFalse(monster.hasFlag(CreatureFlag.ISHELD));
     }
 
-    /**
-     * Repeatedly tests the {@link GameState#pickOne()} method to ensure valid random
-     * object type selection. Verifies that the returned {@link ObjectType} is non-null,
-     * using a fixed seed for reproducible results.
-     */
-    @RepeatedTest(50)
-    void testPickOne(){
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final RogueFactory rogueFactory=new RogueFactory(config,rogueRandom);
-        final MessageSystem messageSystem = new MessageSystem(screen);
-        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
-
-        final ObjectType objectType = gameState.pickOne();
-        assertNotNull(objectType);
-    }
-
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
         private final int mainGoldIncrease;
         private final AtomicInteger mainTimer;

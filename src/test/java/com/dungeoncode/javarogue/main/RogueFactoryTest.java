@@ -4,10 +4,7 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.ObjectType;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
-import com.dungeoncode.javarogue.system.entity.item.WeaponType;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -44,7 +41,7 @@ public class RogueFactoryTest {
     }
 
     /**
-     * Repeatedly tests the {@link RogueFactory#pickOne()} method to ensure valid random
+     * Repeatedly tests the {@link RogueFactory#pickOne(ObjectType)} method to ensure valid random
      * object type selection. Verifies that the returned {@link RogueFactory.PickResult}
      * is non-null, contains a non-null {@link ObjectType}, is not a bad pick, and has
      * null bad pick message and checked templates list, using a fixed seed for reproducible
@@ -56,12 +53,30 @@ public class RogueFactoryTest {
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final RogueFactory rogueFactory=new RogueFactory(config,rogueRandom);
 
-        final RogueFactory.PickResult pickResult = rogueFactory.pickOne();
+        ObjectType objectType=null;
+        RogueFactory.PickResult pickResult = rogueFactory.pickOne(objectType);
         assertNotNull(pickResult);
         assertNotNull(pickResult.objectType());
+        assertNull(pickResult.itemSubType());
         assertFalse(pickResult.isBadPick());
         assertNull(pickResult.badPickMessage());
         assertNull(pickResult.checkedTemplates());
+
+        objectType=ObjectType.ARMOR;
+        pickResult = rogueFactory.pickOne(objectType);
+        assertNotNull(pickResult);
+        assertEquals(objectType,pickResult.objectType());
+        assertNotNull(pickResult.itemSubType());
+        assertFalse(pickResult.isBadPick());
+        assertInstanceOf(ArmorType.class, pickResult.itemSubType());
+
+        objectType=ObjectType.POTION;
+        pickResult = rogueFactory.pickOne(objectType);
+        assertNotNull(pickResult);
+        assertEquals(objectType,pickResult.objectType());
+        assertNotNull(pickResult.itemSubType());
+        assertFalse(pickResult.isBadPick());
+        assertInstanceOf(PotionType.class, pickResult.itemSubType());
     }
 
     /**

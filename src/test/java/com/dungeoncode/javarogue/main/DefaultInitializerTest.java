@@ -34,7 +34,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
      * including player properties and inventory items (Food, Armor, Weapons).
      */
     @Test
-    void testPlayerInitialization() throws IOException {
+    void testPlayerInitialization() {
 
         // Set up game state with necessary dependencies
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
@@ -82,6 +82,9 @@ public class DefaultInitializerTest extends RogueBaseTest {
         assertNull(gameState.getGameEndReason());
         assertNull(gameState.getDeathSource());
         assertEquals(0,gameState.getPlayer().getGoldAmount());
+
+        // assert 0 levels without food
+        assertEquals(0,gameState.getNoFood());
 
     }
 

@@ -51,6 +51,7 @@ public class DefaultInitializer implements Initializer {
         }
 
         // Start at level 1
+        gameState.setNoFood(0);
         final int levelNum = 1;
         gameState.newLevel(levelNum);
 

@@ -55,6 +55,11 @@ public class GameState {
     private CommandFactory commandFactory;
 
     /**
+     * Number of levels without food.
+     */
+    private int noFood;
+
+    /**
      * Command count, number of times to repeat last command.
      * Equivalent of count variable in original Rogue code.
      **/
@@ -341,31 +346,36 @@ public class GameState {
     }
 
     /**
-     * Selects a random {@link ObjectType} from templates with positive probability,
-     * using weighted random selection via {@link RogueFactory#pickOne()}. Logs debug
-     * information in wizard and master mode if the pick is bad, including the bad pick
-     * message and probabilities of checked templates.
+     * Selects a random {@link ObjectType} and optional {@link ItemSubtype} from templates with
+     * positive probability for the specified {@link ObjectType}, using weighted random selection
+     * via {@link RogueFactory#pickOne(ObjectType)}. Logs debug information in wizard and master
+     * mode if the pick is bad, including the bad pick message and probabilities of checked
+     * templates.
      * <p>
      * Equivalent to the <code>pick_one</code> function in the C Rogue source (things.c).
      * </p>
      *
-     * @return The selected {@link ObjectType}.
+     * @param objectType The {@link ObjectType} to match, or null to select from all
+     *                   {@link ObjectInfoTemplate} instances with null {@link ItemSubtype}.
+     * @return A {@link RogueFactory.PickResult} with the selected {@link ObjectType},
+     *         {@link ItemSubtype}, bad pick status, message, and checked templates.
      * @throws IllegalStateException if no templates with positive probability exist.
      */
     @Nonnull
-    public ObjectType pickOne() {
-        final RogueFactory.PickResult pickResult = rogueFactory.pickOne();
-        if(pickResult.isBadPick() && config.isMaster() && config.isWizard()){
-            assert pickResult.badPickMessage()!=null;
-            assert pickResult.checkedTemplates()!=null;
+    public RogueFactory.PickResult pickOne(@Nullable ObjectType objectType) {
+        final RogueFactory.PickResult pickResult = rogueFactory.pickOne(objectType);
+        // Log debug info in wizard and master mode for bad picks
+        if (pickResult.isBadPick() && config.isMaster() && config.isWizard()) {
+            assert pickResult.badPickMessage() != null;
+            assert pickResult.checkedTemplates() != null;
             messageSystem.msg(pickResult.badPickMessage());
-            for(ObjectInfoTemplate template: pickResult.checkedTemplates()){
+            // Log probabilities of checked templates
+            for (ObjectInfoTemplate template : pickResult.checkedTemplates()) {
                 messageSystem.msg(String.format("%s: %.0f%%", template.getName(), template.getProbability()));
             }
         }
-        return pickResult.objectType();
+        return pickResult;
     }
-
 
     // TODO game state newLevel unit test
     public void newLevel(final int levelNum) {
@@ -728,5 +738,13 @@ public class GameState {
 
     public RogueFactory getRogueFactory() {
         return rogueFactory;
+    }
+
+    public int getNoFood() {
+        return noFood;
+    }
+
+    public void setNoFood(int noFood) {
+        this.noFood = noFood;
     }
 }

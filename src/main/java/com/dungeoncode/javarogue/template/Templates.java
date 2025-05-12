@@ -151,6 +151,30 @@ public class Templates {
     }
 
     /**
+     * Retrieves all templates associated with the specified {@link ObjectType}, filtered by
+     * whether they have a non-null {@link ItemSubtype}. If {@code objectType} is null, returns
+     * templates with a null {@link ItemSubtype} and any {@link ObjectType}. If {@code objectType}
+     * is non-null, returns templates matching the given {@link ObjectType} with a non-null
+     * {@link ItemSubtype}.
+     *
+     * @param objectType The {@link ObjectType} to match, or null to retrieve templates with null
+     *                   {@link ItemSubtype}.
+     * @param <T> The template type extending {@link Template}.
+     * @return An unmodifiable set of matching templates, or empty if none found.
+     */
+    @SuppressWarnings("unchecked")
+    public static <T extends Template> Set<T> getTemplates(@Nullable ObjectType objectType) {
+        return TEMPLATES_ALL.stream()
+                .filter(t -> t instanceof ObjectInfoTemplate)
+                .map(t -> (ObjectInfoTemplate) t)
+                .filter(t -> objectType == null
+                        ? t.getItemSubType() == null
+                        : t.getObjectType() == objectType && t.getItemSubType() != null)
+                .map(t -> (T) t)
+                .collect(Collectors.toUnmodifiableSet());
+    }
+
+    /**
      * Finds an ObjectInfoTemplate by its ObjectType.
      *
      * @param objectType The ObjectType to match.
