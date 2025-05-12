@@ -239,7 +239,7 @@ public class Config {
 
         this.wizard = wizard;
         if (this.wizard) {
-            initialPlayerFlags.add(PlayerFlag.CAN_SEE_MONSTERS);
+            initialPlayerFlags.add(PlayerFlag.SEEMONST);
             if (this.master && this.optionsSeed > 0) {
                 // In original Rogue C, when in wizard mode and SEED is set, dungeon seed is overridden
                 this.dungeonSeed = this.optionsSeed;
@@ -247,7 +247,7 @@ public class Config {
                 rogueRandom.reseed(this.seed); // Ensure RogueRandom internal seed matches new dungeon seed
             }
         } else {
-            initialPlayerFlags.remove(PlayerFlag.CAN_SEE_MONSTERS);
+            initialPlayerFlags.remove(PlayerFlag.SEEMONST);
         }
     }
 

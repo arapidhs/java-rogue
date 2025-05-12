@@ -33,12 +33,12 @@ public class ConfigTest {
         assertFalse(config.isScoring());
 
         config.setWizard(true, rogueRandom);
-        assertTrue(config.getInitialPlayerFlags().contains(PlayerFlag.CAN_SEE_MONSTERS));
+        assertTrue(config.getInitialPlayerFlags().contains(PlayerFlag.SEEMONST));
         assertEquals(options.seed, config.getDungeonSeed());
         assertEquals(options.seed, config.getSeed());
 
         config.setWizard(false, rogueRandom);
-        assertFalse(config.getInitialPlayerFlags().contains(PlayerFlag.CAN_SEE_MONSTERS));
+        assertFalse(config.getInitialPlayerFlags().contains(PlayerFlag.SEEMONST));
     }
 
     @Test

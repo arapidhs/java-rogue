@@ -2,8 +2,8 @@ package com.dungeoncode.javarogue.system.entity.creature;
 
 public enum PlayerFlag {
 
-    IS_LEVITATING,
-    IS_HALLUCINATING,
-    CAN_SEE_MONSTERS
+    ISLEVIT,
+    ISHALU,
+    SEEMONST
 
 }
