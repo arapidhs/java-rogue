@@ -21,7 +21,6 @@ import com.dungeoncode.javarogue.system.world.*;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import org.slf4j.Logger;
@@ -42,7 +41,6 @@ public class GameState {
     private final Initializer initializer;
     private final MessageSystem messageSystem;
     private final RogueScreen screen;
-    private final WeaponsFactory weaponsFactory;
     private final ItemData itemData;
     private final RogueFactory rogueFactory;
     private final Map<Phase, Boolean> phaseActivity;
@@ -79,7 +77,6 @@ public class GameState {
         this.initializer = initializer;
         this.messageSystem = messageSystem;
         this.screen = screen;
-        this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
         this.itemData = new ItemData(config, rogueRandom);
         this.rogueFactory=new RogueFactory(config,rogueRandom);
         phaseActivity = new HashMap<>();
@@ -425,33 +422,6 @@ public class GameState {
         return rogueRandom.rnd(50 + 10 * level) + 2;
     }
 
-    //TODO: method to show map for debugging purpose only
-    public void showMap() {
-        Random random = new Random();
-//        if(random.nextBoolean()){
-//            screen.enableModifiers(SGR.BOLD);
-//        } else {
-//            screen.disableModifiers(SGR.BOLD);
-//        }
-        for (int x = 0; x < config.getTerminalCols(); x++) {
-            for (int y = 1; y < config.getTerminalRows() - 1; y++) {
-                final Place place = currentLevel.getPlaceAt(x, y);
-                assert place != null;
-                if (!place.isReal()) {
-                    screen.enableModifiers(SGR.BOLD);
-                }
-                if (place.isType(PlaceType.PASSAGE)) {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
-                } else {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
-                }
-                if (!place.isReal()) {
-                    screen.disableModifiers(SGR.BOLD);
-                }
-            }
-        }
-    }
-
     /**
      * Attempts to pick up an item from the floor at the player's current position.
      * Handles scare monster scrolls by removing them and displaying a message, or adds other items to the inventory.
@@ -732,20 +702,12 @@ public class GameState {
         this.player.setCurrentLevel(currentLevel.getLevelNum());
     }
 
-    public WeaponsFactory getWeaponsFactory() {
-        return weaponsFactory;
-    }
-
     public ItemData getItemData() {
         return itemData;
     }
 
     public RogueScreen getScreen() {
         return screen;
-    }
-
-    public void setPlaying(boolean playing) {
-        this.playing = playing;
     }
 
     public Queue<Command> getCommandQueue() {
@@ -762,5 +724,9 @@ public class GameState {
 
     public void setToDeath(final boolean toDeath) {
         this.toDeath = toDeath;
+    }
+
+    public RogueFactory getRogueFactory() {
+        return rogueFactory;
     }
 }

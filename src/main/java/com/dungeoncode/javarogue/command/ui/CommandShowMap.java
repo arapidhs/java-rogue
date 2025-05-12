@@ -1,8 +1,18 @@
 package com.dungeoncode.javarogue.command.ui;
 
 import com.dungeoncode.javarogue.command.Command;
+import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
+import com.dungeoncode.javarogue.system.RogueScreen;
+import com.dungeoncode.javarogue.system.SymbolMapper;
+import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.world.Place;
+import com.dungeoncode.javarogue.system.world.PlaceType;
+import com.googlecode.lanterna.SGR;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * <p>
@@ -30,8 +40,28 @@ public class CommandShowMap implements Command {
      *                  and rendering.
      */
     @Override
-    public boolean execute(GameState gameState) {
-        gameState.showMap();
+    public boolean execute(@Nonnull final GameState gameState) {
+        Objects.requireNonNull(gameState);
+        final Config config=gameState.getConfig();
+        final RogueScreen screen = gameState.getScreen();
+
+        for (int x = 0; x < config.getTerminalCols(); x++) {
+            for (int y = 1; y < config.getTerminalRows() - 1; y++) {
+                final Place place = gameState.getCurrentLevel().getPlaceAt(x, y);
+                assert place != null;
+                if (!place.isReal()) {
+                    screen.enableModifiers(SGR.BOLD);
+                }
+                if (place.isType(PlaceType.PASSAGE)) {
+                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
+                } else {
+                    screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
+                }
+                if (!place.isReal()) {
+                    screen.disableModifiers(SGR.BOLD);
+                }
+            }
+        }
         return true;
     }
 

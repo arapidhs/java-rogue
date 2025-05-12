@@ -1,7 +1,10 @@
 package com.dungeoncode.javarogue.core;
 
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
+import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
+import com.dungeoncode.javarogue.system.entity.item.Weapon;
+import com.dungeoncode.javarogue.system.entity.item.WeaponType;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
 
@@ -104,6 +107,13 @@ public class RogueFactory {
 
     private final Config config;
     private final RogueRandom rogueRandom;
+
+    /**
+     * A counter for assigning unique group IDs to stackable weapons (e.g., daggers, arrows),
+     * starting at 2 to distinguish from non-grouped items. Incremented for each new group
+     * created by {@link #weapon(WeaponType)}.
+     */
+    private int weaponsGroup = 2;
 
     /**
      * Constructs a factory with the specified configuration and random number generator.
@@ -210,6 +220,22 @@ public class RogueFactory {
             }
         } while (d >= mons.size() || mons.get(d) == null);
         return mons.get(d);
+    }
+
+    public Weapon weapon(@Nonnull final WeaponType weaponType) {
+        Objects.requireNonNull(weaponType);
+        final Weapon weapon = new Weapon(weaponType);
+        if (WeaponType.DAGGER.equals(weapon.getWeaponType())) {
+            weapon.setCount(rogueRandom.rnd(4) + 2);
+            weapon.setGroup(weaponsGroup++);
+        } else if (weapon.hasFlag(ItemFlag.ISMANY)) {
+            weapon.setCount(rogueRandom.rnd(8) + 8);
+            weapon.setGroup(weaponsGroup++);
+        } else {
+            weapon.setCount(1);
+            weapon.setGroup(0);
+        }
+        return weapon;
     }
 
     /**

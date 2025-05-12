@@ -4,7 +4,10 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
+import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
+import com.dungeoncode.javarogue.system.entity.item.Weapon;
+import com.dungeoncode.javarogue.system.entity.item.WeaponType;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
@@ -84,6 +87,33 @@ public class RogueFactoryTest {
         monsterType = rogueFactory.randMonster(wander, level);
         assertNotNull(monsterType);
         assertTrue(RogueFactory.WAND_MONS.contains(monsterType));
+    }
+
+    @RepeatedTest(100)
+    void testWeapon() {
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom);
+
+        final Weapon longSword = rogueFactory.weapon(WeaponType.LONG_SWORD);
+        final String longSwordWieldDamage = "3x4";
+        final String longSwordThrowDamage = "1x2";
+        assertEquals(longSwordWieldDamage, longSword.getWieldDamage());
+        assertEquals(longSwordThrowDamage, longSword.getThrowDamage());
+        assertEquals(0, longSword.getGroup());
+        assertNull(longSword.getLaunchWeapon());
+        assertTrue(longSword.getItemFlags().isEmpty());
+
+        final Weapon dagger = rogueFactory.weapon(WeaponType.DAGGER);
+        assertTrue(dagger.getGroup() > 0);
+        assertTrue(dagger.getCount() > 1);
+
+        final Weapon dart = rogueFactory.weapon(WeaponType.DART);
+        assertTrue(dart.getGroup() > 1);
+        assertTrue(dart.hasFlag(ItemFlag.ISMANY));
+        assertTrue(dart.hasFlag(ItemFlag.ISMISL));
+        assertTrue(dart.getCount() > 7);
+
     }
 
 }
