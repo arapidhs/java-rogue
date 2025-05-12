@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.core;
 
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
@@ -36,6 +37,70 @@ public class RogueFactory {
             ObjectType.GOLD,
             ObjectType.AMULET
     };
+
+    /**
+     * An ordered list of {@link MonsterType} values representing monsters in approximate order of
+     * increasing difficulty for dungeon levels. Used by {@link #randMonster(boolean,int)} to select
+     * monsters for standard level generation, favoring meaner monsters at higher levels.
+     * Mirrors the <code>lvl_mons</code> array in the C Rogue source.
+     */
+    public static final List<MonsterType> LVL_MONS = List.of(
+            MonsterType.KESTREL,
+            MonsterType.EMU,
+            MonsterType.BAT,
+            MonsterType.SNAKE,
+            MonsterType.HOBGOBLIN,
+            MonsterType.ICE_MONSTER,
+            MonsterType.RATTLESNAKE,
+            MonsterType.ORC,
+            MonsterType.ZOMBIE,
+            MonsterType.LEPRECHAUN,
+            MonsterType.CENTAUR,
+            MonsterType.QUAGGA,
+            MonsterType.AQUATOR,
+            MonsterType.NYMPH,
+            MonsterType.YETI,
+            MonsterType.VENUS_FLYTRAP,
+            MonsterType.TROLL,
+            MonsterType.WRAITH,
+            MonsterType.PHANTOM,
+            MonsterType.XEROC,
+            MonsterType.BLACK_UNICORN,
+            MonsterType.MEDUSA,
+            MonsterType.VAMPIRE,
+            MonsterType.GRIFFIN,
+            MonsterType.JABBERWOCK,
+            MonsterType.DRAGON
+    );
+
+    /**
+     * An ordered list of {@link MonsterType} values representing monsters available for wandering
+     * encounters, with gaps for excluded types. Used by {@link #randMonster(boolean,int)} to select
+     * monsters for wandering spawns, favoring a subset of monsters. Mirrors the
+     * <code>wand_mons</code> array in the C Rogue source.
+     */
+    public static final List<MonsterType> WAND_MONS = List.of(
+            MonsterType.KESTREL,
+            MonsterType.EMU,
+            MonsterType.BAT,
+            MonsterType.SNAKE,
+            MonsterType.HOBGOBLIN,
+            MonsterType.RATTLESNAKE,
+            MonsterType.ORC,
+            MonsterType.ZOMBIE,
+            MonsterType.CENTAUR,
+            MonsterType.QUAGGA,
+            MonsterType.AQUATOR,
+            MonsterType.YETI,
+            MonsterType.TROLL,
+            MonsterType.WRAITH,
+            MonsterType.PHANTOM,
+            MonsterType.BLACK_UNICORN,
+            MonsterType.MEDUSA,
+            MonsterType.VAMPIRE,
+            MonsterType.GRIFFIN,
+            MonsterType.JABBERWOCK
+    );
 
     private final Config config;
     private final RogueRandom rogueRandom;
@@ -118,7 +183,43 @@ public class RogueFactory {
         );
     }
 
-    public List<ObjectInfoTemplate> getObjectInfoProbabilityTemplates() {
+    /**
+     * Selects a random {@link MonsterType} for a dungeon level or wandering encounter.
+     * Chooses from {@link #LVL_MONS} for level spawns or {@link #WAND_MONS} for wandering,
+     * adjusting the selection index based on the dungeon level to favor meaner monsters at
+     * higher levels. Ensures a valid monster is selected by retrying if the index points to a null entry.
+     * <p>
+     * Equivalent to the <code>randmonster</code> function in the C Rogue source (monsters.c).
+     * </p>
+     *
+     * @param wander True to select from wandering monsters, false for level monsters.
+     * @param level The current dungeon level, influencing monster selection.
+     * @return A randomly selected {@link MonsterType}.
+     */
+    @Nonnull
+    public MonsterType randMonster(boolean wander, final int level) {
+        List<MonsterType> mons = wander ? WAND_MONS : LVL_MONS;
+        int d;
+        do {
+            d = level + (rogueRandom.rnd(10) - 6);
+            if (d < 0) {
+                d = rogueRandom.rnd(5);
+            }
+            if (d > 25) {
+                d = rogueRandom.rnd(5) + 21;
+            }
+        } while (d >= mons.size() || mons.get(d) == null);
+        return mons.get(d);
+    }
+
+    /**
+     * Retrieves a sorted list of {@link ObjectInfoTemplate} instances with positive probability.
+     * Filters templates to include only those with probability greater than 0, sorts them by ID,
+     * and returns an immutable list.
+     *
+     * @return A sorted list of {@link ObjectInfoTemplate} with positive probability.
+     */
+    private List<ObjectInfoTemplate> getObjectInfoProbabilityTemplates() {
         return Templates.getTemplates(ObjectInfoTemplate.class)
                 .stream()
                 .filter(template -> template.getProbability() > 0)

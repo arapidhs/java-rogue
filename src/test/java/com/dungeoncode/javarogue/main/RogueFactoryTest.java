@@ -3,6 +3,7 @@ package com.dungeoncode.javarogue.main;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -59,4 +60,30 @@ public class RogueFactoryTest {
         assertNull(pickResult.badPickMessage());
         assertNull(pickResult.checkedTemplates());
     }
+
+    /**
+     * Repeatedly tests the {@link RogueFactory#randMonster(boolean, int)} method to ensure
+     * valid random monster selection. Verifies that non-wandering selections are from
+     * {@link RogueFactory#LVL_MONS} and wandering selections are from
+     * {@link RogueFactory#WAND_MONS}, with non-null results, using a random level up to
+     * the amulet level and a fixed seed for reproducibility.
+     */
+    @RepeatedTest(50)
+    void testRandMonster(){
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final RogueFactory rogueFactory=new RogueFactory(config,rogueRandom);
+
+        boolean wander=false;
+        int level=rogueRandom.rnd(config.getAmuletLevel());
+        MonsterType monsterType = rogueFactory.randMonster(wander, level);
+        assertNotNull(monsterType);
+        assertTrue(RogueFactory.LVL_MONS.contains(monsterType));
+
+        wander=true;
+        monsterType = rogueFactory.randMonster(wander, level);
+        assertNotNull(monsterType);
+        assertTrue(RogueFactory.WAND_MONS.contains(monsterType));
+    }
+
 }
