@@ -19,6 +19,7 @@ import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
 import com.dungeoncode.javarogue.system.world.*;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
+import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -43,6 +44,7 @@ public class GameState {
     private final RogueScreen screen;
     private final WeaponsFactory weaponsFactory;
     private final ItemData itemData;
+    private final RogueFactory rogueFactory;
     private final Map<Phase, Boolean> phaseActivity;
     private final Queue<Command> commandQueue = new ConcurrentLinkedQueue<>();
     private Player player;
@@ -79,6 +81,7 @@ public class GameState {
         this.screen = screen;
         this.weaponsFactory = new WeaponsFactory(this.rogueRandom);
         this.itemData = new ItemData(config, rogueRandom);
+        this.rogueFactory=new RogueFactory(config,rogueRandom);
         phaseActivity = new HashMap<>();
         init();
     }
@@ -339,6 +342,33 @@ public class GameState {
     public MessageSystem getMessageSystem() {
         return messageSystem;
     }
+
+    /**
+     * Selects a random {@link ObjectType} from templates with positive probability,
+     * using weighted random selection via {@link RogueFactory#pickOne()}. Logs debug
+     * information in wizard and master mode if the pick is bad, including the bad pick
+     * message and probabilities of checked templates.
+     * <p>
+     * Equivalent to the <code>pick_one</code> function in the C Rogue source (things.c).
+     * </p>
+     *
+     * @return The selected {@link ObjectType}.
+     * @throws IllegalStateException if no templates with positive probability exist.
+     */
+    @Nonnull
+    public ObjectType pickOne() {
+        final RogueFactory.PickResult pickResult = rogueFactory.pickOne();
+        if(pickResult.isBadPick() && config.isMaster() && config.isWizard()){
+            assert pickResult.badPickMessage()!=null;
+            assert pickResult.checkedTemplates()!=null;
+            messageSystem.msg(pickResult.badPickMessage());
+            for(ObjectInfoTemplate template: pickResult.checkedTemplates()){
+                messageSystem.msg(String.format("%s: %.0f%%", template.getName(), template.getProbability()));
+            }
+        }
+        return pickResult.objectType();
+    }
+
 
     // TODO game state newLevel unit test
     public void newLevel(final int levelNum) {

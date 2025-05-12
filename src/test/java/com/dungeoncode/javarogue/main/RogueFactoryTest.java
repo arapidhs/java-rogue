@@ -4,6 +4,7 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,4 +39,24 @@ public class RogueFactoryTest {
         }
     }
 
+    /**
+     * Repeatedly tests the {@link RogueFactory#pickOne()} method to ensure valid random
+     * object type selection. Verifies that the returned {@link RogueFactory.PickResult}
+     * is non-null, contains a non-null {@link ObjectType}, is not a bad pick, and has
+     * null bad pick message and checked templates list, using a fixed seed for reproducible
+     * results.
+     */
+    @RepeatedTest(100)
+    void testPickOne(){
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final RogueFactory rogueFactory=new RogueFactory(config,rogueRandom);
+
+        final RogueFactory.PickResult pickResult = rogueFactory.pickOne();
+        assertNotNull(pickResult);
+        assertNotNull(pickResult.objectType());
+        assertFalse(pickResult.isBadPick());
+        assertNull(pickResult.badPickMessage());
+        assertNull(pickResult.checkedTemplates());
+    }
 }

@@ -4,10 +4,7 @@ import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandFunctional;
 import com.dungeoncode.javarogue.command.core.CommandParameterizedTimed;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
-import com.dungeoncode.javarogue.core.Config;
-import com.dungeoncode.javarogue.core.GameState;
-import com.dungeoncode.javarogue.core.Phase;
-import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.core.*;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
@@ -19,6 +16,7 @@ import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -595,6 +593,23 @@ public class GameStateTest extends RogueBaseTest {
         assertEquals(monster.getDestination(),gameState.getPlayer().getPosition());
         assertTrue(monster.hasFlag(CreatureFlag.ISRUN));
         assertFalse(monster.hasFlag(CreatureFlag.ISHELD));
+    }
+
+    /**
+     * Repeatedly tests the {@link GameState#pickOne()} method to ensure valid random
+     * object type selection. Verifies that the returned {@link ObjectType} is non-null,
+     * using a fixed seed for reproducible results.
+     */
+    @RepeatedTest(50)
+    void testPickOne(){
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final RogueFactory rogueFactory=new RogueFactory(config,rogueRandom);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+
+        final ObjectType objectType = gameState.pickOne();
+        assertNotNull(objectType);
     }
 
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
