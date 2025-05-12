@@ -202,6 +202,7 @@ public class RogueFactory {
                 List.copyOf(validTemplates)
         );
     }
+
     /**
      * Selects a random {@link MonsterType} for a dungeon level or wandering encounter.
      * Chooses from {@link #LVL_MONS} for level spawns or {@link #WAND_MONS} for wandering,
@@ -231,6 +232,19 @@ public class RogueFactory {
         return mons.get(d);
     }
 
+    /**
+     * Creates and initializes a {@link Weapon} of the specified {@link WeaponType}, setting
+     * its count and group based on type and flags. Daggers receive 2-5 units, weapons with
+     * {@link ItemFlag#ISMANY} receive 8-15 units with a unique group ID, and others receive
+     * 1 unit with no group. Increments the weapons group counter for stackable weapons.
+     * <p>
+     * Equivalent to weapon initialization logic in the C Rogue source (things.c).
+     * </p>
+     *
+     * @param weaponType The {@link WeaponType} to create.
+     * @return The initialized {@link Weapon}.
+     * @throws NullPointerException if weaponType is null.
+     */
     public Weapon weapon(@Nonnull final WeaponType weaponType) {
         Objects.requireNonNull(weaponType);
         final Weapon weapon = new Weapon(weaponType);
