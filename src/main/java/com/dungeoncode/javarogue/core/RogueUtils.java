@@ -78,6 +78,20 @@ public class RogueUtils {
         };
     }
 
+    /**
+     * Calculates the squared distance between two points, used for comparative purposes.
+     * Returns (x2 - x1)^2 + (y2 - y1)^2, mirroring the C Rogue <code>dist</code> function.
+     *
+     * @param y1 The y-coordinate of the first point.
+     * @param x1 The x-coordinate of the first point.
+     * @param y2 The y-coordinate of the second point.
+     * @param x2 The x-coordinate of the second point.
+     * @return The squared distance between the points.
+     */
+    public int dist(int y1, int x1, int y2, int x2) {
+        return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+    }
+
     public static String crypt(@Nonnull final String input, @Nonnull final String salt) {
         Objects.requireNonNull(input);
         Objects.requireNonNull(salt);
