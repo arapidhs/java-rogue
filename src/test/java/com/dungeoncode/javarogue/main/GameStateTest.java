@@ -564,6 +564,39 @@ public class GameStateTest extends RogueBaseTest {
 
     }
 
+    /**
+     * Tests the {@link GameState#runTo(Position)} method to ensure a monster is set to run toward the player.
+     * Verifies that a monster placed close to the player, in the same room, has its running state enabled,
+     * held state cleared, and destination set to the player’s position after execution, using a fixed seed
+     * (200) for reproducible results.
+     */
+    @Test
+    void testRunTo() {
+        final long seed = 200;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+        final int px=gameState.getPlayer().getX();
+        final int py=gameState.getPlayer().getY();
+
+        // create and place the monster close to the player
+        final Monster monster=new Monster(MonsterType.ICE_MONSTER);
+        final int dx=1;
+        final int dy=1;
+        monster.setPosition(px+dx,py+dy);
+        monster.setRoom(gameState.getPlayer().getRoom());
+
+        final Place place = gameState.getCurrentLevel().getPlaceAt(monster.getX(), monster.getY());
+        assertNotNull(place);
+        place.setMonster(monster);
+
+        // assert monster runs to player
+        gameState.runTo(monster.getPosition());
+        assertEquals(monster.getDestination(),gameState.getPlayer().getPosition());
+        assertTrue(monster.hasFlag(CreatureFlag.ISRUN));
+        assertFalse(monster.hasFlag(CreatureFlag.ISHELD));
+    }
+
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
         private final int mainGoldIncrease;
         private final AtomicInteger mainTimer;

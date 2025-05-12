@@ -265,6 +265,33 @@ public class GameState {
     }
 
     /**
+     * Sets a monster at the specified position to run toward a destination, enabling its
+     * running state and clearing its held state. If no monster is found and master mode is
+     * enabled, logs a debug message. The destination is determined by {@link #findDest(Monster)}.
+     * <p>
+     * Equivalent to the <code>runto</code> function in the C Rogue source (chase.c).
+     * </p>
+     *
+     * @param monsterPosition The position of the monster to set running.
+     * @throws NullPointerException if monsterPosition is null.
+     */
+    public void runTo(@Nonnull final Position monsterPosition){
+        Objects.requireNonNull(monsterPosition);
+        final int mx=monsterPosition.getX();
+        final int my=monsterPosition.getY();
+        final Place place = currentLevel.getPlaceAt(mx, my);
+        assert place!=null;
+        final Monster monster=place.getMonster();
+        if(monster==null && config.isMaster()){
+            messageSystem.msg(String.format("couldn't find monster in runto at (%d,%d)",mx,my));
+        } else if(monster!=null){
+            monster.addFlag(CreatureFlag.ISRUN);
+            monster.removeFlag(CreatureFlag.ISHELD);
+            monster.setDestination(findDest(monster));
+        }
+    }
+
+    /**
      * Determines if the player can see the specified monster, considering blindness,
      * invisibility, proximity, and room visibility.
      * <p>
