@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.entity.item.ring.Ring;
-import com.dungeoncode.javarogue.entity.item.ring.RingType;
-import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.system.entity.item.Ring;
+import com.dungeoncode.javarogue.system.entity.item.RingType;
+import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

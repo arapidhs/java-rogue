@@ -1,12 +1,11 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.core.ScoreManager;
+import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

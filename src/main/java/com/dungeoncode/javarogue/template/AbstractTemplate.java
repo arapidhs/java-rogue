@@ -1,7 +1,5 @@
 package com.dungeoncode.javarogue.template;
 
-import com.dungeoncode.javarogue.core.Template;
-
 import java.util.Objects;
 
 public abstract class AbstractTemplate implements Template {

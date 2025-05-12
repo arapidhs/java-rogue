@@ -1,15 +1,8 @@
 package com.dungeoncode.javarogue.template;
 
 import com.dungeoncode.javarogue.core.Messages;
-import com.dungeoncode.javarogue.core.Template;
-import com.dungeoncode.javarogue.entity.item.ItemSubtype;
-import com.dungeoncode.javarogue.entity.item.ObjectType;
-import com.dungeoncode.javarogue.entity.item.armor.ArmorInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.potion.PotionInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.ring.RingInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.rod.RodInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.scroll.ScrollInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponInfoTemplate;
+import com.dungeoncode.javarogue.system.entity.item.ItemSubtype;
+import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.annotation.Nonnull;

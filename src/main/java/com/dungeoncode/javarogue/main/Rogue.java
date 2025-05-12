@@ -1,15 +1,16 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.*;
+import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
-import com.dungeoncode.javarogue.ui.MessageSystem;
-import com.dungeoncode.javarogue.ui.RogueScreen;
-import com.dungeoncode.javarogue.ui.TombstoneRenderer;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.RogueScreen;
+import com.dungeoncode.javarogue.system.TombstoneRenderer;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;

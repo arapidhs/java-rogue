@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.template;
 
+import com.dungeoncode.javarogue.system.entity.item.DragonBreathType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -2,10 +2,10 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.entity.item.weapon.Weapon;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponType;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponsFactory;
-import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.system.entity.item.Weapon;
+import com.dungeoncode.javarogue.system.entity.item.WeaponType;
+import com.dungeoncode.javarogue.system.entity.item.WeaponsFactory;
+import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

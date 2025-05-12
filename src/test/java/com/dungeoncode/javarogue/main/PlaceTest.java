@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.entity.creature.Monster;
-import com.dungeoncode.javarogue.ui.SymbolType;
-import com.dungeoncode.javarogue.world.Place;
-import com.dungeoncode.javarogue.world.PlaceType;
+import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.world.Place;
+import com.dungeoncode.javarogue.system.world.PlaceType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

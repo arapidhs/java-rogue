@@ -1,7 +1,7 @@
 package com.dungeoncode.javarogue.template;
 
-import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.entity.creature.Stats;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.Stats;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

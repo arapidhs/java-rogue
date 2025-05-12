@@ -3,7 +3,7 @@ package com.dungeoncode.javarogue.command;
 import com.dungeoncode.javarogue.command.action.CommandPlayerMove;
 import com.dungeoncode.javarogue.command.system.CommandQuit;
 import com.dungeoncode.javarogue.command.ui.CommandShowMap;
-import com.dungeoncode.javarogue.entity.Position;
+import com.dungeoncode.javarogue.system.entity.Position;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 

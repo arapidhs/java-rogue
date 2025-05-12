@@ -1,23 +1,14 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.entity.item.ObjectType;
-import com.dungeoncode.javarogue.entity.item.armor.Armor;
-import com.dungeoncode.javarogue.entity.item.armor.ArmorInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.armor.ArmorType;
-import com.dungeoncode.javarogue.entity.item.potion.PotionInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.potion.PotionType;
-import com.dungeoncode.javarogue.entity.item.ring.RingInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.ring.RingType;
-import com.dungeoncode.javarogue.entity.item.rod.RodInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.rod.RodType;
-import com.dungeoncode.javarogue.entity.item.scroll.ScrollInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
-import com.dungeoncode.javarogue.entity.item.weapon.Weapon;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponInfoTemplate;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponType;
-import com.dungeoncode.javarogue.system.combat.KillType;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.item.*;
+import com.dungeoncode.javarogue.template.ArmorInfoTemplate;
+import com.dungeoncode.javarogue.template.PotionInfoTemplate;
+import com.dungeoncode.javarogue.template.RingInfoTemplate;
+import com.dungeoncode.javarogue.template.RodInfoTemplate;
+import com.dungeoncode.javarogue.template.ScrollInfoTemplate;
+import com.dungeoncode.javarogue.template.WeaponInfoTemplate;
+import com.dungeoncode.javarogue.system.death.KillType;
 import com.dungeoncode.javarogue.template.*;
 import org.junit.jupiter.api.Test;
 

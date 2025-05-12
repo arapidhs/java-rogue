@@ -1,12 +1,12 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.Config;
-import com.dungeoncode.javarogue.entity.creature.Player;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static com.dungeoncode.javarogue.entity.creature.Player.STATUS_HUNGER_NAMES;
+import static com.dungeoncode.javarogue.system.entity.creature.Player.STATUS_HUNGER_NAMES;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PlayerTest {

@@ -15,6 +15,7 @@ import com.dungeoncode.javarogue.core.Phase;
  * particularly in rooms.c (e.g., init_rooms()), and integrates with Lanterna for rendering,
  * replacing the C code's curses-based display.
  */
+// TODO this command (CommandShowMap) is a PoC - not final
 public class CommandShowMap implements Command {
 
     /**

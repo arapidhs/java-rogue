@@ -1,7 +1,7 @@
 package com.dungeoncode.javarogue.main.base;
 
 import com.dungeoncode.javarogue.core.Config;
-import com.dungeoncode.javarogue.ui.RogueScreen;
+import com.dungeoncode.javarogue.system.RogueScreen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;

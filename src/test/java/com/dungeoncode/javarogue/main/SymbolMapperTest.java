@@ -1,8 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.ui.SymbolMapper;
-import com.dungeoncode.javarogue.entity.creature.Player;
-import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.system.SymbolMapper;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

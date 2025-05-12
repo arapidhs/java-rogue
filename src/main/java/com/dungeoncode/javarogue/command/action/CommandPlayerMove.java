@@ -3,11 +3,11 @@ package com.dungeoncode.javarogue.command.action;
 import com.dungeoncode.javarogue.command.core.CommandParameterized;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
-import com.dungeoncode.javarogue.entity.Position;
-import com.dungeoncode.javarogue.ui.RogueScreen;
-import com.dungeoncode.javarogue.ui.SymbolMapper;
-import com.dungeoncode.javarogue.world.Place;
-import com.dungeoncode.javarogue.world.PlaceType;
+import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.RogueScreen;
+import com.dungeoncode.javarogue.system.SymbolMapper;
+import com.dungeoncode.javarogue.system.world.Place;
+import com.dungeoncode.javarogue.system.world.PlaceType;
 import com.googlecode.lanterna.SGR;
 
 import javax.annotation.Nonnull;

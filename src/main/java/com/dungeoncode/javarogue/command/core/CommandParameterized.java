@@ -1,52 +1,35 @@
 package com.dungeoncode.javarogue.command.core;
 
-import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 
 /**
- * An abstract base class for commands that require parameters to execute their logic.
- * This class extends the {@link Command} interface, adding support for parameterized
- * execution while maintaining phase-based turn processing. Parameters are stored in a
- * type-safe manner using generics, allowing flexibility for different command types
- * (e.g., movement coordinates, command arguments, or level numbers).
+ * An abstract base class for commands that use parameters to execute their logic.
+ * Extends {@link AbstractCommand} to support type-safe parameter storage and phase-based
+ * execution, enabling flexible commands like movement or item usage.
  * <p>
- * Inspired by the flexible input handling in the original C Rogue source code (e.g.,
- * command.c parsing user inputs), this class provides a foundation for commands that
- * need additional data to perform their actions, such as item usage (things.c) or
- * level generation (rooms.c).
+ * Inspired by the input parsing in the C Rogue source (e.g., command.c), where actions
+ * like item use (things.c) or level changes (rooms.c) rely on contextual data.
  * </p>
  *
  * @param <T> The type of parameters required by the command.
  */
-public abstract class CommandParameterized<T> implements Command {
-    /**
-     * The parameters used by the command during execution.
-     */
+public abstract class CommandParameterized<T> extends AbstractCommand {
     private final T params;
-    /**
-     * The phase in which the command executes (START_TURN, MAIN_TURN, or END_TURN).
-     */
-    private final Phase phase;
 
     /**
-     * Constructs a parameterized command with the specified parameters and execution phase.
-     * The parameters are stored for use during execution, and the phase determines when
-     * the command runs in the game's turn cycle, aligning with the C source code's turn
-     * structure in main.c.
+     * Constructs a parameterized command with the specified parameters and phase.
      *
-     * @param params The parameters required for the command's execution.
-     * @param phase  The phase in which the command should execute.
+     * @param params The parameters for the command’s execution.
+     * @param phase  The phase in which the command executes (e.g., START_TURN, MAIN_TURN).
      */
     protected CommandParameterized(T params, Phase phase) {
+        super(phase);
         this.params = params;
-        this.phase = phase;
     }
 
     /**
-     * Returns the parameters associated with this command.
-     * Subclasses can use these parameters to customize their execution logic, such as
-     * processing movement directions or command arguments.
+     * Returns the parameters for the command’s execution.
      *
      * @return The parameters of type T.
      */
@@ -55,25 +38,12 @@ public abstract class CommandParameterized<T> implements Command {
     }
 
     /**
-     * Executes the command, modifying the game state based on the stored parameters.
-     * Subclasses must implement this method to define the specific action, such as
-     * moving the player (move.c), using an item (things.c), or triggering an effect.
+     * Executes the command, modifying the game state using the stored parameters.
+     * Subclasses must implement the specific action, such as moving the player or using an item.
      *
-     * @param gameState The current game state to be modified by the command.
+     * @param gameState The game state to modify.
+     * @return True if the command executed successfully, false otherwise.
      */
     @Override
     public abstract boolean execute(GameState gameState);
-
-    /**
-     * Returns the phase in which this command executes.
-     * The phase (START_TURN, MAIN_TURN, or END_TURN) ensures proper ordering of command
-     * execution within a game turn, consistent with the C source code's game loop in
-     * main.c.
-     *
-     * @return The execution phase of the command.
-     */
-    @Override
-    public Phase getPhase() {
-        return phase;
-    }
 }

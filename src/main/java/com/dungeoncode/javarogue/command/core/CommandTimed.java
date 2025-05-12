@@ -1,41 +1,56 @@
 package com.dungeoncode.javarogue.command.core;
 
-import com.dungeoncode.javarogue.command.Command;
+import com.dungeoncode.javarogue.core.Phase;
 
 /**
- * Represents a command that executes after a specified number of turns, supporting
- * delayed actions in the Rogue game. Timed commands maintain a turn-based timer,
- * decrementing each turn until ready to execute, and remain in the command queue
- * until their action is performed.
+ * An abstract base class for commands that execute after a specified number of turns,
+ * implementing delayed actions in the Rogue game. Maintains a turn-based timer that
+ * decrements each turn until execution, remaining in the command queue until completed.
  * <p>
- * This interface is inspired by the delayed action system in the original C Rogue
- * source code, particularly the fuse and daemon mechanisms in daemon.c, which
- * schedule actions like traps or effects to occur after a set number of turns.
+ * Inspired by the fuse and daemon mechanisms in the C Rogue source (daemon.c), which
+ * schedule delayed actions like traps or effects.
+ * </p>
  */
-public interface CommandTimed extends Command {
-    /**
-     * Returns the number of turns remaining before the command is ready to execute.
-     * This corresponds to the turn counter used in the C source code's fuse system
-     * (daemon.c), which tracks how many turns are left until the action triggers.
-     *
-     * @return The number of turns remaining.
-     */
-    int getTurnsRemaining();
+public abstract class CommandTimed extends AbstractCommand {
+
+    private int turnsRemaining;
 
     /**
-     * Decrements the command's turn timer by one, advancing it closer to execution.
-     * Called each turn during the command's phase, mirroring the turn-based
-     * progression of delayed actions in the C source code's daemon.c.
+     * Constructs a timed command with a specified delay and execution phase.
+     *
+     * @param turns The number of turns to wait before execution.
+     * @param phase The phase in which the command executes (e.g., START_TURN, MAIN_TURN).
      */
-    void decrementTimer();
+    public CommandTimed(int turns, Phase phase) {
+        super(phase);
+        this.turnsRemaining = turns;
+    }
 
     /**
-     * Checks if the command is ready to execute, typically when its turn timer
-     * reaches zero. This determines whether the command should be executed and
-     * removed from the queue, aligning with the C source code's logic for
-     * triggering delayed actions in daemon.c.
-     *
-     * @return true if the command is ready to execute, false otherwise.
+     * Decrements the turn timer by one, advancing the command toward execution.
+     * No effect if the timer is already zero.
      */
-    boolean isReadyToExecute();
+    public void decrementTimer() {
+        if (turnsRemaining > 0) {
+            turnsRemaining--;
+        }
+    }
+
+    /**
+     * Returns the number of turns remaining before execution.
+     *
+     * @return The remaining turns.
+     */
+    public int getTurnsRemaining() {
+        return turnsRemaining;
+    }
+
+    /**
+     * Checks if the command is ready to execute (timer is zero or less).
+     *
+     * @return True if the timer is zero or less, false otherwise.
+     */
+    public boolean isReadyToExecute() {
+        return turnsRemaining <= 0;
+    }
 }

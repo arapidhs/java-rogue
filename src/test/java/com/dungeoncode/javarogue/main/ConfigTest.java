@@ -1,9 +1,10 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.Config;
+import com.dungeoncode.javarogue.core.Options;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.entity.creature.PlayerFlag;
-import com.dungeoncode.javarogue.entity.creature.Stats;
+import com.dungeoncode.javarogue.system.entity.creature.PlayerFlag;
+import com.dungeoncode.javarogue.system.entity.creature.Stats;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

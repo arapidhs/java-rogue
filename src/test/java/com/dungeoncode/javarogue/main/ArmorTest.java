@@ -1,8 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.entity.item.armor.Armor;
-import com.dungeoncode.javarogue.entity.item.armor.ArmorType;
-import com.dungeoncode.javarogue.ui.SymbolType;
+import com.dungeoncode.javarogue.system.entity.item.Armor;
+import com.dungeoncode.javarogue.system.entity.item.ArmorType;
+import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

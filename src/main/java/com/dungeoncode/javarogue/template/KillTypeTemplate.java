@@ -1,6 +1,6 @@
 package com.dungeoncode.javarogue.template;
 
-import com.dungeoncode.javarogue.system.combat.KillType;
+import com.dungeoncode.javarogue.system.death.KillType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

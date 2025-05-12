@@ -2,27 +2,27 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandFunctional;
-import com.dungeoncode.javarogue.command.core.CommandParameterizedDelayedTimed;
+import com.dungeoncode.javarogue.command.core.CommandParameterizedTimed;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.entity.creature.Monster;
-import com.dungeoncode.javarogue.entity.creature.Player;
-import com.dungeoncode.javarogue.entity.item.Inventory;
-import com.dungeoncode.javarogue.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.entity.item.food.Food;
-import com.dungeoncode.javarogue.entity.item.scroll.Scroll;
-import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.entity.item.Inventory;
+import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.system.entity.item.Food;
+import com.dungeoncode.javarogue.system.entity.item.Scroll;
+import com.dungeoncode.javarogue.system.entity.item.ScrollType;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
-import com.dungeoncode.javarogue.ui.MessageSystem;
-import com.dungeoncode.javarogue.ui.SymbolType;
-import com.dungeoncode.javarogue.world.Level;
-import com.dungeoncode.javarogue.world.Passage;
-import com.dungeoncode.javarogue.world.Room;
-import com.dungeoncode.javarogue.world.RoomFlag;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.world.Level;
+import com.dungeoncode.javarogue.system.world.Passage;
+import com.dungeoncode.javarogue.system.world.Room;
+import com.dungeoncode.javarogue.system.world.RoomFlag;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -204,28 +204,7 @@ public class GameStateTest extends RogueBaseTest {
         final int initialTimer = 2;
         final int mainGoldIncrease = 10;
         final AtomicInteger mainTimer = new AtomicInteger(initialTimer);
-        gameState.addCommand(new CommandParameterizedDelayedTimed<>(initialTimer, 0, Phase.MAIN_TURN) {
-            @Override
-            public boolean execute(GameState gs) {
-                gs.getPlayer().setGoldAmount(gs.getPlayer().getGoldAmount() + mainGoldIncrease);
-                return true;
-            }
-
-            @Override
-            public int getTurnsRemaining() {
-                return mainTimer.get();
-            }
-
-            @Override
-            public void decrementTimer() {
-                mainTimer.decrementAndGet();
-            }
-
-            @Override
-            public boolean isReadyToExecute() {
-                return mainTimer.get() <= 0;
-            }
-        });
+        gameState.addCommand(new CommandParameterizedTimedTest(initialTimer, mainGoldIncrease, mainTimer));
 
         // Test END_TURN phase with inline TestCommandEternal
         final AtomicInteger endEternalExecutions = new AtomicInteger(0);
@@ -469,4 +448,35 @@ public class GameStateTest extends RogueBaseTest {
         assertEquals(SymbolType.FLOOR,gameState.floorAt());
     }
 
+    private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
+        private final int mainGoldIncrease;
+        private final AtomicInteger mainTimer;
+
+        public CommandParameterizedTimedTest(int initialTimer, int mainGoldIncrease, AtomicInteger mainTimer) {
+            super(initialTimer, 0, Phase.MAIN_TURN);
+            this.mainGoldIncrease = mainGoldIncrease;
+            this.mainTimer = mainTimer;
+        }
+
+        @Override
+        public boolean execute(GameState gs) {
+            gs.getPlayer().setGoldAmount(gs.getPlayer().getGoldAmount() + mainGoldIncrease);
+            return true;
+        }
+
+        @Override
+        public int getTurnsRemaining() {
+            return mainTimer.get();
+        }
+
+        @Override
+        public void decrementTimer() {
+            mainTimer.decrementAndGet();
+        }
+
+        @Override
+        public boolean isReadyToExecute() {
+            return mainTimer.get() <= 0;
+        }
+    }
 }

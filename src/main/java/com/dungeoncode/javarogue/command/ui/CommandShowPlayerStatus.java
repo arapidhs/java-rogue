@@ -4,8 +4,8 @@ import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
-import com.dungeoncode.javarogue.entity.creature.Player;
-import com.dungeoncode.javarogue.ui.MessageSystem;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.MessageSystem;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;

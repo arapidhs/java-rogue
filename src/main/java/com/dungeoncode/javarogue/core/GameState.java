@@ -4,32 +4,34 @@ import com.dungeoncode.javarogue.command.Command;
 import com.dungeoncode.javarogue.command.CommandFactory;
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
-import com.dungeoncode.javarogue.command.status.CommandSetupPlayerTimesPerTurn;
+import com.dungeoncode.javarogue.command.status.CommandSetupPlayerMovesPerTurn;
 import com.dungeoncode.javarogue.command.system.CommandQuit;
 import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
-import com.dungeoncode.javarogue.entity.Position;
-import com.dungeoncode.javarogue.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.entity.creature.Monster;
-import com.dungeoncode.javarogue.entity.creature.Player;
-import com.dungeoncode.javarogue.entity.item.Item;
-import com.dungeoncode.javarogue.entity.item.ItemData;
-import com.dungeoncode.javarogue.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.entity.item.ObjectType;
-import com.dungeoncode.javarogue.entity.item.scroll.ScrollType;
-import com.dungeoncode.javarogue.entity.item.weapon.WeaponsFactory;
+import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.entity.item.Item;
+import com.dungeoncode.javarogue.system.entity.item.ItemData;
+import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
+import com.dungeoncode.javarogue.system.entity.item.ObjectType;
+import com.dungeoncode.javarogue.system.entity.item.ScrollType;
+import com.dungeoncode.javarogue.system.entity.item.WeaponsFactory;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
-import com.dungeoncode.javarogue.ui.MessageSystem;
-import com.dungeoncode.javarogue.ui.RogueScreen;
-import com.dungeoncode.javarogue.ui.SymbolMapper;
-import com.dungeoncode.javarogue.ui.SymbolType;
-import com.dungeoncode.javarogue.world.*;
-import com.dungeoncode.javarogue.world.generation.LevelGenerator;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.RogueScreen;
+import com.dungeoncode.javarogue.system.SymbolMapper;
+import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.world.*;
+import com.dungeoncode.javarogue.system.LevelGenerator;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,6 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameState {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(GameState.class);
     private static final String MSG_SCROLL_TURNS_TO_DUST = "the scroll turns to dust as you pick it up";
 
     private final Config config;
@@ -110,7 +113,7 @@ public class GameState {
      *   <li>{@link CommandEternal}: Executes every turn, remains in the queue.</li>
      *   <li>Other commands: Executes once, removed if successful.</li>
      * </ul>
-     * Player commands are executed up to the player's move count (set by {@link CommandSetupPlayerTimesPerTurn}, default 1, increased by {@link CreatureFlag#ISHASTE}).
+     * Player commands are executed up to the player's move count (set by {@link CommandSetupPlayerMovesPerTurn}, default 1, increased by {@link CreatureFlag#ISHASTE}).
      * Retries input on {@link KeyType#Escape} (e.g., from Ctrl+C) or if no command is executed.
      * Mirrors the turn-based loop in C Rogue (main.c), with pre-player actions (monsters.c), player input (command.c), and post-player updates (daemon.c).
      */
@@ -118,7 +121,7 @@ public class GameState {
         this.playing = true;
         this.commandFactory = new CommandFactory();
 
-        addCommand(new CommandSetupPlayerTimesPerTurn());
+        addCommand(new CommandSetupPlayerMovesPerTurn());
         addCommand(new CommandShowPlayerStatus());
         addCommand(new CommandClearMessage());
 
@@ -262,6 +265,7 @@ public class GameState {
         final Room room = currentLevel.roomIn(x, y);
         if (room == null) {
             messageSystem.msg(String.format("in some bizarre place (%d, %d)", x, y));
+            LOGGER.debug("in some bizarre place ({}, {})", x, y);
             if (config.isMaster()) {
                 abort();
             }
@@ -270,11 +274,8 @@ public class GameState {
     }
 
     private void abort() {
+        LOGGER.debug("Aborting java-rogue..");
         System.exit(1);
-    }
-
-    public boolean hasAmulet() {
-        return player.getInventory().contains(ObjectType.AMULET);
     }
 
     public int goldCalc(final int level) {
@@ -327,7 +328,7 @@ public class GameState {
                 if (item.getObjectType() == ObjectType.SCROLL && item.getItemSubType() == ScrollType.SCARE_MONSTER
                         && item.getItemFlags().contains(ItemFlag.ISFOUND)) {
                     screen.putChar(x, y, SymbolMapper.getSymbol(floorCh()));
-                    setPlaceSymbolTypeAt(x, y, room.getSymbolType());
+                    currentLevel.setPlaceSymbol(x, y, room.getSymbolType());
                     currentLevel.removeItem(item);
                     messageSystem.msg(MSG_SCROLL_TURNS_TO_DUST);
                 } else {
@@ -335,7 +336,7 @@ public class GameState {
                     if (itemAdded) {
                         currentLevel.removeItem(item);
                         screen.putChar(x, y, SymbolMapper.getSymbol(floorCh()));
-                        setPlaceSymbolTypeAt(x, y, room.getSymbolType());
+                        currentLevel.setPlaceSymbol(x, y, room.getSymbolType());
                     } else {
                         // Notify player if item cannot be picked up
                         if (!config.isTerse()) {
@@ -396,19 +397,6 @@ public class GameState {
         } else {
             return SymbolType.EMPTY;
         }
-    }
-
-    /**
-     * Sets the display SymbolType for the given map coordinates on the current level.
-     *
-     * @param x          the x-coordinate
-     * @param y          the y-coordinate
-     * @param symbolType the Symbol Type to place at the specified coordinates
-     * @see SymbolType
-     */
-    private void setPlaceSymbolTypeAt(final int x, final int y, @Nonnull SymbolType symbolType) {
-        Objects.requireNonNull(symbolType);
-        currentLevel.setPlaceSymbol(x, y, symbolType);
     }
 
     /**

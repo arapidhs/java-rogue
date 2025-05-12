@@ -2,11 +2,11 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.entity.Position;
-import com.dungeoncode.javarogue.entity.item.Item;
-import com.dungeoncode.javarogue.entity.item.food.Food;
-import com.dungeoncode.javarogue.ui.SymbolType;
-import com.dungeoncode.javarogue.world.*;
+import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.item.Item;
+import com.dungeoncode.javarogue.system.entity.item.Food;
+import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.world.*;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 

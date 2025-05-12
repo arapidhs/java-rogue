@@ -4,11 +4,11 @@ import com.dungeoncode.javarogue.command.core.CommandParameterized;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
-import com.dungeoncode.javarogue.core.ScoreManager;
+import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.main.Rogue;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
-import com.dungeoncode.javarogue.ui.MessageSystem;
-import com.dungeoncode.javarogue.ui.RogueScreen;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.RogueScreen;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
