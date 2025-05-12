@@ -3,6 +3,9 @@ package com.dungeoncode.javarogue.system.entity.creature;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
 public class Stats {
 
     private final int strength;
@@ -29,6 +32,17 @@ public class Stats {
         this.hitPoints = hitPoints;
         this.damage = damage;
         this.maxHitPoints = maxHitPoints;
+    }
+
+    public Stats(@Nonnull final Stats stats){
+        Objects.requireNonNull(stats);
+        this.strength=stats.strength;
+        this.experience=stats.experience;
+        this.level=stats.level;
+        this.armor=stats.armor;
+        this.hitPoints=stats.hitPoints;
+        this.damage=stats.damage;
+        this.maxHitPoints=stats.maxHitPoints;
     }
 
     public int getStrength() {

@@ -41,8 +41,8 @@ public class Player extends Creature {
     public Player(@Nonnull final Config config) {
         super();
         Objects.requireNonNull(config);
-        this.setStats(config.getInitialPlayerStats());
-        this.maxStats = config.getInitialPlayerStats();
+        this.setStats(new Stats(config.getInitialPlayerStats()));
+        this.maxStats = new Stats(config.getInitialPlayerStats());
         this.playerFlags = EnumSet.copyOf(config.getInitialPlayerFlags());
         this.playerName = config.getPlayerName();
         this.foodLeft = config.getFoodLeft();
