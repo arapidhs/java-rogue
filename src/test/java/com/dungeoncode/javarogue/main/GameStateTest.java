@@ -8,14 +8,12 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
-import com.dungeoncode.javarogue.system.entity.item.Inventory;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.Food;
-import com.dungeoncode.javarogue.system.entity.item.Scroll;
-import com.dungeoncode.javarogue.system.entity.item.ScrollType;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
@@ -63,7 +61,7 @@ public class GameStateTest extends RogueBaseTest {
         // Test stacking additional Food and monster destination update
         final Food additionalFood = new Food();
         additionalFood.setPosition(foodX, foodY);
-        final Monster monster = new Monster();
+        final Monster monster = new Monster(MonsterType.ICE_MONSTER);
         monster.setDestination(foodX, foodY);
         assertTrue(gameState.getCurrentLevel().addMonster(monster)); // Add monster to level
 
@@ -76,7 +74,7 @@ public class GameStateTest extends RogueBaseTest {
     }
 
     @Test
-    void testAddToPack() throws IOException {
+    void testAddToPack() {
         boolean silent = false;
 
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
@@ -463,7 +461,7 @@ public class GameStateTest extends RogueBaseTest {
         final Player player=gameState.getPlayer();
         final int px=player.getX();
         final int py=player.getY();
-        final Monster monster = new Monster();
+        final Monster monster = new Monster(MonsterType.ICE_MONSTER);
 
         player.addFlag(CreatureFlag.ISBLIND);
         assertFalse(gameState.seeMonst(monster));
@@ -501,6 +499,69 @@ public class GameStateTest extends RogueBaseTest {
         monster.setRoom(player.getRoom());
         monster.setPosition(px+dx,py+dy);
         assertTrue(gameState.seeMonst(monster));
+    }
+
+    /**
+     * Tests the {@link GameState#findDest(Monster)} method to ensure correct destination selection for monsters.
+     * Verifies that the method returns the player’s position when the monster has no carry probability,
+     * is in the same room as the player, is visible to the player, or when an item is already targeted by
+     * another monster. Confirms it returns an item’s position when the monster is in the same room as an
+     * untargeted item and passes the carry probability check. Uses a fixed seed (200) for reproducible results.
+     */
+    @Test
+    void testFindDest() {
+        final long seed = 200;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+        final Player player = gameState.getPlayer();
+        final int px=player.getPosition().getX();
+        final int py=player.getPosition().getY();
+
+        // monster has 0 carry probability
+        Monster monster = new Monster(MonsterType.AQUATOR);
+        Position dest=gameState.findDest(monster);
+        assertEquals(player.getPosition(),dest);
+
+        // monster has >0 carry probability (100), but is in same room as player
+        monster=new Monster(MonsterType.DRAGON);
+        monster.setRoom(player.getRoom());
+        dest=gameState.findDest(monster);
+        assertEquals(player.getPosition(),dest);
+
+        // monster in another room but adjacent to player (player can see it)
+        int dx=1;
+        int dy=1;
+        monster.setRoom(null);
+        monster.setPosition(px+dx,py+dy);
+        dest=gameState.findDest(monster);
+        assertEquals(player.getPosition(),dest);
+
+        // player cannot see the monster so the monster does not normally target it
+        // but since there is no item in monster's room it targets player anyway
+        player.addFlag(CreatureFlag.ISBLIND);
+        dest=gameState.findDest(monster);
+        assertEquals(player.getPosition(),dest);
+
+        // monster in same room with item (item not targeted by other monsters), targets the item
+        final Item item=gameState.getCurrentLevel().getItems().get(0);
+        final Room itemRoom = gameState.roomIn(item.getPosition().getX(), item.getPosition().getY());
+        monster.setRoom(itemRoom);
+        for(Monster m: gameState.getCurrentLevel().getMonsters()){
+            if(m.getDestination().equals(item.getPosition())){
+                m.setDestination(null);
+            }
+        }
+        dest=gameState.findDest(monster);
+        assertEquals(item.getPosition(),dest);
+
+        // item already targeted by another monster, target selection falls back to player
+        final Monster iceMonster = new Monster(MonsterType.ICE_MONSTER);
+        gameState.getCurrentLevel().getMonsters().add(iceMonster);
+        iceMonster.setDestination(item.getPosition());
+        dest=gameState.findDest(monster);
+        assertEquals(player.getPosition(),dest);
+
     }
 
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {

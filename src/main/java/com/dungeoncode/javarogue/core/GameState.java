@@ -18,6 +18,8 @@ import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
 import com.dungeoncode.javarogue.system.world.*;
+import com.dungeoncode.javarogue.template.MonsterTemplate;
+import com.dungeoncode.javarogue.template.Templates;
 import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -213,6 +215,53 @@ public class GameState {
             return new KeyStroke(KeyType.Escape);
         }
         return keyStroke;
+    }
+
+    /**
+     * Finds the destination for a monster, prioritizing an untargeted item in the same room
+     * or defaulting to the player’s position. Returns the player’s position if the monster
+     * has no carry probability, is in the player’s room, or is visible to the player.
+     * Otherwise, selects an item in the monster’s room (excluding scare monster scrolls)
+     * with a probability check, ensuring no other monster targets it.
+     * <p>
+     * Equivalent to the <code>find_dest</code> function in the C Rogue source (chase.c).
+     * </p>
+     *
+     * @param monster The monster to find a destination for.
+     * @return The destination position (item or player).
+     * @throws NullPointerException if monster is null.
+     */
+    public Position findDest(@Nonnull final Monster monster) {
+        Objects.requireNonNull(monster);
+        final MonsterTemplate monsterTemplate = Templates.getTemplates(MonsterTemplate.class)
+                .stream()
+                .filter(template -> template.getMonsterType() == monster.getMonsterType())
+                .findFirst()
+                .orElse(null);
+        assert monsterTemplate != null; // Assumes template exists for all MonsterType values
+        final int prob = monsterTemplate.getCarryProbability();
+        final boolean sameRoom = Objects.equals(monster.getRoom(), player.getRoom());
+        if (prob <= 0 || sameRoom || seeMonst(monster)) {
+            return player.getPosition(); // Default to player if no carry chance, same room, or visible
+        }
+        for (Item item : currentLevel.getItems()) {
+            if (Objects.equals(ObjectType.SCROLL, item.getObjectType()) &&
+                    Objects.equals(ScrollType.SCARE_MONSTER, item.getItemSubType())) {
+                continue; // Skip scare monster scrolls
+            }
+            final int ix = item.getPosition().getX();
+            final int iy = item.getPosition().getY();
+            final Room itemRoom = roomIn(ix, iy);
+            if (Objects.equals(itemRoom, monster.getRoom()) && rogueRandom.rnd(100) < prob) {
+                // Check if another monster targets this item’s position
+                boolean found = currentLevel.getMonsters().stream().anyMatch(
+                        m -> m.getDestination() != null && m.getDestination().equals(item.getPosition()));
+                if (!found) {
+                    return item.getPosition(); // Return item position if untargeted
+                }
+            }
+        }
+        return player.getPosition(); // Fallback to player if no suitable item found
     }
 
     /**
