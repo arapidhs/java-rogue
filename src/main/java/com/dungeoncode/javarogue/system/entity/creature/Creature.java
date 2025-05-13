@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.system.entity.creature;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.item.Inventory;
@@ -14,11 +15,23 @@ import java.util.EnumSet;
  */
 public abstract class Creature extends Entity {
 
-    private final EnumSet<CreatureFlag> creatureFlags;
+    private EnumSet<CreatureFlag> creatureFlags;
     private Stats stats;
     private Position destination;
     private Room room;
     private Inventory inventory;
+
+    /**
+     * Equivalent to tp -> t_oldch.
+     */
+    private SymbolType oldSymbolType;
+
+    /**
+     * If slowed, is it a turn to move.
+     * <p>
+     * Equivalent of bool _t_turn;.
+     */
+    private boolean turn;
 
     protected Creature() {
         super();
@@ -73,4 +86,27 @@ public abstract class Creature extends Entity {
         return inventory;
     }
 
+    public void setCreatureFlags(EnumSet<CreatureFlag> creatureFlags) {
+        this.creatureFlags = creatureFlags;
+    }
+
+    public EnumSet<CreatureFlag> getCreatureFlags() {
+        return creatureFlags;
+    }
+
+    public boolean isTurn() {
+        return turn;
+    }
+
+    public void setTurn(boolean turn) {
+        this.turn = turn;
+    }
+
+    public SymbolType getOldSymbolType() {
+        return oldSymbolType;
+    }
+
+    public void setOldSymbolType(SymbolType oldSymbolType) {
+        this.oldSymbolType = oldSymbolType;
+    }
 }

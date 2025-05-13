@@ -4,8 +4,7 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.SymbolType;
-import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
-import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.entity.creature.*;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.RingInfoTemplate;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -296,10 +296,103 @@ public class RogueFactoryTest {
     }
 
     /**
+     * Tests the {@link RogueFactory#expAdd(int, int)} method for correct experience point calculations.
+     * Verifies additional experience points for various monster levels and hit points, matching the
+     * C Rogue <code>exp_add</code> logic.
+     */
+    @Test
+    void testExpAdd() {
+        final RogueFactory rogueFactory = getRogueFactory();
+
+        // Test level 1: maxHP / 8
+        assertEquals(2, rogueFactory.expAdd(1, 16), "Level 1 with 16 HP should yield 16/8 = 2");
+        assertEquals(1, rogueFactory.expAdd(1, 8), "Level 1 with 8 HP should yield 8/8 = 1");
+
+        // Test levels 2-6: maxHP / 6
+        assertEquals(2, rogueFactory.expAdd(2, 12), "Level 2 with 12 HP should yield 12/6 = 2");
+        assertEquals(4, rogueFactory.expAdd(6, 24), "Level 6 with 24 HP should yield 24/6 = 4");
+
+        // Test levels 7-9: (maxHP / 6) * 4
+        assertEquals(16, rogueFactory.expAdd(7, 24), "Level 7 with 24 HP should yield (24/6) * 4 = 16");
+        assertEquals(24, rogueFactory.expAdd(9, 36), "Level 9 with 36 HP should yield (36/6) * 4 = 24");
+
+        // Test levels 10+: (maxHP / 6) * 20
+        assertEquals(40, rogueFactory.expAdd(10, 12), "Level 10 with 12 HP should yield (12/6) * 20 = 40");
+        assertEquals(100, rogueFactory.expAdd(15, 30), "Level 15 with 30 HP should yield (30/6) * 20 = 100");
+    }
+
+    /**
+     * Tests the {@link RogueFactory#monster(MonsterType, int)} method for correct monster creation.
+     * Verifies stats, flags, and disguise for various monster types and levels, including level-based
+     * adjustments, haste flag for high levels, and Xeroc’s random disguise, using specific seeds for
+     * predictable results.
+     */
+    @Test
+    void testMonster() {
+        final RogueFactory rogueFactory = getRogueFactory();
+        final long seed = 150;
+        rogueFactory.getRogueRandom().reseed(seed); // Set seed for predictable random results
+
+        // Test basic monster (BAT, level 1, below amulet level)
+        final Monster bat = rogueFactory.monster(MonsterType.BAT, 1);
+        // BAT monster should not be null
+        assertNotNull(bat);
+        // Monster type should be BAT
+        assertEquals(MonsterType.BAT, bat.getMonsterType());
+        Stats batStats = bat.getStats();
+        // BAT level should be 1
+        assertEquals(1, batStats.getLevel());
+        // BAT max HP should be 1-8
+        assertTrue(batStats.getMaxHitPoints() >= 1 && batStats.getMaxHitPoints() <= 8);
+        // BAT armor should be 3
+        assertEquals(3, batStats.getArmor());
+        // BAT damage should be 1x2
+        assertEquals("1x2", batStats.getDamage());
+        // BAT strength should be 10
+        assertEquals(10, batStats.getStrength());
+        // BAT flags should include ISFLY
+        assertEquals(EnumSet.of(CreatureFlag.ISFLY), bat.getCreatureFlags());
+        // BAT turn should be enabled
+        assertTrue(bat.isTurn());
+        // BAT inventory should be null
+        assertNull(bat.getInventory());
+        // BAT should have no disguise, same as it is primary symbol
+        assertEquals(bat.getSymbolType(),bat.getDisguiseSymbolType());
+
+        // Test level adjustment (DRAGON, level 30, above amulet level)
+        rogueFactory.getRogueRandom().reseed(seed); // Reset seed
+        final Monster dragon = rogueFactory.monster(MonsterType.DRAGON, 30);
+        // DRAGON monster should not be null
+        assertNotNull(dragon);
+        Stats dragonStats = dragon.getStats();
+        int levelAdd = Math.max(0, 30 - rogueFactory.getConfig().getAmuletLevel()); // e.g., 30 - 26 = 4
+        // DRAGON level should be 10 + levelAdd
+        assertEquals(10 + levelAdd, dragonStats.getLevel());
+        // DRAGON armor should be -1 - levelAdd
+        assertEquals(-1 - levelAdd, dragonStats.getArmor());
+        // DRAGON experience should include level adjustment
+        assertTrue(dragonStats.getExperience() >= 5000 + levelAdd * 10);
+        // DRAGON at level 30 should have ISHASTE flag
+        assertTrue(dragon.getCreatureFlags().contains(CreatureFlag.ISHASTE));
+
+        // Test Xeroc with disguise (level 10)
+        rogueFactory.getRogueRandom().reseed(200); // Specific seed for predictable disguise
+        final Monster xeroc = rogueFactory.monster(MonsterType.XEROC, 10);
+        // XEROC monster should not be null
+        assertNotNull(xeroc);
+        // XEROC should have a disguise symbol
+        assertNotNull(xeroc.getDisguiseSymbolType());
+        // XEROC base symbol should be a monster symbol
+        assertTrue(SymbolType.MONSTER_SYMBOLS.contains(xeroc.getSymbolType()));
+        // XEROC disguise should differ from base symbol
+        assertNotSame(xeroc.getDisguiseSymbolType(), xeroc.getSymbolType());
+    }
+
+    /**
      * Tests initialization of RogueFactory, ensuring names, forms, and worth are set for all item subtypes.
      */
     @Test
-    void testInitializerogueFactory() {
+    void testInitializeRogueFactory() {
         RogueFactory rogueFactory=getRogueFactory();
 
         // Verify all ScrollTypes have generated names

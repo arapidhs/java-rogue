@@ -1,12 +1,9 @@
 package com.dungeoncode.javarogue.core;
 
-import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
-import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.SymbolMapper;
+import com.dungeoncode.javarogue.system.entity.creature.*;
 import com.dungeoncode.javarogue.system.entity.item.*;
-import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
-import com.dungeoncode.javarogue.template.RingInfoTemplate;
-import com.dungeoncode.javarogue.template.Template;
-import com.dungeoncode.javarogue.template.Templates;
+import com.dungeoncode.javarogue.template.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -308,6 +305,83 @@ public class RogueFactory {
             weapon.setGroup(0);
         }
         return weapon;
+    }
+
+    /**
+     * Creates and initializes a new {@link Monster} of the specified {@link MonsterType} for the given
+     * dungeon level. Sets stats, flags, and disguise based on the monster's template, adjusting for level
+     * relative to the amulet level. Applies haste for levels above 29 and sets a random disguise for Xeroc.
+     * <p>
+     * Equivalent to the <code>new_monster</code> function in the C Rogue source (monsters.c).
+     * </p>
+     *
+     * @param monsterType The {@link MonsterType} to create.
+     * @param level The current dungeon level, influencing stats and flags.
+     * @return The initialized {@link Monster}.
+     * @throws NullPointerException if monsterType is null.
+     */
+    public Monster monster(@Nonnull final MonsterType monsterType, final int level) {
+        final Monster monster = new Monster(monsterType);
+
+        final MonsterTemplate template = Templates.getMonsterTemplate(monsterType);
+        assert template != null; // Assumes template exists for all MonsterType values
+
+        // Adjust stats based on level relative to amulet level
+        int levelAdd = level - config.getAmuletLevel();
+        if (levelAdd < 0) {
+            levelAdd = 0; // Ensure non-negative adjustment
+        }
+        final Stats stats = template.getStats();
+        final int lvl = stats.getLevel() + levelAdd;
+        final int maxHp = rogueRandom.roll(level, 8); // Roll hit points (level * 1d8)
+        final int armorClass = stats.getArmor() - levelAdd;
+        final String dmg = stats.getDamage();
+        final int str = stats.getStrength();
+        final int exp = stats.getExperience() + levelAdd * 10 + expAdd(lvl, maxHp);
+        final EnumSet<CreatureFlag> flags = EnumSet.copyOf(template.getCreatureFlags());
+        monster.setStats(new Stats(str, exp, lvl, armorClass, maxHp, dmg, maxHp));
+        monster.setCreatureFlags(flags);
+
+        // Apply haste flag for high levels
+        if (level > 29) {
+            monster.addFlag(CreatureFlag.ISHASTE);
+        }
+        monster.setTurn(true); // Monster starts with turn enabled
+        monster.setInventory(null); // No initial inventory
+
+        // Set random disguise for Xeroc
+        if (monsterType.equals(MonsterType.XEROC)) {
+            final ObjectType objectType = rndThing(level);
+            monster.setDisguiseSymbolType(SymbolMapper.getSymbolType(objectType));
+        }
+        return monster;
+    }
+
+    /**
+     * Calculates additional experience points for a monster based on its level and maximum hit points.
+     * Divides max hit points by 8 for level 1, or by 6 for higher levels, then multiplies by 20 for levels
+     * above 9, by 4 for levels 7-9, or leaves unchanged for levels 2-6.
+     * <p>
+     * Equivalent to the <code>exp_add</code> function in the C Rogue source (monsters.c).
+     * </p>
+     *
+     * @param level The level of the monster.
+     * @param maxHitPoints The maximum hit points of the monster.
+     * @return The additional experience points.
+     */
+    public int expAdd(final int level, final int maxHitPoints) {
+        int mod;
+        if (level == 1) {
+            mod = maxHitPoints / 8; // Level 1: divide max HP by 8
+        } else {
+            mod = maxHitPoints / 6; // Levels 2+: divide max HP by 6
+        }
+        if (level > 9) {
+            mod *= 20; // Levels 10+: multiply by 20
+        } else if (level > 6) {
+            mod *= 4; // Levels 7-9: multiply by 4
+        }
+        return mod;
     }
 
     /**

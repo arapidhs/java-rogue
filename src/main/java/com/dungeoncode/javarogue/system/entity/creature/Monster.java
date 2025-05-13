@@ -12,6 +12,14 @@ public class Monster extends Creature {
     private final MonsterType monsterType;
     private final SymbolType symbolType;
 
+    /**
+     * Symbol when the creature appears as disguised.
+     * <p>
+     * Equivalent of:
+     * <pre>tp -> t_disguise</pre>
+     */
+    private SymbolType disguiseSymbolType;
+
     public Monster(@Nonnull final MonsterType monsterType) {
         Objects.requireNonNull(monsterType);
         this.monsterType = monsterType;
@@ -19,6 +27,7 @@ public class Monster extends Creature {
         final MonsterTemplate template = Templates.getMonsterTemplate(monsterType);
         assert template != null;
         this.symbolType = template.getSymbolType();
+        this.disguiseSymbolType=symbolType;
     }
 
     public MonsterType getMonsterType() {
@@ -30,4 +39,11 @@ public class Monster extends Creature {
         return symbolType;
     }
 
+    public SymbolType getDisguiseSymbolType() {
+        return disguiseSymbolType;
+    }
+
+    public void setDisguiseSymbolType(SymbolType disguiseSymbolType) {
+        this.disguiseSymbolType = disguiseSymbolType;
+    }
 }

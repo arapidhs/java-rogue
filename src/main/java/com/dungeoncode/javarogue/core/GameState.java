@@ -468,7 +468,6 @@ public class GameState {
         return pickResult;
     }
 
-    // TODO game state newLevel unit test
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);

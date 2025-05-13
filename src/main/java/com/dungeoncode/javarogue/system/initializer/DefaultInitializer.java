@@ -42,6 +42,11 @@ public class DefaultInitializer implements Initializer {
         initializeFactory(gameState);
 
         // Set up the game sub window with full terminal dimensions
+        // equivalent to the hw window initialized in main.c as:
+        //     /*
+        //     * Set up windows
+        //     */
+        //    hw = newwin(LINES, COLS, 0, 0);
         gameState.getScreen().addWindow("hw", 0, 0, config.getTerminalCols(), config.getTerminalRows());
 
         // Disable scoring in wizard mode for master configuration
@@ -53,6 +58,10 @@ public class DefaultInitializer implements Initializer {
         // Start at level 1
         gameState.setNoFood(0);
         final int levelNum = 1;
+
+        // TODO convert this to a parameterzed with levelNum CommandNewLevel
+        // then move this call at start of gameState.loop, it is not part of the initializer
+        // then write a CommandNewLevel unit test
         gameState.newLevel(levelNum);
 
         // Enable all game phases

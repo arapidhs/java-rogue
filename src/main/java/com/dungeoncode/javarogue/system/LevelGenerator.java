@@ -99,8 +99,6 @@ public class LevelGenerator {
      * @see #conn(int, int, Room[])
      * @see #passnum(Passage[])
      */
-    //TODO unit test for doPassages and all inner methods
-    // (bottom up approach - requires doRooms unittest first)
     public Passage[] doPassages(@Nonnull final Room[] rooms) {
         Objects.requireNonNull(rooms);
         final Passage[] passages = new Passage[config.getMaxPassages()];

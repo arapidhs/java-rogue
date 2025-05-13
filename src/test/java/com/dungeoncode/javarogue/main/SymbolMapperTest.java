@@ -3,6 +3,7 @@ package com.dungeoncode.javarogue.main;
 import com.dungeoncode.javarogue.system.SymbolMapper;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,4 +30,9 @@ class SymbolMapperTest {
         assertEquals('@', SymbolMapper.getSymbol(Player.class));
     }
 
+    @Test
+    void testGetSymbolType() {
+        final SymbolType symbolType = SymbolMapper.getSymbolType(ObjectType.FOOD);
+        assertEquals(SymbolType.FOOD,symbolType);
+    }
 }

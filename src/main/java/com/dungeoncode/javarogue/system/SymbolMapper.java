@@ -2,15 +2,7 @@ package com.dungeoncode.javarogue.system;
 
 import com.dungeoncode.javarogue.core.Messages;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
-import com.dungeoncode.javarogue.system.entity.item.Amulet;
-import com.dungeoncode.javarogue.system.entity.item.Armor;
-import com.dungeoncode.javarogue.system.entity.item.Food;
-import com.dungeoncode.javarogue.system.entity.item.Gold;
-import com.dungeoncode.javarogue.system.entity.item.Potion;
-import com.dungeoncode.javarogue.system.entity.item.Ring;
-import com.dungeoncode.javarogue.system.entity.item.Rod;
-import com.dungeoncode.javarogue.system.entity.item.Scroll;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
+import com.dungeoncode.javarogue.system.entity.item.*;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -23,9 +15,10 @@ public class SymbolMapper {
 
     private static final Map<SymbolType, Character> SYMBOL_REGISTRY;
     private static final Map<Class<?>, SymbolType> CLASS_TO_SYMBOL_TYPE;
+    private static final Map<ObjectType, SymbolType> OBJECT_TYPE_TO_SYMBOL_TYPE;
 
     static {
-        SYMBOL_REGISTRY = Map.ofEntries(
+        SYMBOL_REGISTRY = Map.<SymbolType, Character>ofEntries(
                 Map.entry(SymbolType.EMPTY, ' '),
                 Map.entry(SymbolType.PASSAGE, '#'),
                 Map.entry(SymbolType.FLOOR, '.'),
@@ -44,6 +37,7 @@ public class SymbolMapper {
                 Map.entry(SymbolType.GOLD, '*'),
 
                 Map.entry(SymbolType.PLAYER, '@'),
+                Map.entry(SymbolType.STAIRS, '%'),
 
                 // Inventory key symbols
                 Map.entry(SymbolType.KEY_A, 'a'),
@@ -114,6 +108,19 @@ public class SymbolMapper {
                 Map.entry(Amulet.class, SymbolType.AMULET),
                 Map.entry(Gold.class, SymbolType.GOLD)
         );
+
+        OBJECT_TYPE_TO_SYMBOL_TYPE = Map.ofEntries(
+                Map.entry(ObjectType.ARMOR, SymbolType.ARMOR),
+                Map.entry(ObjectType.POTION, SymbolType.POTION),
+                Map.entry(ObjectType.SCROLL, SymbolType.SCROLL),
+                Map.entry(ObjectType.FOOD, SymbolType.FOOD),
+                Map.entry(ObjectType.RING, SymbolType.RING),
+                Map.entry(ObjectType.WEAPON, SymbolType.WEAPON),
+                Map.entry(ObjectType.ROD, SymbolType.ROD),
+                Map.entry(ObjectType.GOLD, SymbolType.GOLD),
+                Map.entry(ObjectType.AMULET, SymbolType.AMULET),
+                Map.entry(ObjectType.STAIRS, SymbolType.STAIRS)
+        );
     }
 
     /**
@@ -133,6 +140,24 @@ public class SymbolMapper {
             throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_CLASS + clazz.getSimpleName());
         }
         return getSymbol(symbolType);
+    }
+
+    /**
+     * Retrieves the {@link SymbolType} for a given game element class.
+     * Maps the class to its corresponding {@link SymbolType} using a predefined registry.
+     *
+     * @param objectType The ObjectType to get the {@link SymbolType} for.
+     * @return The corresponding {@link SymbolType}.
+     * @throws NullPointerException if objectType is null.
+     * @throws IllegalArgumentException if no {@link SymbolType} is mapped for the objectType.
+     */
+    public static SymbolType getSymbolType(@Nonnull final ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        final SymbolType symbolType = OBJECT_TYPE_TO_SYMBOL_TYPE.get(objectType);
+        if (symbolType == null) {
+            throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_OBJECT_TYPE + objectType);
+        }
+        return symbolType;
     }
 
     /**

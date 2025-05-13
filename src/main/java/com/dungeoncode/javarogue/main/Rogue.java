@@ -59,8 +59,7 @@ public class Rogue {
         MessageSystem messageSystem;
         try {
 
-            final BufferedImage icon = ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
-            ICON_ROGUE_64=icon;
+            ICON_ROGUE_64= ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
 
             final InputStream fontStream = Rogue.class.getResourceAsStream(PATH_FONT_IBM_VGA_8x16);
             assert fontStream != null;

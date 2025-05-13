@@ -24,6 +24,7 @@ public enum SymbolType {
     AMULET,
 
     PLAYER,
+    STAIRS,
 
     // Inventory key symbols
     KEY_A, KEY_B, KEY_C, KEY_D, KEY_E, KEY_F, KEY_G, KEY_H, KEY_I,
