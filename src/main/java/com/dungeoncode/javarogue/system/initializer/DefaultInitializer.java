@@ -59,9 +59,6 @@ public class DefaultInitializer implements Initializer {
         gameState.setNoFood(0);
         final int levelNum = 1;
 
-        // TODO convert this to a parameterzed with levelNum CommandNewLevel
-        // then move this call at start of gameState.loop, it is not part of the initializer
-        // then write a CommandNewLevel unit test
         gameState.newLevel(levelNum);
 
         // Enable all game phases

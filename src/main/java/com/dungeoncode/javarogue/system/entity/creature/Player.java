@@ -1,10 +1,7 @@
 package com.dungeoncode.javarogue.system.entity.creature;
 
 import com.dungeoncode.javarogue.core.Config;
-import com.dungeoncode.javarogue.system.entity.item.Inventory;
-import com.dungeoncode.javarogue.system.entity.item.Armor;
-import com.dungeoncode.javarogue.system.entity.item.Ring;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
+import com.dungeoncode.javarogue.system.entity.item.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -76,6 +73,25 @@ public class Player extends Creature {
                 clevel, gold, hp, maxHp, str, maxStr, 10 - armor, level, exp, hungerState));
 
         return st.toString().trim();
+    }
+
+    /**
+     * Checks if the player is wearing a ring of the specified {@link RingType} on either the left or right hand.
+     * <p>
+     * Equivalent to the <code>ISWEARING</code> macro in the C Rogue source, checking if either hand’s ring
+     * matches the given type.
+     * </p>
+     *
+     * @param ringType The {@link RingType} to check for.
+     * @return True if the player is wearing a ring of the specified type, false otherwise.
+     * @throws NullPointerException if ringType is null.
+     */
+    public boolean isWearing(@Nonnull RingType ringType){
+        Objects.requireNonNull(ringType);
+        if(getRightRing()!=null && getRightRing().getItemSubType().equals(ringType)){
+            return true;
+        }
+        return getLeftRing() != null && getLeftRing().getItemSubType().equals(ringType);
     }
 
     public boolean hasFlag(@Nonnull final PlayerFlag playerFlag) {

@@ -4,6 +4,8 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.dungeoncode.javarogue.system.entity.item.Gold;
 import com.dungeoncode.javarogue.system.world.*;
@@ -39,12 +41,11 @@ public class LevelGenerator {
         if (this.levelNum > gameState.getMaxLevel()) {
             gameState.setMaxLevel(this.levelNum);
         }
+        gameState.setCurrentLevel(level);
 
         final Room[] rooms = doRooms();
-        Arrays.stream(rooms).forEach(level::addRoom);
 
-        final Passage[] passages = doPassages(rooms);
-        Arrays.stream(passages).forEach(level::addPassage);
+        doPassages(rooms);
 
         // TODO continue with no_food, traps etc..
         return level;
@@ -218,6 +219,8 @@ public class LevelGenerator {
         // Number all passages and store door positions
         passnum(passages);
 
+        Arrays.stream(passages).forEach(level::addPassage);
+
         return passages;
     }
 
@@ -276,12 +279,26 @@ public class LevelGenerator {
             }
             drawRoom(room);
 
+            // add the room to the level
+            level.addRoom(room);
+
             final boolean amuletFound =gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
             if (rogueRandom.rnd(2) == 0 && (!amuletFound || levelNum >= gameState.getMaxLevel())) {
                 addGold(room);
             }
 
-            //TODO: Put the monster in
+            /*
+             * Put the monster in
+             */
+            final int r=room.getGoldValue()>0?80:25;
+            if(rogueRandom.rnd(100)<r){
+                final Position monsterPosition = level.findFloor(room, 0, true);
+                assert monsterPosition != null;
+                final MonsterType monsterType = gameState.getRogueFactory().randMonster(false, levelNum);
+                final Monster monster = gameState.newMonster(monsterType, monsterPosition);
+                gameState.givePack(monster,gameState.getLevelNum(),gameState.getMaxLevel());
+            }
+
         }
         return rooms;
     }

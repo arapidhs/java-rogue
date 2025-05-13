@@ -14,6 +14,7 @@ import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
@@ -218,6 +219,31 @@ public class GameState {
             return new KeyStroke(KeyType.Escape);
         }
         return keyStroke;
+    }
+
+    public Monster newMonster(@Nonnull final MonsterType monsterType, @Nonnull Position monsterPosition){
+        Objects.requireNonNull(monsterType);
+        Objects.requireNonNull(monsterPosition);
+
+        final Monster monster = rogueFactory.monster(monsterType, levelNum);
+        currentLevel.addMonster(monster);
+
+        final int mx=monsterPosition.getX();
+        final int my=monsterPosition.getY();
+        monster.setPosition(mx,my);
+
+        final Place place = getCurrentLevel().getPlaceAt(mx, my);
+        assert place != null;
+        place.setMonster(monster);
+        monster.setOldSymbolType(place.getSymbolType());
+
+        final Room room = roomIn(mx, my);
+        monster.setRoom(room);
+
+        if (player.isWearing(RingType.R_AGGR)){
+            runTo(monster.getPosition());;
+        }
+        return monster;
     }
 
     /**
@@ -468,6 +494,7 @@ public class GameState {
         return pickResult;
     }
 
+    // TODO newLevel is WIP
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);

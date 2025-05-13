@@ -19,6 +19,7 @@ import com.dungeoncode.javarogue.system.world.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -262,11 +263,11 @@ public class GameStateTest extends RogueBaseTest {
 
     @Test
     void testNewLevelStartingAtMaze() {
-        final long problematicSeed=336362311;
+        final long problematicSeed=-1482531755;
+        final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(problematicSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
-        gameState.getRogueRandom().reseed(problematicSeed);
 
         final Player player = new Player(config);
         final int levelNum=20;
@@ -377,12 +378,11 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testFloorAtMaze() {
-        final long startInMazeSeed=336362311;
+        final long startInMazeSeed=1236129691;
         final Config config=new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
-        gameState.getRogueRandom().reseed(startInMazeSeed);
 
         final Player player = new Player(config);
         final int levelNum=20;
@@ -548,7 +548,7 @@ public class GameStateTest extends RogueBaseTest {
         final Room itemRoom = gameState.roomIn(item.getPosition().getX(), item.getPosition().getY());
         monster.setRoom(itemRoom);
         for(Monster m: gameState.getCurrentLevel().getMonsters()){
-            if(m.getDestination().equals(item.getPosition())){
+            if(Objects.equals(m.getDestination(),item.getPosition())){
                 m.setDestination(null);
             }
         }
