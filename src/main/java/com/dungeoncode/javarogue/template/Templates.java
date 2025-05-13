@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.template;
 
 import com.dungeoncode.javarogue.core.Messages;
+import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.ItemSubtype;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -186,6 +187,24 @@ public class Templates {
         Set<ObjectInfoTemplate> templates = getTemplates(ObjectInfoTemplate.class);
         return templates.stream()
                 .filter(t -> t.getObjectType() == objectType)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Retrieves the {@link MonsterTemplate} corresponding to the specified {@link MonsterType}.
+     *
+     * @param monsterType The {@link MonsterType} to match.
+     * @return The matching {@link MonsterTemplate}, or null if not found.
+     * @throws NullPointerException if monsterType is null.
+     */
+    @Nullable
+    public static MonsterTemplate getMonsterTemplate(@Nonnull MonsterType monsterType) {
+        Objects.requireNonNull(monsterType);
+        return TEMPLATES_ALL.stream()
+                .filter(t -> t instanceof MonsterTemplate)
+                .map(t -> (MonsterTemplate) t)
+                .filter(t -> t.getMonsterType() == monsterType)
                 .findFirst()
                 .orElse(null);
     }

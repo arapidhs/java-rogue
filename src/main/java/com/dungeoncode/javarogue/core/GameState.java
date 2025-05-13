@@ -412,6 +412,31 @@ public class GameState {
     }
 
     /**
+     * Grants an item to a monster's inventory if the current level is at or above the maximum level
+     * and a random check based on the monster's carry probability succeeds. Creates a new inventory
+     * with the configured maximum pack size and adds a random item via {@link #newThing()}.
+     * <p>
+     * Equivalent to item assignment logic in the C Rogue source (e.g., <code>give_pack</code> in monsters.c).
+     * </p>
+     *
+     * @param monster The {@link Monster} to potentially grant an item.
+     * @param level The current dungeon level.
+     * @param maxLevel The maximum level required for item assignment.
+     * @throws NullPointerException if monster is null.
+     */
+    public void givePack(@Nonnull final Monster monster, final int level, final int maxLevel){
+        Objects.requireNonNull(monster);
+        final MonsterTemplate monsterTemplate=Templates.getMonsterTemplate(monster.getMonsterType());
+        assert monsterTemplate != null;
+        if(level >= maxLevel) {
+            if (rogueRandom.rnd(100) < monsterTemplate.getCarryProbability()) {
+                monster.setInventory(new Inventory(config.getMaxPack()));
+                monster.getInventory().getItems().add(newThing());
+            }
+        }
+    }
+
+    /**
      * Selects a random {@link ObjectType} and optional {@link ItemSubtype} from templates with
      * positive probability for the specified {@link ObjectType}, using weighted random selection
      * via {@link RogueFactory#pickOne(ObjectType)}. Logs debug information in wizard and master

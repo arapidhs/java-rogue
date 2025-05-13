@@ -2,6 +2,7 @@ package com.dungeoncode.javarogue.system.entity.creature;
 
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.item.Inventory;
 import com.dungeoncode.javarogue.system.world.Room;
 
 import javax.annotation.Nonnull;
@@ -17,6 +18,7 @@ public abstract class Creature extends Entity {
     private Stats stats;
     private Position destination;
     private Room room;
+    private Inventory inventory;
 
     protected Creature() {
         super();
@@ -62,4 +64,13 @@ public abstract class Creature extends Entity {
     public void setRoom(Room room) {
         this.room = room;
     }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
 }

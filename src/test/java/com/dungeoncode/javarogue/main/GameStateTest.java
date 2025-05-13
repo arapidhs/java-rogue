@@ -625,6 +625,37 @@ public class GameStateTest extends RogueBaseTest {
         assertInstanceOf(Scroll.class, item);
     }
 
+    /**
+     * Tests the {@link GameState#givePack(Monster, int, int)} method for correct item assignment.
+     * Verifies that a monster (Nymph) with 100% carry probability receives no item when the level
+     * is below the maximum level, and receives one item when the level equals the maximum level,
+     * using a fixed seed for reproducibility.
+     */
+    @Test
+    void testGivePack() {
+        final long seed = 150;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+        int level=1;
+        int maxLevel=2;
+
+        gameState.setLevelNum(level);
+        gameState.setMaxLevel(maxLevel);
+
+        // Nymph has 100% chance of carrying but because level<maxLevel does not get any item
+        final Monster monster = new Monster(MonsterType.NYMPH);
+        gameState.givePack(monster,level,maxLevel);
+        assertNull(monster.getInventory());
+
+        // maxLevel is equal to level and Nymph gets an item
+        maxLevel=level;
+        gameState.setMaxLevel(maxLevel);
+        gameState.givePack(monster,level,maxLevel);
+        assertNotNull(monster.getInventory());
+        assertEquals(1,monster.getInventory().getItems().size());
+    }
+
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
         private final int mainGoldIncrease;
         private final AtomicInteger mainTimer;

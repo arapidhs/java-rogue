@@ -21,7 +21,6 @@ public class Player extends Creature {
     private final String playerName;
     private final EnumSet<PlayerFlag> playerFlags;
     private final int foodLeft;
-    private final Inventory inventory;
     private final Stats maxStats;
     private Armor currentArmor;
     private Weapon currentWeapon;
@@ -46,7 +45,7 @@ public class Player extends Creature {
         this.playerFlags = EnumSet.copyOf(config.getInitialPlayerFlags());
         this.playerName = config.getPlayerName();
         this.foodLeft = config.getFoodLeft();
-        this.inventory = new Inventory(config.getMaxPack());
+        setInventory(new Inventory(config.getMaxPack()));
     }
 
     /**
@@ -89,10 +88,6 @@ public class Player extends Creature {
 
     public EnumSet<PlayerFlag> getPlayerFlags() {
         return playerFlags;
-    }
-
-    public Inventory getInventory() {
-        return inventory;
     }
 
     public int getFoodLeft() {

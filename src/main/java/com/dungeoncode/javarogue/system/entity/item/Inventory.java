@@ -158,11 +158,11 @@ public class Inventory {
     /**
      * Returns the list of items in the inventory.
      *
-     * @return A copy of the items list to prevent external modification.
+     * @return the items list.
      */
     @Nonnull
     public List<Item> getItems() {
-        return new ArrayList<>(items);
+        return items;
     }
 
     /**
