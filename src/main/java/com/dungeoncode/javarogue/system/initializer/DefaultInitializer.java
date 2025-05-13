@@ -39,7 +39,7 @@ public class DefaultInitializer implements Initializer {
         final Config config = gameState.getConfig();
 
         initializePlayer(gameState);
-        initializeItemData(gameState);
+        initializeFactory(gameState);
 
         // Set up the game sub window with full terminal dimensions
         gameState.getScreen().addWindow("hw", 0, 0, config.getTerminalCols(), config.getTerminalRows());
@@ -112,13 +112,13 @@ public class DefaultInitializer implements Initializer {
     }
 
     /**
-     * Initializes the item data for the game state by calling the item data’s initialization method.
+     * Initializes the factory for the game state by calling the item data’s initialization method.
      *
      * @param gameState The game state containing the item data.
      * @throws NullPointerException if gameState is null.
      */
-    private void initializeItemData(@Nonnull final GameState gameState) {
+    private void initializeFactory(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
-        gameState.getItemData().init();
+        gameState.getRogueFactory().init();
     }
 }

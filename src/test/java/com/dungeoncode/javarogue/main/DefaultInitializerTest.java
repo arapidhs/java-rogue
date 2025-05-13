@@ -2,12 +2,12 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
+import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.Inventory;
 import com.dungeoncode.javarogue.system.entity.item.Item;
-import com.dungeoncode.javarogue.system.entity.item.ItemData;
 import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.system.entity.item.Armor;
 import com.dungeoncode.javarogue.system.entity.item.ArmorType;
@@ -89,31 +89,31 @@ public class DefaultInitializerTest extends RogueBaseTest {
     }
 
     @Test
-    void testItemDataInitialization() throws IOException {
+    void testRogueFactoryInitialization() throws IOException {
         // Set up game state with necessary dependencies
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
         final DefaultInitializer initializer = new DefaultInitializer();
 
         final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
-        final ItemData itemData = gameState.getItemData();
+        final RogueFactory rogueFactory=gameState.getRogueFactory();
 
         Arrays.stream(ScrollType.values())
                 .forEach(scrollType -> assertNotNull(
-                        itemData.getName(scrollType)));
+                        rogueFactory.getName(scrollType)));
 
         Arrays.stream(PotionType.values())
                 .forEach(potionType -> assertNotNull(
-                        itemData.getName(potionType)));
+                        rogueFactory.getName(potionType)));
 
         Arrays.stream(RingType.values())
-                .forEach(ringType -> assertNotNull(itemData.getName(ringType)));
+                .forEach(ringType -> assertNotNull(rogueFactory.getName(ringType)));
 
         Arrays.stream(RingType.values())
-                .forEach(ringType -> assertTrue(itemData.getRingWorth(ringType) > 0));
+                .forEach(ringType -> assertTrue(rogueFactory.getRingWorth(ringType) > 0));
 
         Arrays.stream(RodType.values())
-                .forEach(rodType -> assertNotNull(itemData.getRodFormAsString(rodType)));
+                .forEach(rodType -> assertNotNull(rogueFactory.getRodFormAsString(rodType)));
 
     }
 

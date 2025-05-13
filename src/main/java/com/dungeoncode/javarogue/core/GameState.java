@@ -41,7 +41,6 @@ public class GameState {
     private final Initializer initializer;
     private final MessageSystem messageSystem;
     private final RogueScreen screen;
-    private final ItemData itemData;
     private final RogueFactory rogueFactory;
     private final Map<Phase, Boolean> phaseActivity;
     private final Queue<Command> commandQueue = new ConcurrentLinkedQueue<>();
@@ -82,8 +81,7 @@ public class GameState {
         this.initializer = initializer;
         this.messageSystem = messageSystem;
         this.screen = screen;
-        this.itemData = new ItemData(config, rogueRandom);
-        this.rogueFactory=new RogueFactory(config,rogueRandom,itemData);
+        this.rogueFactory=new RogueFactory(config,rogueRandom);
         phaseActivity = new HashMap<>();
         init();
     }
@@ -655,7 +653,7 @@ public class GameState {
      * @return the string name of the item, formatted for display
      */
     public String getItemName(@Nonnull Player player, @Nonnull final Item item, boolean dropCapital) {
-        return itemData.invName(player, item, dropCapital);
+        return rogueFactory.invName(player, item, dropCapital);
     }
 
     /**
@@ -778,10 +776,6 @@ public class GameState {
     public void setCurrentLevel(Level currentLevel) {
         this.currentLevel = currentLevel;
         this.player.setCurrentLevel(currentLevel.getLevelNum());
-    }
-
-    public ItemData getItemData() {
-        return itemData;
     }
 
     public RogueScreen getScreen() {

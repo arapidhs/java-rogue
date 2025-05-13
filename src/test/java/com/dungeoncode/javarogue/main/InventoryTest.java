@@ -20,8 +20,7 @@ public class InventoryTest {
         // Initialize dependencies for test setup
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final ItemData itemData=new ItemData(config,rogueRandom);
-        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom,itemData);
+        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom);
 
         // Initialize inventory with max pack size from config
         final Inventory inventory = new Inventory(config.getMaxPack());
