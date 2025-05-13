@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.system.initializer;
 
+import com.dungeoncode.javarogue.command.system.CommandNewLevel;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
@@ -59,7 +60,8 @@ public class DefaultInitializer implements Initializer {
         gameState.setNoFood(0);
         final int levelNum = 1;
 
-        gameState.newLevel(levelNum);
+        final CommandNewLevel commandNewLevel = new CommandNewLevel(levelNum);
+        commandNewLevel.execute(gameState);
 
         // Enable all game phases
         Arrays.stream(Phase.values()).forEach(gameState::enablePhase);
