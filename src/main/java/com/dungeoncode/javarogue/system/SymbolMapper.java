@@ -71,7 +71,35 @@ public class SymbolMapper {
                 Map.entry(SymbolType.KEY_W, 'w'),
                 Map.entry(SymbolType.KEY_X, 'x'),
                 Map.entry(SymbolType.KEY_Y, 'y'),
-                Map.entry(SymbolType.KEY_Z, 'z')
+                Map.entry(SymbolType.KEY_Z, 'z'),
+
+                // Monster type symbols
+                Map.entry(SymbolType.MONSTER_AQUATOR, 'A'),
+                Map.entry(SymbolType.MONSTER_BAT, 'B'),
+                Map.entry(SymbolType.MONSTER_CENTAUR, 'C'),
+                Map.entry(SymbolType.MONSTER_DRAGON, 'D'),
+                Map.entry(SymbolType.MONSTER_EMU, 'E'),
+                Map.entry(SymbolType.MONSTER_VENUS_FLYTRAP, 'F'),
+                Map.entry(SymbolType.MONSTER_GRIFFIN, 'G'),
+                Map.entry(SymbolType.MONSTER_HOBGOBLIN, 'H'),
+                Map.entry(SymbolType.MONSTER_ICE_MONSTER, 'I'),
+                Map.entry(SymbolType.MONSTER_JABBERWOCK, 'J'),
+                Map.entry(SymbolType.MONSTER_KESTREL, 'K'),
+                Map.entry(SymbolType.MONSTER_LEPRECHAUN, 'L'),
+                Map.entry(SymbolType.MONSTER_MEDUSA, 'M'),
+                Map.entry(SymbolType.MONSTER_NYMPH, 'N'),
+                Map.entry(SymbolType.MONSTER_ORC, 'O'),
+                Map.entry(SymbolType.MONSTER_PHANTOM, 'P'),
+                Map.entry(SymbolType.MONSTER_QUAGGA, 'Q'),
+                Map.entry(SymbolType.MONSTER_RATTLESNAKE, 'R'),
+                Map.entry(SymbolType.MONSTER_SNAKE, 'S'),
+                Map.entry(SymbolType.MONSTER_TROLL, 'T'),
+                Map.entry(SymbolType.MONSTER_BLACK_UNICORN, 'U'),
+                Map.entry(SymbolType.MONSTER_VAMPIRE, 'V'),
+                Map.entry(SymbolType.MONSTER_WRAITH, 'W'),
+                Map.entry(SymbolType.MONSTER_XEROC, 'X'),
+                Map.entry(SymbolType.MONSTER_YETI, 'Y'),
+                Map.entry(SymbolType.MONSTER_ZOMBIE, 'Z')
         );
 
         CLASS_TO_SYMBOL_TYPE = Map.ofEntries(

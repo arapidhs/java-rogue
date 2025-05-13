@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.*;
@@ -50,6 +51,7 @@ public class TemplatesTest {
         final String griffinName = "griffin";
         final int griffinExperience = 2000;
         final int griffinCarryProbability = 20;
+        final SymbolType griffinSymbolType=SymbolType.MONSTER_GRIFFIN;
         final EnumSet<CreatureFlag> griffinCreatureFlags = EnumSet.of(
                 CreatureFlag.ISMEAN,
                 CreatureFlag.ISFLY,
@@ -64,6 +66,7 @@ public class TemplatesTest {
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
         assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
         assertEquals(griffinCarryProbability, griffinTemplate.getCarryProbability());
+        assertEquals(griffinSymbolType,griffinTemplate.getSymbolType());
     }
 
     /**

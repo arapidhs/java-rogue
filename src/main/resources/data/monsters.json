@@ -15,7 +15,8 @@
       "hitPoints": 1,
       "damage": "0x0/0x0",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_AQUATOR"
   },
   {
     "id": 2,
@@ -33,7 +34,8 @@
       "hitPoints": 1,
       "damage": "1x2",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_BAT"
   },
   {
     "id": 3,
@@ -49,7 +51,8 @@
       "hitPoints": 1,
       "damage": "1x2/1x5/1x5",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_CENTAUR"
   },
   {
     "id": 4,
@@ -67,7 +70,8 @@
       "hitPoints": 1,
       "damage": "1x8/1x8/3x10",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_DRAGON"
   },
   {
     "id": 5,
@@ -85,7 +89,8 @@
       "hitPoints": 1,
       "damage": "1x2",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_EMU"
   },
   {
     "id": 6,
@@ -103,7 +108,8 @@
       "hitPoints": 1,
       "damage": "%%%x0",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_VENUS_FLYTRAP"
   },
   {
     "id": 7,
@@ -123,7 +129,8 @@
       "hitPoints": 1,
       "damage": "4x3/3x5",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_GRIFFIN"
   },
   {
     "id": 8,
@@ -141,7 +148,8 @@
       "hitPoints": 1,
       "damage": "1x8",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_HOBGOBLIN"
   },
   {
     "id": 9,
@@ -157,7 +165,8 @@
       "hitPoints": 1,
       "damage": "0x0",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_ICE_MONSTER"
   },
   {
     "id": 10,
@@ -173,7 +182,8 @@
       "hitPoints": 1,
       "damage": "2x12/2x4",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_JABBERWOCK"
   },
   {
     "id": 11,
@@ -192,7 +202,8 @@
       "hitPoints": 1,
       "damage": "1x4",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_KESTREL"
   },
   {
     "id": 12,
@@ -208,7 +219,8 @@
       "hitPoints": 1,
       "damage": "1x1",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_LEPRECHAUN"
   },
   {
     "id": 13,
@@ -226,7 +238,8 @@
       "hitPoints": 1,
       "damage": "3x4/3x4/2x5",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_MEDUSA"
   },
   {
     "id": 14,
@@ -242,7 +255,8 @@
       "hitPoints": 1,
       "damage": "0x0",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_NYMPH"
   },
   {
     "id": 15,
@@ -260,7 +274,8 @@
       "hitPoints": 1,
       "damage": "1x8",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_ORC"
   },
   {
     "id": 16,
@@ -278,7 +293,8 @@
       "hitPoints": 1,
       "damage": "4x4",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_PHANTOM"
   },
   {
     "id": 17,
@@ -296,7 +312,8 @@
       "hitPoints": 1,
       "damage": "1x5/1x5",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_QUAGGA"
   },
   {
     "id": 18,
@@ -314,7 +331,8 @@
       "hitPoints": 1,
       "damage": "1x6",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_RATTLESNAKE"
   },
   {
     "id": 19,
@@ -332,7 +350,8 @@
       "hitPoints": 1,
       "damage": "1x3",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_SNAKE"
   },
   {
     "id": 20,
@@ -351,7 +370,8 @@
       "hitPoints": 1,
       "damage": "1x8/1x8/2x6",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_TROLL"
   },
   {
     "id": 21,
@@ -369,7 +389,8 @@
       "hitPoints": 1,
       "damage": "1x9/1x9/2x9",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_BLACK_UNICORN"
   },
   {
     "id": 22,
@@ -388,7 +409,8 @@
       "hitPoints": 1,
       "damage": "1x10",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_VAMPIRE"
   },
   {
     "id": 23,
@@ -404,7 +426,8 @@
       "hitPoints": 1,
       "damage": "1x6",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_WRAITH"
   },
   {
     "id": 24,
@@ -420,7 +443,8 @@
       "hitPoints": 1,
       "damage": "4x4",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_XEROC"
   },
   {
     "id": 25,
@@ -436,7 +460,8 @@
       "hitPoints": 1,
       "damage": "1x6/1x6",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_YETI"
   },
   {
     "id": 26,
@@ -454,6 +479,7 @@
       "hitPoints": 1,
       "damage": "1x8",
       "maxHitPoints": 1
-    }
+    },
+    "symbolType": "MONSTER_ZOMBIE"
   }
 ]

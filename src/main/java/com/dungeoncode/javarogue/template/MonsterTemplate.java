@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.template;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Stats;
@@ -18,6 +19,7 @@ public class MonsterTemplate extends AbstractTemplate {
     private final int carryProbability;
     private final EnumSet<CreatureFlag> creatureFlags;
     private final Stats stats;
+    private final SymbolType symbolType;
 
     @JsonCreator
     public MonsterTemplate(
@@ -26,7 +28,8 @@ public class MonsterTemplate extends AbstractTemplate {
             @JsonProperty("name") @Nonnull final String name,
             @JsonProperty("carryProbability") final int carryProbability,
             @JsonProperty("creatureFlags") final EnumSet<CreatureFlag> creatureFlags,
-            @JsonProperty("stats") @Nonnull final Stats stats) {
+            @JsonProperty("stats") @Nonnull final Stats stats,
+            @JsonProperty("symbolType") @Nonnull final SymbolType symbolType) {
 
         super(id);
 
@@ -42,6 +45,7 @@ public class MonsterTemplate extends AbstractTemplate {
                 ? EnumSet.noneOf(CreatureFlag.class)
                 : EnumSet.copyOf(creatureFlags);
         this.stats = stats;
+        this.symbolType=symbolType;
     }
 
     public long getId() {
@@ -66,5 +70,9 @@ public class MonsterTemplate extends AbstractTemplate {
 
     public MonsterType getMonsterType() {
         return monsterType;
+    }
+
+    public SymbolType getSymbolType() {
+        return symbolType;
     }
 }
