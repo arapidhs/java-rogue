@@ -16,10 +16,8 @@ import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -593,6 +591,37 @@ public class GameStateTest extends RogueBaseTest {
         assertEquals(monster.getDestination(),gameState.getPlayer().getPosition());
         assertTrue(monster.hasFlag(CreatureFlag.ISRUN));
         assertFalse(monster.hasFlag(CreatureFlag.ISHELD));
+    }
+
+    /**
+     * Tests the {@link GameState#newThing()} method for correct random item creation.
+     * Verifies that food is prioritized when no food count exceeds 3, resetting the count,
+     * and checks that other item types (armor, potion, scroll) are selected with specific seeds.
+     */
+    @Test
+    void testNewThing() {
+        final long seed = 200;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+
+        final int noFood=5;
+        gameState.setNoFood(noFood);
+        Item item = gameState.newThing();
+        assertNotNull(item);
+        assertInstanceOf(Food.class, item);
+        assertEquals(0,gameState.getNoFood());
+
+        item = gameState.newThing();
+        assertInstanceOf(Armor.class, item);
+
+        rogueRandom.reseed(seed*3);
+        item = gameState.newThing();
+        assertInstanceOf(Potion.class, item);
+
+        rogueRandom.reseed(seed*4);
+        item = gameState.newThing();
+        assertInstanceOf(Scroll.class, item);
     }
 
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {

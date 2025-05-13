@@ -345,6 +345,18 @@ public class GameState {
         return messageSystem;
     }
 
+    /**
+     * Creates a random {@link Item} based on a weighted selection of {@link ObjectType}. Prioritizes
+     * {@link ObjectType#FOOD} if no food is higher than 3, otherwise selects
+     * a random type via {@link #pickOne(ObjectType)}. Initializes the item with the appropriate subtype
+     * (e.g., {@link PotionType}, {@link WeaponType}) and logs a debug message in master mode for invalid
+     * types.
+     * <p>
+     * Equivalent to the <code>new_thing</code> function in the C Rogue source (things.c).
+     * </p>
+     *
+     * @return A newly created {@link Item}.
+     */
     @Nonnull
     public Item newThing(){
         Item item = null;
