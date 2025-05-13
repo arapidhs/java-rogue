@@ -1,5 +1,7 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
+
 import javax.annotation.Nullable;
 
 public class Rod extends Item {
@@ -8,6 +10,7 @@ public class Rod extends Item {
 
     public Rod(@Nullable Enum<RodType> itemSubType) {
         super(ObjectType.ROD, itemSubType, 1);
+        setSymbolType(SymbolType.ROD);
     }
 
     @Override

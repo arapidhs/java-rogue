@@ -3,17 +3,7 @@ package com.dungeoncode.javarogue.main;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.item.Inventory;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.Armor;
-import com.dungeoncode.javarogue.system.entity.item.ArmorType;
-import com.dungeoncode.javarogue.system.entity.item.Food;
-import com.dungeoncode.javarogue.system.entity.item.Potion;
-import com.dungeoncode.javarogue.system.entity.item.PotionType;
-import com.dungeoncode.javarogue.system.entity.item.Scroll;
-import com.dungeoncode.javarogue.system.entity.item.ScrollType;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
-import com.dungeoncode.javarogue.system.entity.item.WeaponType;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -30,7 +20,8 @@ public class InventoryTest {
         // Initialize dependencies for test setup
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom);
+        final ItemData itemData=new ItemData(config,rogueRandom);
+        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom,itemData);
 
         // Initialize inventory with max pack size from config
         final Inventory inventory = new Inventory(config.getMaxPack());
@@ -103,14 +94,14 @@ public class InventoryTest {
         assertEquals(6, inventory.getItems().size()); // Still six items due to stacking
 
         // Test adding a Dagger (non-stackable but groupable)
-        final Weapon dagger = rogueFactory.weapon(WeaponType.DAGGER);
+        final Weapon dagger = rogueFactory.initWeapon(WeaponType.DAGGER);
         assertTrue(inventory.addToPack(dagger)); // Should add as new item
         assertEquals(SymbolType.KEY_G, dagger.getInventoryKey()); // Gets next character 'g'
         assertEquals(9, inventory.getPackSize()); // Pack size increments
         assertEquals(7, inventory.getItems().size()); // Seven items in inventory
 
         // Test grouping another Dagger with the same group
-        final Weapon additionalDagger = rogueFactory.weapon(WeaponType.DAGGER);
+        final Weapon additionalDagger = rogueFactory.initWeapon(WeaponType.DAGGER);
         additionalDagger.setGroup(dagger.getGroup()); // Ensure same group for grouping
         assertTrue(inventory.addToPack(additionalDagger)); // Should group with existing Dagger
         assertEquals(SymbolType.KEY_G, additionalDagger.getInventoryKey()); // Shares 'g' with first Dagger
@@ -118,7 +109,7 @@ public class InventoryTest {
         assertEquals(7, inventory.getItems().size()); // Still seven items due to grouping
 
         // Test adding a Dagger with a different group
-        final Weapon separateGroupDagger = rogueFactory.weapon(WeaponType.DAGGER);
+        final Weapon separateGroupDagger = rogueFactory.initWeapon(WeaponType.DAGGER);
         assertTrue(inventory.addToPack(separateGroupDagger)); // Should add as new item (different group)
         assertEquals(SymbolType.KEY_H, separateGroupDagger.getInventoryKey()); // Gets next character 'h'
         assertEquals(10, inventory.getPackSize()); // Pack size increments

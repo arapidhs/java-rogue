@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.template.ArmorInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
 
@@ -14,6 +15,7 @@ public class Armor extends Item {
 
         final ArmorInfoTemplate armorInfoTemplate = (ArmorInfoTemplate) Templates.findTemplateBySubType(armorType);
         setArmorClass(armorInfoTemplate.getArmorClass());
+        setSymbolType(SymbolType.ARMOR);
     }
 
     /**

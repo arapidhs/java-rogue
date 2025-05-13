@@ -99,7 +99,14 @@ public class Config {
     private final String homeDirName;
     private final int maxScrollItemGeneratedNameLength;
     private final int minArmorClass;
+
+    /**
+     * Say which way items are being used.
+     * <p>Equivalent of:
+     * <pre>bool inv_describe = TRUE;</pre>
+     */
     private final boolean inventoryDescribe;
+
     private final int maxRooms;
     private final int maxGoneRooms;
     private final int maxPassages;

@@ -302,7 +302,7 @@ public class LevelGenerator {
     public Position addGold(@Nonnull final Room room) {
         Objects.requireNonNull(room);
         final int goldValue = gameState.goldCalc(levelNum);
-        final Gold gold = new Gold(goldValue);
+        final Gold gold = gameState.getRogueFactory().gold(goldValue);
         room.setGoldValue(goldValue);
 
         final Position goldPos = level.findFloor(room, 0, false);
@@ -312,7 +312,7 @@ public class LevelGenerator {
 
         final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
         assert place != null;
-        place.setSymbolType(SymbolType.GOLD);
+        place.setSymbolType(gold.getSymbolType());
         level.addItem(gold);
         return goldPos;
     }

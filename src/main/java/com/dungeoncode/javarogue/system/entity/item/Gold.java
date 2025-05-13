@@ -1,5 +1,7 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
+
 public class Gold extends Item {
 
     private static final int GOLDGRP = 1;
@@ -9,6 +11,7 @@ public class Gold extends Item {
         setGoldValue(goldValue);
         addFlag(ItemFlag.ISMANY);
         setGroup(GOLDGRP);
+        setSymbolType(SymbolType.GOLD);
     }
 
 }

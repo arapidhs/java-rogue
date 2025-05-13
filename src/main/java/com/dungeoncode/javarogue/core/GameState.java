@@ -83,7 +83,7 @@ public class GameState {
         this.messageSystem = messageSystem;
         this.screen = screen;
         this.itemData = new ItemData(config, rogueRandom);
-        this.rogueFactory=new RogueFactory(config,rogueRandom);
+        this.rogueFactory=new RogueFactory(config,rogueRandom,itemData);
         phaseActivity = new HashMap<>();
         init();
     }
@@ -343,6 +343,62 @@ public class GameState {
 
     public MessageSystem getMessageSystem() {
         return messageSystem;
+    }
+
+    @Nonnull
+    public Item newThing(){
+        Item item = null;
+        ObjectType objectType;
+        if(noFood>3){
+            objectType=ObjectType.FOOD;
+        }else{
+            objectType=pickOne(null).objectType();
+        }
+        switch (objectType){
+            case POTION -> {
+                final PotionType potionType = (PotionType) pickOne(ObjectType.POTION).itemSubType();
+                assert potionType != null;
+                item=rogueFactory.potion(potionType);
+            }
+            case SCROLL -> {
+                final ScrollType scrollType = (ScrollType) pickOne(ObjectType.SCROLL).itemSubType();
+                assert scrollType != null;
+                item=rogueFactory.scroll(scrollType);
+            }
+            case FOOD ->{
+                setNoFood(0);
+                item=rogueFactory.food();
+            }
+            case WEAPON -> {
+                final WeaponType weaponType = (WeaponType) pickOne(ObjectType.WEAPON).itemSubType();
+                assert weaponType != null;
+                item=rogueFactory.weapon(weaponType);
+            }
+            case ARMOR -> {
+                final ArmorType armorType = (ArmorType) pickOne(ObjectType.ARMOR).itemSubType();
+                assert armorType != null;
+                item=rogueFactory.armor(armorType);
+            }
+            case RING -> {
+                final RingType ringType = (RingType) pickOne(ObjectType.RING).itemSubType();
+                assert ringType != null;
+                item=rogueFactory.ring(ringType);
+            }
+            case ROD -> {
+                final RodType rodType = (RodType) pickOne(ObjectType.ROD).itemSubType();
+                assert rodType != null;
+                item=rogueFactory.rod(rodType);
+            }
+            default -> {
+                LOGGER.debug("Picked a bad kind of object {}",objectType);
+                if(config.isMaster()){
+                    messageSystem.msg("Picked a bad kind of object");
+                    screen.waitFor(' ');
+                }
+            }
+        }
+        assert item != null;
+        return item;
     }
 
     /**

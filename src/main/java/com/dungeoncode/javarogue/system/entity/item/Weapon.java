@@ -1,5 +1,6 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.template.Templates;
 import com.dungeoncode.javarogue.template.WeaponInfoTemplate;
 
@@ -26,6 +27,7 @@ public class Weapon extends Item {
         setThrowDamage(weaponInfoTemplate.getThrowDamage());
         this.launchWeapon = weaponInfoTemplate.getLaunchWeapon();
         weaponInfoTemplate.getItemFlags().forEach(this::addFlag);
+        setSymbolType(SymbolType.WEAPON);
     }
 
     /**

@@ -1,11 +1,14 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
+
 import javax.annotation.Nullable;
 
 public class Ring extends Item {
 
     public Ring(@Nullable Enum<RingType> ringType) {
         super(ObjectType.RING, ringType, 1);
+        setSymbolType(SymbolType.RING);
     }
 
     /**

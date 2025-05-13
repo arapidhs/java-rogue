@@ -23,6 +23,11 @@ import java.util.Set;
  */
 public class RogueFactory {
 
+    private static final int DEFAULT_ITEM_ARMOR=11;
+    private static final int DEFAULT_ITEM_COUNT=1;
+    private static final int DEFAULT_ITEM_GROUP=0;
+    private static final String DEFAULT_ITEM_WIELD_DAMAGE="0x0";
+    private static final String DEFAULT_ITEM_THROW_DAMAGE="0x0";
     /**
      * List of possible object types that can be randomly selected, mirroring the
      * thing_list in the C Rogue source.
@@ -106,11 +111,12 @@ public class RogueFactory {
 
     private final Config config;
     private final RogueRandom rogueRandom;
+    private final ItemData itemData;
 
     /**
      * A counter for assigning unique group IDs to stackable weapons (e.g., daggers, arrows),
      * starting at 2 to distinguish from non-grouped items. Incremented for each new group
-     * created by {@link #weapon(WeaponType)}.
+     * created by {@link #initWeapon(WeaponType)}.
      */
     private int weaponsGroup = 2;
 
@@ -121,11 +127,12 @@ public class RogueFactory {
      * @param rogueRandom The random number generator for object selection.
      * @throws NullPointerException if config or rogueRandom is null.
      */
-    public RogueFactory(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom) {
+    public RogueFactory(@Nonnull final Config config, @Nonnull final RogueRandom rogueRandom, @Nonnull ItemData itemData) {
         Objects.requireNonNull(rogueRandom);
         Objects.requireNonNull(config);
         this.config = config;
         this.rogueRandom = rogueRandom;
+        this.itemData=itemData;
     }
 
     /**
@@ -245,7 +252,7 @@ public class RogueFactory {
      * @return The initialized {@link Weapon}.
      * @throws NullPointerException if weaponType is null.
      */
-    public Weapon weapon(@Nonnull final WeaponType weaponType) {
+    public Weapon initWeapon(@Nonnull final WeaponType weaponType) {
         Objects.requireNonNull(weaponType);
         final Weapon weapon = new Weapon(weaponType);
         if (WeaponType.DAGGER.equals(weapon.getWeaponType())) {
@@ -259,6 +266,178 @@ public class RogueFactory {
             weapon.setGroup(0);
         }
         return weapon;
+    }
+
+    /**
+     * Creates and initializes a {@link Food} item, randomly setting it as fruit (10% chance)
+     * or non-fruit (90% chance) based on a random roll.
+     *
+     * @return The initialized {@link Food} item.
+     */
+    public Food food() {
+        final Food food = new Food();
+        if (rogueRandom.rnd(10) != 0) {
+            food.setFruit(false); // 90% chance for non-fruit
+        } else {
+            food.setFruit(true); // 10% chance for fruit
+        }
+        return food;
+    }
+
+    /**
+     * Creates and initializes a {@link Potion} of the specified {@link PotionType}.
+     * Applies default item properties via {@link #initItem(Item)}.
+     *
+     * @param potionType The {@link PotionType} to create.
+     * @return The initialized {@link Potion}.
+     * @throws NullPointerException if potionType is null.
+     */
+    public Potion potion(@Nonnull final PotionType potionType) {
+        Objects.requireNonNull(potionType);
+        final Potion potion = new Potion(potionType);
+        initItem(potion); // Set default count, armor, group, and clear flags
+        return potion;
+    }
+
+    /**
+     * Creates and initializes a {@link Scroll} of the specified {@link ScrollType}.
+     * Applies default item properties via {@link #initItem(Item)}.
+     *
+     * @param scrollType The {@link ScrollType} to create.
+     * @return The initialized {@link Scroll}.
+     * @throws NullPointerException if scrollType is null.
+     */
+    public Scroll scroll(@Nonnull final ScrollType scrollType) {
+        Objects.requireNonNull(scrollType);
+        final Scroll scroll = new Scroll(scrollType);
+        initItem(scroll); // Set default count, armor, group, and clear flags
+        return scroll;
+    }
+
+    /**
+     * Creates and initializes a {@link Weapon} of the specified {@link WeaponType}, setting
+     * count and group via {@link #initWeapon(WeaponType)}. Applies a 10% chance for a cursed
+     * weapon with reduced hit bonus (-1 to -3), a 5% chance for an enhanced hit bonus (+1 to +3),
+     * or no bonus change otherwise.
+     *
+     * @param weaponType The {@link WeaponType} to create.
+     * @return The initialized {@link Weapon}.
+     * @throws NullPointerException if weaponType is null.
+     */
+    public Weapon weapon(@Nonnull final WeaponType weaponType) {
+        Objects.requireNonNull(weaponType);
+        final Weapon weapon = initWeapon(weaponType);
+        final int r = rogueRandom.rnd(100);
+        int hitPlus = weapon.getHitPlus();
+        if (r < 10) {
+            weapon.addFlag(ItemFlag.ISCURSED); // 10% chance for cursed
+            hitPlus -= rogueRandom.rnd(3) + 1; // Reduce hit bonus by 1-3
+            weapon.setHitPlus(hitPlus);
+        } else if (r < 15) {
+            hitPlus += rogueRandom.rnd(3) + 1; // 5% chance for enhanced, increase by 1-3
+            weapon.setHitPlus(hitPlus);
+        }
+        return weapon;
+    }
+
+    /**
+     * Creates and initializes an {@link Armor} of the specified {@link ArmorType}. Applies a
+     * 20% chance for a cursed armor with increased armor class (+1 to +3), an 8% chance for
+     * reduced armor class (-1 to -3), or no change otherwise.
+     *
+     * @param armorType The {@link ArmorType} to create.
+     * @return The initialized {@link Armor}.
+     * @throws NullPointerException if armorType is null.
+     */
+    public Armor armor(@Nonnull final ArmorType armorType) {
+        Objects.requireNonNull(armorType);
+        final Armor armor = new Armor(armorType);
+        final int r = rogueRandom.rnd(100);
+        int armorClass = armor.getArmorClass();
+        if (r < 20) {
+            armor.addFlag(ItemFlag.ISCURSED); // 20% chance for cursed
+            armorClass += rogueRandom.rnd(3) + 1; // Increase armor class by 1-3
+            armor.setArmorClass(armorClass);
+        } else if (r < 28) {
+            armorClass -= rogueRandom.rnd(3) + 1; // 8% chance for reduced, decrease by 1-3
+            armor.setArmorClass(armorClass);
+        }
+        return armor;
+    }
+
+    /**
+     * Creates and initializes a {@link Ring} of the specified {@link RingType}. Applies default
+     * item properties via {@link #initItem(Item)}. For strength, protection, hit, or damage rings,
+     * sets a random armor class (0-2), making it cursed with -1 if 0. Aggression and teleport
+     * rings are always cursed.
+     * <p>
+     * Equivalent to ring initialization logic in the C Rogue source (things.c).
+     * </p>
+     *
+     * @param ringType The {@link RingType} to create.
+     * @return The initialized {@link Ring}.
+     * @throws NullPointerException if ringType is null.
+     */
+    public Ring ring(@Nonnull final RingType ringType) {
+        Objects.requireNonNull(ringType);
+        final Ring ring = new Ring(ringType);
+        initItem(ring);
+        switch (ringType){
+            case R_ADDSTR, R_PROTECT, R_ADDHIT, R_ADDDAM -> {
+                ring.setArmorClass(rogueRandom.rnd(3));
+                if(ring.getArmorClass()==0){
+                    ring.setArmorClass(-1);
+                    ring.addFlag(ItemFlag.ISCURSED);
+                }
+            }
+            case R_AGGR, R_TELEPORT -> {
+                ring.addFlag(ItemFlag.ISCURSED);
+            }
+        }
+        return ring;
+    }
+
+    /**
+     * Creates and initializes a {@link Rod} of the specified {@link RodType}. Applies default
+     * item properties via {@link #initItem(Item)} and configures damage and charges via
+     * {@link ItemData#fixStick(Rod)}.
+     *
+     * @param rodType The {@link RodType} to create.
+     * @return The initialized {@link Rod}.
+     * @throws NullPointerException if rodType is null.
+     */
+    public Rod rod(@Nonnull final RodType rodType) {
+        Objects.requireNonNull(rodType);
+        final Rod rod = new Rod(rodType);
+        initItem(rod); // Set default count, armor, group, and clear flags
+        itemData.fixStick(rod); // Configure damage and charges
+        return rod;
+    }
+
+    /**
+     * Creates a {@link Gold} item with the specified gold value.
+     *
+     * @param goldValue The amount of gold for the item.
+     * @return The initialized {@link Gold} item.
+     */
+    public Gold gold(final int goldValue) {
+        return new Gold(goldValue);
+    }
+
+    /**
+     * Initializes an {@link Item} with default properties: count, armor class, group,
+     * wield damage, throw damage, and clears all flags.
+     *
+     * @param item The {@link Item} to initialize.
+     * @throws NullPointerException if item is null.
+     */
+    private void initItem(@Nonnull final Item item) {
+        item.setCount(DEFAULT_ITEM_COUNT); // Set default quantity
+        item.setArmorClass(DEFAULT_ITEM_ARMOR); // Set default armor class
+        item.setGroup(DEFAULT_ITEM_GROUP); // Set default group ID
+        item.setWieldDamage(DEFAULT_ITEM_WIELD_DAMAGE); // Set default wield damage
+        item.setThrowDamage(DEFAULT_ITEM_THROW_DAMAGE); // Set default throw damage
+        item.getItemFlags().clear(); // Reset all flags
     }
 
     /**
@@ -289,4 +468,11 @@ public class RogueFactory {
         }
     }
 
+    public Config getConfig() {
+        return config;
+    }
+
+    public RogueRandom getRogueRandom() {
+        return rogueRandom;
+    }
 }

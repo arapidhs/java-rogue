@@ -1,11 +1,16 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
-import javax.annotation.Nullable;
+import com.dungeoncode.javarogue.system.SymbolType;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
 
 public class Scroll extends Item {
 
-    public Scroll(@Nullable Enum<? extends ItemSubtype> scrollType) {
+    public Scroll(@Nonnull Enum<? extends ItemSubtype> scrollType) {
         super(ObjectType.SCROLL, scrollType, 1);
+        Objects.requireNonNull(scrollType);
+        setSymbolType(SymbolType.SCROLL);
     }
 
     @Override

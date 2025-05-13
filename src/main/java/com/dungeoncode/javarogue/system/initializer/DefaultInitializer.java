@@ -86,7 +86,7 @@ public class DefaultInitializer implements Initializer {
         gameState.addToPack(ringMail, silent);
 
         // Equip and add mace with hit and damage bonuses
-        final Weapon mace = gameState.getRogueFactory().weapon(WeaponType.MACE);
+        final Weapon mace = gameState.getRogueFactory().initWeapon(WeaponType.MACE);
         mace.setHitPlus(1);
         mace.setDamagePlus(1);
         mace.addFlag(ItemFlag.ISKNOW);
@@ -94,13 +94,13 @@ public class DefaultInitializer implements Initializer {
         player.setCurrentWeapon(mace);
 
         // Add short bow with hit bonus
-        final Weapon bow = gameState.getRogueFactory().weapon(WeaponType.SHORT_BOW);
+        final Weapon bow = gameState.getRogueFactory().initWeapon(WeaponType.SHORT_BOW);
         bow.setHitPlus(1);
         bow.addFlag(ItemFlag.ISKNOW);
         gameState.addToPack(bow, silent);
 
         // Add arrows with random quantity (25-39)
-        final Weapon arrow = gameState.getRogueFactory().weapon(WeaponType.ARROW);
+        final Weapon arrow = gameState.getRogueFactory().initWeapon(WeaponType.ARROW);
         arrow.setCount(gameState.getRogueRandom().rnd(15) + 25);
         arrow.addFlag(ItemFlag.ISKNOW);
         gameState.addToPack(arrow, silent);
