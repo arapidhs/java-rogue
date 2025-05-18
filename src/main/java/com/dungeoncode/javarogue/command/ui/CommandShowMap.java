@@ -8,11 +8,14 @@ import com.dungeoncode.javarogue.system.RogueScreen;
 import com.dungeoncode.javarogue.system.SymbolMapper;
 import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.world.Place;
-import com.dungeoncode.javarogue.system.world.PlaceType;
 import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.screen.Screen;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
+
+import static com.dungeoncode.javarogue.system.RogueScreen.WINDOW_HW;
 
 /**
  * <p>
@@ -25,7 +28,6 @@ import java.util.Objects;
  * particularly in rooms.c (e.g., init_rooms()), and integrates with Lanterna for rendering,
  * replacing the C code's curses-based display.
  */
-// TODO this command (CommandShowMap) is a PoC - not final
 public class CommandShowMap implements Command {
 
     /**
@@ -45,24 +47,26 @@ public class CommandShowMap implements Command {
         final Config config=gameState.getConfig();
         final RogueScreen screen = gameState.getScreen();
 
+        screen.clearWindow(WINDOW_HW);
+
         for (int x = 0; x < config.getTerminalCols(); x++) {
             for (int y = 1; y < config.getTerminalRows() - 1; y++) {
                 final Place place = gameState.getCurrentLevel().getPlaceAt(x, y);
                 assert place != null;
-                if (!place.isReal()) {
-                    screen.enableModifiers(SGR.BOLD);
-                }
-                if (place.isType(PlaceType.PASSAGE)) {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(SymbolType.PASSAGE));
-                } else {
-                    screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
-                }
-                if (!place.isReal()) {
-                    screen.disableModifiers(SGR.BOLD);
-                }
+                final SGR[] modifiers = place.isReal() ? null : new SGR[]{SGR.REVERSE};
+                final SymbolType symbolType = place.getSymbolType();
+                screen.putWChar(WINDOW_HW,x, y, SymbolMapper.getSymbol(symbolType),modifiers);
             }
         }
-        return true;
+
+        screen.setCursorPosition(new TerminalPosition(gameState.getPlayer().getX(),gameState.getPlayer().getY()));
+        screen.showWindow(WINDOW_HW);
+        screen.closeWindow(WINDOW_HW,"---More (level map)---");
+        screen.setCursorPosition(null);
+        screen.refresh(Screen.RefreshType.DELTA);
+
+        // this command does not consume a player move, returns false
+        return false;
     }
 
     /**

@@ -22,8 +22,10 @@ import com.dungeoncode.javarogue.system.world.*;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.googlecode.lanterna.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +58,8 @@ public class GameState {
 
     /**
      * Number of levels without food.
+     * Equivalent of:
+     * <pre>int no_food = 0; extern.c</pre>
      */
     private int noFood;
 
@@ -115,8 +119,9 @@ public class GameState {
      * Mirrors the turn-based loop in C Rogue (main.c), with pre-player actions (monsters.c), player input (command.c), and post-player updates (daemon.c).
      */
     public void loop() {
+
         this.playing = true;
-        this.commandFactory = new CommandFactory();
+        this.commandFactory = new CommandFactory(this);
 
         addCommand(new CommandSetupPlayerMovesPerTurn());
         addCommand(new CommandShowPlayerStatus());
@@ -125,10 +130,10 @@ public class GameState {
         while (playing) {
 
             processPhase(Phase.START_TURN);
-            screen.refresh();
 
             processPhase(Phase.UPKEEP_TURN);
-            screen.refresh();
+
+            screen.refresh(Screen.RefreshType.DELTA);
 
             KeyStroke keyStroke;
             boolean commandExecuted = false;
@@ -146,13 +151,20 @@ public class GameState {
                         if (commandExecuted) {
                             player.setNtimes(player.getNtimes() - 1);
                         }
-                        screen.refresh();
                     }
+                } else {
+                    // TODO check what happens on ESCAPE user input
+                    // see command.c
+                    //  when ESCAPE: /* Escape */
+                    //  door_stop = FALSE;
+                    //  count = 0;
+                    //  after = FALSE;
+                    //  again = FALSE;
                 }
             } while (player.getNtimes() > 0 || !commandExecuted || keyStroke.getKeyType().equals(KeyType.Escape));
 
             processPhase(Phase.END_TURN);
-            screen.refresh();
+
         }
     }
 

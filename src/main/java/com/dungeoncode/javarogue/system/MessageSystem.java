@@ -149,4 +149,7 @@ public class MessageSystem {
         this.messagePosition = 0;
     }
 
+    public String getLastMessage() {
+        return lastMessage;
+    }
 }

@@ -59,6 +59,13 @@ public class Config {
     private static final int DEFAULT_LEVEL_MAX_WIDTH = 80;
     private static final int DEFAULT_LEVEL_MAX_HEIGHT = 32;
     private static final int DEFAULT_LEVEL_LAM_DIST = 3;
+
+    /**
+     * Release version, equivalent of:
+     * <pre>char *release = "5.4.4"; vers.c</pre>
+     */
+    private static final String RELEASE_VERSION = "5.4.4";
+
     private final int maxStringLength;
     private final String javaRogueDirName;
     private final String scoreFileName;
@@ -80,7 +87,7 @@ public class Config {
 
     private final EnumSet<PlayerFlag> initialPlayerFlags;
     private final Stats initialPlayerStats;
-    private final boolean messageSave;
+    private boolean messageSave;
     private final boolean messageAllowLowercase;
     private final boolean messageAllowEscape;
 
@@ -129,6 +136,7 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
+    private final String release;
 
     /**
      * The squared distance threshold for proximity checks,
@@ -188,6 +196,7 @@ public class Config {
         this.statMsg = DEFAULT_STATUS_AS_MESSAGE;
         this.statLine = this.terminalRows - 1;
         this.lampDist=DEFAULT_LEVEL_LAM_DIST;
+        this.release=RELEASE_VERSION;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -439,5 +448,17 @@ public class Config {
 
     public int getLampDist() {
         return lampDist;
+    }
+
+    public void setMessageSave(boolean messageSave) {
+        this.messageSave = messageSave;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
+    }
+
+    public String getRelease() {
+        return release;
     }
 }

@@ -16,6 +16,8 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.Objects;
 
+import static com.dungeoncode.javarogue.system.RogueScreen.WINDOW_HW;
+
 /**
  * Default implementation of the {@link Initializer} interface, responsible for setting up
  * the initial game state. Configures the player with starting items, initializes item data,
@@ -48,7 +50,7 @@ public class DefaultInitializer implements Initializer {
         //     * Set up windows
         //     */
         //    hw = newwin(LINES, COLS, 0, 0);
-        gameState.getScreen().addWindow("hw", 0, 0, config.getTerminalCols(), config.getTerminalRows());
+        gameState.getScreen().addWindow(WINDOW_HW, 0, 0, config.getTerminalCols(), config.getTerminalRows());
 
         // Disable scoring in wizard mode for master configuration
         if (config.isMaster()) {

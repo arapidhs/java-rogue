@@ -17,7 +17,14 @@ public class Player extends Creature {
 
     private final String playerName;
     private final EnumSet<PlayerFlag> playerFlags;
+
+    /**
+     * Amount of food in hero's stomach.
+     * Equivalent of <pre>int food_left; extern.c</pre>
+     */
     private final int foodLeft;
+
+
     private final Stats maxStats;
     private Armor currentArmor;
     private Weapon currentWeapon;

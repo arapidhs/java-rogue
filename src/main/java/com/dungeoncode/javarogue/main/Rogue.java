@@ -45,7 +45,8 @@ public class Rogue {
     private static final String PASSWORD_SALT = "mT";
     private static final String PASSWORD_HASH = "62851374aa4abd12095d7246ae1e3c273ab5619e9967be902dc0847047d333ae";
 
-    private static final String PATH_FONT_IBM_VGA_8x16="/fonts/Ac437_IBM_VGA_8x16.ttf";
+    private static final String PATH_FONT_IBM_VGA_8x16= "/fonts/IBM-VGA-8x16/Ac437_IBM_VGA_8x16.ttf";
+    private static final String PATH_FONT_MODERN_TERMINUS="/fonts/modern-terminus/TerminusTTF-4.38.2.ttf";
     private static final String PATH_ROGUE_ICON_64="/icons/icon-java-rogue-64.png";
 
     public static BufferedImage ICON_ROGUE_64 = null;
@@ -61,18 +62,24 @@ public class Rogue {
 
             ICON_ROGUE_64= ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
 
-            final InputStream fontStream = Rogue.class.getResourceAsStream(PATH_FONT_IBM_VGA_8x16);
-            assert fontStream != null;
-            final Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(Font.PLAIN, 26);
-            fontStream.close();
-            // final Font font = new Font("Monospaced", Font.PLAIN, 16);
+            final InputStream ibmVgaFontStream = Rogue.class.getResourceAsStream(PATH_FONT_IBM_VGA_8x16);
+            assert ibmVgaFontStream != null;
+            final Font ibmVgaFont = Font.createFont(Font.TRUETYPE_FONT, ibmVgaFontStream).deriveFont(Font.PLAIN, 36);
+            ibmVgaFontStream.close();
+
+            final InputStream terminusFontStream = Rogue.class.getResourceAsStream(PATH_FONT_MODERN_TERMINUS);
+            assert terminusFontStream != null;
+            final Font terminusFont = Font.createFont(Font.TRUETYPE_FONT, terminusFontStream).deriveFont(Font.PLAIN, 36);
+            terminusFontStream.close();
+
+            final Font monospacedFont = new Font("Monospaced", Font.PLAIN, 36);
 
             // Initialize terminal with configured size and font
             final DefaultTerminalFactory terminalFactory = new DefaultTerminalFactory(System.out, System.in, StandardCharsets.UTF_8);
             terminalFactory.setInitialTerminalSize(
                     new TerminalSize(config.getTerminalCols(), config.getTerminalRows()));
             terminalFactory.setTerminalEmulatorTitle(TERMINAL_TITLE);
-            terminalFactory.setTerminalEmulatorFontConfiguration(SwingTerminalFontConfiguration.newInstance(font));
+            terminalFactory.setTerminalEmulatorFontConfiguration(SwingTerminalFontConfiguration.newInstance(ibmVgaFont));
 
             try {
                 screen = new RogueScreen(terminalFactory.createTerminal(), config);
@@ -97,6 +104,12 @@ public class Rogue {
                 } finally {
                     screen.clearAndRefresh();
                 }
+            }
+
+            // override master and wizard in debug mode
+            if (options.debug) {
+                config.setMaster(true);
+                config.setWizard(true,rogueRandom);
             }
 
             if (options.showScores) {
