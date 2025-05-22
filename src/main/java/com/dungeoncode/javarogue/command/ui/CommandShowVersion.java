@@ -13,7 +13,7 @@ public class CommandShowVersion implements Command {
     public boolean execute(@NonNull final GameState gameState) {
         Objects.requireNonNull(gameState);
         gameState.getMessageSystem().msg(String.format("version %s. (mctesq was here)",
-                gameState.getConfig().getRelease()));
+                gameState.getConfig().getReleaseVersion()));
         return false;
     }
 

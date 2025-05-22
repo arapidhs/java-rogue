@@ -136,7 +136,7 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
-    private final String release;
+    private final String releaseVersion;
 
     /**
      * The squared distance threshold for proximity checks,
@@ -196,7 +196,7 @@ public class Config {
         this.statMsg = DEFAULT_STATUS_AS_MESSAGE;
         this.statLine = this.terminalRows - 1;
         this.lampDist=DEFAULT_LEVEL_LAM_DIST;
-        this.release=RELEASE_VERSION;
+        this.releaseVersion =RELEASE_VERSION;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -458,7 +458,7 @@ public class Config {
         this.master = master;
     }
 
-    public String getRelease() {
-        return release;
+    public String getReleaseVersion() {
+        return releaseVersion;
     }
 }

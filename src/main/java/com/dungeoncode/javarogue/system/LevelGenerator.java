@@ -47,7 +47,13 @@ public class LevelGenerator {
 
         doPassages(rooms);
 
-        // TODO continue with no_food, traps etc..
+        gameState.setNoFood(gameState.getNoFood()+1);
+
+        // TODO continue with put_thins()
+
+        /* Place objects (if any) */
+        putThings();
+
         return level;
     }
 
@@ -224,7 +230,6 @@ public class LevelGenerator {
         return passages;
     }
 
-    // TODO unit test for doRooms
     public Room[] doRooms() {
         final int maxRoomX = getMaxRoomX();
         final int maxRoomY = getMaxRoomY();
@@ -949,6 +954,17 @@ public class LevelGenerator {
         numpass(new Position(pos.getX(), pos.getY() - 1), passages, state); // Up
         numpass(new Position(pos.getX() + 1, pos.getY()), passages, state); // Right
         numpass(new Position(pos.getX() - 1, pos.getY()), passages, state); // Left
+    }
+
+    public void putThings() {
+        /*
+         * Once you have found the amulet, the only way to get new stuff is
+         * go down into the dungeon.
+         */
+        final boolean amuletFound = gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
+        if (amuletFound && gameState.getLevelNum() < gameState.getMaxLevel()) {
+            return;
+        }
     }
 
     /**

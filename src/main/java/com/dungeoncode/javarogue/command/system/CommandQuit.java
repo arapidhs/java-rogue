@@ -19,6 +19,8 @@ import java.util.Objects;
  * A command that prompts the player to confirm quitting, mirroring the C Rogue
  * <code>quit</code> function. Exits with a score display if confirmed, or restores
  * the game state if canceled.
+ * <p>
+ *  Equivalent of <pre>quit(int sig) from main.c</pre>
  */
 public class CommandQuit extends CommandParameterized<Boolean> {
 
