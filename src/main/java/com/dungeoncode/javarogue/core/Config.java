@@ -65,6 +65,28 @@ public class Config {
      * <pre>char *release = "5.4.4"; vers.c</pre>
      */
     private static final String RELEASE_VERSION = "5.4.4";
+    /**
+     * Equivalent of <code>#define TREAS_ROOM</code> in <code>new_level.c</code>.
+     */
+    private static final int DEFAULT_TREAS_ROOM_CHANCE = 20;
+    /**
+     * Equivalent of <code>##define MINTREAS</code> in <code>new_level.c</code>.
+     */
+    private static final int DEFAULT_MIN_TREAS = 2;
+    /**
+     * Equivalent of <code>##define MAXTREAS</code> in <code>new_level.c</code>.
+     */
+    private static final int DEFAULT_MAX_TREAS = 10;
+    /**
+     * Default max tries to find a valid floor spot in a room.
+     * Equivalent of <code>#define MAXTRIES</code> in <code>new_level.c</code>.
+     */
+    private static final int DEFAULT_MAX_TRIES_FIND_FLOOR = 10;
+    /**
+     * Default maximum number of tries to place items in a level.
+     * Equivalent of <code>#define MAXOBJ</code> in <code>rogue.h</code>.
+     */
+    private static final int DEFAULT_MAX_OBJ_TRIES = 9;
 
     private final int maxStringLength;
     private final String javaRogueDirName;
@@ -102,6 +124,30 @@ public class Config {
     private final String homeDirName;
     private final int maxScrollItemGeneratedNameLength;
     private final int minArmorClass;
+    /**
+     * Equivalent of <code>#define TREAS_ROOM</code> in <code>new_level.c</code>.
+     */
+    private final int treasureRoomChance;
+    /**
+     * Minimum number of treasures in a treasure room.
+     * Equivalent of <code>#define MINTREAS</code> in <code>new_level.c</code>.
+     */
+    private final int minTreasure;
+    /**
+     * Minimum number of treasures in a treasure room.
+     * Equivalent of <code>#define MAXTREAS</code> in <code>new_level.c</code>.
+     */
+    private final int maxTreasure;
+    /**
+     * Max tries to find a valid floor spot in a room.
+     * Equivalent of <code>#define MAXTRIES</code> in new_level.c.
+     */
+    private final int maxTriesFindFloor;
+    /**
+     * Maximum number of tries to place items in a level.
+     * Equivalent of <code>#define MAXOBJ</code> in <code>rogue.h</code>.
+     */
+    private final int maxObjTries;
     /**
      * Say which way items are being used.
      * <p>Equivalent of:
@@ -191,6 +237,11 @@ public class Config {
         this.statLine = this.terminalRows - 1;
         this.lampDist = DEFAULT_LEVEL_LAM_DIST;
         this.releaseVersion = RELEASE_VERSION;
+        this.treasureRoomChance = DEFAULT_TREAS_ROOM_CHANCE;
+        this.minTreasure = DEFAULT_MIN_TREAS;
+        this.maxTreasure = DEFAULT_MAX_TREAS;
+        this.maxTriesFindFloor = DEFAULT_MAX_TRIES_FIND_FLOOR;
+        this.maxObjTries = DEFAULT_MAX_OBJ_TRIES;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -455,4 +506,25 @@ public class Config {
     public String getReleaseVersion() {
         return releaseVersion;
     }
+
+    public int getTreasureRoomChance() {
+        return treasureRoomChance;
+    }
+
+    public int getMinTreasure() {
+        return minTreasure;
+    }
+
+    public int getMaxTreasure() {
+        return maxTreasure;
+    }
+
+    public int getMaxTriesFindFloor() {
+        return maxTriesFindFloor;
+    }
+
+    public int getMaxObjTries() {
+        return maxObjTries;
+    }
+
 }

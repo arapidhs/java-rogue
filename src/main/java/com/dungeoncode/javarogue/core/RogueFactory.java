@@ -513,6 +513,20 @@ public class RogueFactory {
     }
 
     /**
+     * Creates and configures a new Amulet item for the Rogue game.
+     * Sets the amulet's throw damage to "0x0" and armor class to 11.
+     *
+     * @return A configured Amulet instance.
+     */
+    public Amulet amulet() {
+        final Amulet amulet = new Amulet();
+        amulet.setThrowDamage("0x0");
+        amulet.setWieldDamage("0x0");
+        amulet.setArmorClass(11);
+        return amulet;
+    }
+
+    /**
      * Creates and initializes a {@link Potion} of the specified {@link PotionType}.
      * Applies default item properties via {@link #initItem(Item)}.
      *
@@ -663,9 +677,7 @@ public class RogueFactory {
                     ring.addFlag(ItemFlag.ISCURSED);
                 }
             }
-            case R_AGGR, R_TELEPORT -> {
-                ring.addFlag(ItemFlag.ISCURSED);
-            }
+            case R_AGGR, R_TELEPORT -> ring.addFlag(ItemFlag.ISCURSED);
         }
         return ring;
     }

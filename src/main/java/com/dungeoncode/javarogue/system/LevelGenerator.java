@@ -4,9 +4,12 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
+import com.dungeoncode.javarogue.system.entity.item.Amulet;
 import com.dungeoncode.javarogue.system.entity.item.Gold;
+import com.dungeoncode.javarogue.system.entity.item.Item;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.dungeoncode.javarogue.system.world.*;
 import org.slf4j.Logger;
@@ -477,7 +480,9 @@ public class LevelGenerator {
                     continue;
                 }
 
-                if (level.getPlaceAt(newX + topx, newY + topy).isType(PlaceType.PASSAGE)) {
+                final Place place = level.getPlaceAt(newX + topx, newY + topy);
+                assert place != null;
+                if (place.isType(PlaceType.PASSAGE)) {
                     continue;
                 }
 
@@ -956,13 +961,102 @@ public class LevelGenerator {
         numpass(new Position(pos.getX() - 1, pos.getY()), passages, state); // Left
     }
 
+    /**
+     * Places potions, scrolls, and potentially an amulet on the current dungeon level, equivalent to
+     * <code>void put_things()</code> in <code>new_level.c</code> from the original Rogue C source.
+     * Adds items based on probability, places a treasure room if conditions are met, and ensures an
+     * amulet is placed if the player is deep enough in the dungeon and hasn't found it yet.
+     */
     public void putThings() {
-        /*
-         * Once you have found the amulet, the only way to get new stuff is
-         * go down into the dungeon.
-         */
+        // Check if amulet is found and level is less than max level to skip item placement
         final boolean amuletFound = gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
-        if (amuletFound && gameState.getLevelNum() < gameState.getMaxLevel()) {
+        if (!(amuletFound && gameState.getLevelNum() < gameState.getMaxLevel())) {
+            // Check for treasure room with configured probability
+            if (rnd(config.getTreasureRoomChance()) == 0) {
+                treasRoom();
+            }
+            // Attempt to place items up to max tries
+            for (int i = 0; i < config.getMaxObjTries(); i++) {
+                if (rnd(100) < 36) {
+                    // Create and add a new random item to the level
+                    final Item item = gameState.newThing();
+                    getLevel().addItem(item);
+                    // Find a valid floor position for the item
+                    final Position pos = getLevel().findFloor(null, 0, false);
+                    assert pos != null;
+                    item.setPosition(pos.getX(), pos.getY());
+                    // Update the map with the item's symbol
+                    final Place place = getLevel().getPlaceAt(pos.getX(), pos.getY());
+                    final SymbolType symbolType = SymbolMapper.getSymbolType(item.getObjectType());
+                    assert place != null;
+                    place.setSymbolType(symbolType);
+                }
+            }
+
+            // Place an amulet if at or below amulet level and not yet found
+            if (level.getLevelNum() >= config.getAmuletLevel() && !amuletFound) {
+                final Amulet amulet = gameState.getRogueFactory().amulet();
+                // Find a valid floor position for the amulet
+                final Position pos = getLevel().findFloor(null, 0, false);
+                assert pos != null;
+                amulet.setPosition(pos.getX(), pos.getY());
+                // Update the map with the amulet's symbol
+                Place place = getLevel().getPlaceAt(pos.getX(), pos.getY());
+                final SymbolType symbolType = SymbolMapper.getSymbolType(amulet.getObjectType());
+                assert place != null;
+                place.setSymbolType(symbolType);
+            }
+        }
+    }
+
+    /**
+     * Adds a treasure room to the dungeon, equivalent to <code>void treas_room()</code> in
+     * <code>new_level.c</code> from the original Rogue C source. Places treasure items and
+     * monsters in a randomly selected room, ensuring valid floor positions. Updates the level's
+     * map with appropriate symbols for placed items. Monsters are generated as if from the next
+     * level down, but the level number is not incremented in this implementation.
+     */
+    private void treasRoom() {
+        final int roomIndex = rndRoom(getLevel().getRooms().toArray(new Room[0]));
+        final Room room = getLevel().getRooms().get(roomIndex);
+
+        int spots = (room.getSize().getY() - 2) * (room.getSize().getX() - 2) - config.getMinTreasure();
+        if (spots > (config.getMaxTreasure() - config.getMinTreasure())) {
+            spots = config.getMaxTreasure() - config.getMinTreasure();
+        }
+
+        int nm = rnd(spots) + config.getMinTreasure();
+        int numMonst = nm;
+
+        while (nm-- > 0) {
+            final Position pos = getLevel().findFloor(room, 2 * config.getMaxTriesFindFloor(), false);
+            assert pos != null;
+            final Item item = gameState.newThing();
+            item.setPosition(pos.getX(), pos.getY());
+            level.addItem(item);
+
+            SymbolType symbolType = SymbolMapper.getSymbolType(item.getObjectType());
+            final Place place = level.getPlaceAt(pos.getX(), pos.getY());
+            assert place != null;
+            place.setSymbolType(symbolType);
+        }
+
+        /*
+         * fill up room with monsters from the next level down
+         */
+        nm = rnd(spots) + config.getMinTreasure();
+        if (nm < numMonst + 2) {
+            nm = numMonst + 2;
+        }
+        while (nm-- > 0) {
+            final int level = getLevel().getLevelNum() + 1;
+            final Position pos = getLevel().findFloor(room, config.getMaxTriesFindFloor(), true);
+            final MonsterType monsterType = gameState.getRogueFactory().randMonster(false, level);
+            final Monster monster = gameState.getRogueFactory().monster(monsterType, level);
+            assert pos != null;
+            monster.setPosition(pos.getX(), pos.getY());
+            monster.addFlag(CreatureFlag.ISMEAN);
+            gameState.givePack(monster, level, gameState.getMaxLevel());
         }
     }
 
