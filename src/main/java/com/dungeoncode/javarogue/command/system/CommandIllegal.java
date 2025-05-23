@@ -1,7 +1,8 @@
 /**
  * Handles illegal command inputs in the Java port of the video game Rogue,
  * equivalent to the C function `void illcom(int ch)` in `command.c` from the original source.
- * Processes invalid keystrokes, displays an error message, and ensures the command does not consume a player move.
+ * Processes invalid keystrokes, displays an error message for non-space invalid commands,
+ * and ensures the command does not consume a player move.
  */
 package com.dungeoncode.javarogue.command.system;
 
@@ -27,8 +28,8 @@ public class CommandIllegal extends CommandParameterized<KeyStroke> {
     }
 
     /**
-     * Executes the illegal command, displaying an error message and resetting the command count.
-     * Does not consume a player move.
+     * Executes the illegal command. Displays an error message for non-space invalid commands
+     * and resets the command count. Does not consume a player move.
      *
      * @param gameState The current game state.
      * @return false, indicating no player move is consumed.
@@ -37,17 +38,17 @@ public class CommandIllegal extends CommandParameterized<KeyStroke> {
     public boolean execute(@Nonnull final GameState gameState) {
         Objects.requireNonNull(gameState);
         final Config config = gameState.getConfig();
+        final KeyStroke keyStroke = getParams();
 
-        boolean messageSaveSetting = config.isMessageSave();
-        config.setMessageSave(false);
-
-        gameState.setCount(0);
-
-        gameState.getMessageSystem().msg(
-                String.format("illegal command '%s'", unctrl(getParams()))
-        );
-        config.setMessageSave(messageSaveSetting);
-
+        if (!(keyStroke.getKeyType() == KeyType.Character && ' ' == keyStroke.getCharacter())) {
+            boolean messageSaveSetting = config.isMessageSave();
+            config.setMessageSave(false);
+            gameState.setCount(0);
+            gameState.getMessageSystem().msg(
+                    String.format("illegal command '%s'", unctrl(keyStroke))
+            );
+            config.setMessageSave(messageSaveSetting);
+        }
         return false;
     }
 
@@ -67,7 +68,7 @@ public class CommandIllegal extends CommandParameterized<KeyStroke> {
      * @param keyStroke The keystroke to convert.
      * @return A string representation of the keystroke.
      */
-    private String unctrl(@Nonnull final KeyStroke keyStroke) {
+    private String unctrl (@Nonnull final KeyStroke keyStroke) {
         String com = "";
         if (keyStroke.isCtrlDown()) {
             com = "^";
