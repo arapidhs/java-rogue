@@ -6,8 +6,8 @@ import com.dungeoncode.javarogue.core.RogueRandom;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
-import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.dungeoncode.javarogue.system.entity.item.Gold;
+import com.dungeoncode.javarogue.system.entity.item.ObjectType;
 import com.dungeoncode.javarogue.system.world.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class LevelGenerator {
 
         doPassages(rooms);
 
-        gameState.setNoFood(gameState.getNoFood()+1);
+        gameState.setNoFood(gameState.getNoFood() + 1);
 
         // TODO continue with put_thins()
 
@@ -287,7 +287,7 @@ public class LevelGenerator {
             // add the room to the level
             level.addRoom(room);
 
-            final boolean amuletFound =gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
+            final boolean amuletFound = gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
             if (rogueRandom.rnd(2) == 0 && (!amuletFound || levelNum >= gameState.getMaxLevel())) {
                 addGold(room);
             }
@@ -295,13 +295,13 @@ public class LevelGenerator {
             /*
              * Put the monster in
              */
-            final int r=room.getGoldValue()>0?80:25;
-            if(rogueRandom.rnd(100)<r){
+            final int r = room.getGoldValue() > 0 ? 80 : 25;
+            if (rogueRandom.rnd(100) < r) {
                 final Position monsterPosition = level.findFloor(room, 0, true);
                 assert monsterPosition != null;
                 final MonsterType monsterType = gameState.getRogueFactory().randMonster(false, levelNum);
                 final Monster monster = gameState.newMonster(monsterType, monsterPosition);
-                gameState.givePack(monster,gameState.getLevelNum(),gameState.getMaxLevel());
+                gameState.givePack(monster, gameState.getLevelNum(), gameState.getMaxLevel());
             }
 
         }
@@ -963,7 +963,6 @@ public class LevelGenerator {
          */
         final boolean amuletFound = gameState.getPlayer().getInventory().contains(ObjectType.AMULET);
         if (amuletFound && gameState.getLevelNum() < gameState.getMaxLevel()) {
-            return;
         }
     }
 

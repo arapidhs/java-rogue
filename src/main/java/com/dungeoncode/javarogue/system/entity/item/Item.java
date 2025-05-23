@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.system.entity.item;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
-import com.dungeoncode.javarogue.system.SymbolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,8 +37,8 @@ public class Item extends Entity {
         setSymbolType(objectInfoTemplate.getSymbolType());
     }
 
-    public boolean isType(@Nonnull final Enum<? extends ItemSubtype> itemSubType){
-        return Objects.equals(this.itemSubType,itemSubType);
+    public boolean isType(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        return Objects.equals(this.itemSubType, itemSubType);
     }
 
     public void addFlag(@Nonnull final ItemFlag itemFlag) {
@@ -118,6 +118,10 @@ public class Item extends Entity {
         return wieldDamage;
     }
 
+    public void setWieldDamage(String wieldDamage) {
+        this.wieldDamage = wieldDamage;
+    }
+
     /**
      * Returns the damage dealt when the weapon is thrown.
      *
@@ -125,10 +129,6 @@ public class Item extends Entity {
      */
     public String getThrowDamage() {
         return throwDamage;
-    }
-
-    public void setWieldDamage(String wieldDamage) {
-        this.wieldDamage = wieldDamage;
     }
 
     public void setThrowDamage(String throwDamage) {

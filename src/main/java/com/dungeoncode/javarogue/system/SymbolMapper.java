@@ -143,24 +143,6 @@ public class SymbolMapper {
     }
 
     /**
-     * Retrieves the {@link SymbolType} for a given game element class.
-     * Maps the class to its corresponding {@link SymbolType} using a predefined registry.
-     *
-     * @param objectType The ObjectType to get the {@link SymbolType} for.
-     * @return The corresponding {@link SymbolType}.
-     * @throws NullPointerException if objectType is null.
-     * @throws IllegalArgumentException if no {@link SymbolType} is mapped for the objectType.
-     */
-    public static SymbolType getSymbolType(@Nonnull final ObjectType objectType) {
-        Objects.requireNonNull(objectType);
-        final SymbolType symbolType = OBJECT_TYPE_TO_SYMBOL_TYPE.get(objectType);
-        if (symbolType == null) {
-            throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_OBJECT_TYPE + objectType);
-        }
-        return symbolType;
-    }
-
-    /**
      * Returns the character symbol for a given game element.
      *
      * @param symbolType The SymbolType to get the character for.
@@ -174,5 +156,23 @@ public class SymbolMapper {
             throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_TYPE + symbolType);
         }
         return character;
+    }
+
+    /**
+     * Retrieves the {@link SymbolType} for a given game element class.
+     * Maps the class to its corresponding {@link SymbolType} using a predefined registry.
+     *
+     * @param objectType The ObjectType to get the {@link SymbolType} for.
+     * @return The corresponding {@link SymbolType}.
+     * @throws NullPointerException     if objectType is null.
+     * @throws IllegalArgumentException if no {@link SymbolType} is mapped for the objectType.
+     */
+    public static SymbolType getSymbolType(@Nonnull final ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        final SymbolType symbolType = OBJECT_TYPE_TO_SYMBOL_TYPE.get(objectType);
+        if (symbolType == null) {
+            throw new IllegalArgumentException(Messages.ERROR_NO_SYMBOL_FOR_OBJECT_TYPE + objectType);
+        }
+        return symbolType;
     }
 }

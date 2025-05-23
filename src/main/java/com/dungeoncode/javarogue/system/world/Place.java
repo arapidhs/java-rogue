@@ -1,8 +1,8 @@
 package com.dungeoncode.javarogue.system.world;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
-import com.dungeoncode.javarogue.system.SymbolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

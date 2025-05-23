@@ -18,18 +18,18 @@ public class CommandFactory {
     private final Config config;
     private final GameState gameState;
 
-    public CommandFactory(@Nonnull final GameState gameState){
-        this.gameState=gameState;
-        this.config=gameState.getConfig();
+    public CommandFactory(@Nonnull final GameState gameState) {
+        this.gameState = gameState;
+        this.config = gameState.getConfig();
     }
 
     public Command fromKeyStroke(KeyStroke keyStroke) {
-        if(keyStroke.isCtrlDown()){
+        if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.Character) {
                 char ch = keyStroke.getCharacter();
                 return switch (ch) {
-                    case 'D','d' -> {
-                        if(config.isMaster() && config.isWizard()) {
+                    case 'D', 'd' -> {
+                        if (config.isMaster() && config.isWizard()) {
                             int levelNum = gameState.getLevelNum();
                             gameState.setLevelNum(++levelNum);
                             yield new CommandNewLevel(levelNum);
@@ -37,8 +37,8 @@ public class CommandFactory {
                             yield new CommandIllegal(keyStroke);
                         }
                     }
-                    case 'A','a' -> {
-                        if(config.isMaster() && config.isWizard()) {
+                    case 'A', 'a' -> {
+                        if (config.isMaster() && config.isWizard()) {
                             int levelNum = gameState.getLevelNum();
                             gameState.setLevelNum(--levelNum);
                             yield new CommandNewLevel(levelNum);
@@ -46,21 +46,21 @@ public class CommandFactory {
                             yield new CommandIllegal(keyStroke);
                         }
                     }
-                    case 'F','f' -> {
-                        if(config.isMaster() && config.isWizard()) {
+                    case 'F', 'f' -> {
+                        if (config.isMaster() && config.isWizard()) {
                             yield new CommandShowMap();
                         } else {
                             yield new CommandIllegal(keyStroke);
                         }
                     }
-                    case 'E','e' -> {
-                        if(config.isMaster() && config.isWizard()) {
+                    case 'E', 'e' -> {
+                        if (config.isMaster() && config.isWizard()) {
                             yield new CommandShowPlayerFoodLeft();
                         } else {
                             yield new CommandIllegal(keyStroke);
                         }
                     }
-                    case 'P','p' -> new CommandShowLastMessage();
+                    case 'P', 'p' -> new CommandShowLastMessage();
                     default -> new CommandIllegal(keyStroke);
                 };
             }
@@ -83,11 +83,10 @@ public class CommandFactory {
                         new CommandPlayerMove(new Position(-1, 1));
                 case 'n' -> // move down right
                         new CommandPlayerMove(new Position(1, 1));
-                case 'v' ->
-                        new CommandShowVersion();
+                case 'v' -> new CommandShowVersion();
                 case 'Q' -> new CommandQuit(true);
                 case '|' -> {
-                    if(config.isMaster() && config.isWizard()) {
+                    if (config.isMaster() && config.isWizard()) {
                         yield new CommandShowPlayerPosition();
                     } else {
                         yield new CommandIllegal(keyStroke);

@@ -62,6 +62,24 @@ public class RogueScreen extends TerminalScreen {
     }
 
     /**
+     * Returns the number of rows in the terminal.
+     *
+     * @return The row count.
+     */
+    public int getRows() {
+        return getTerminalSize().getRows();
+    }
+
+    /**
+     * Returns the number of columns in the terminal.
+     *
+     * @return The column count.
+     */
+    public int getColumns() {
+        return getTerminalSize().getColumns();
+    }
+
+    /**
      * Writes a string to the specified window at the given coordinates with optional text style.
      *
      * @param windowName The target window name.
@@ -75,6 +93,25 @@ public class RogueScreen extends TerminalScreen {
         Objects.requireNonNull(windowName);
         Objects.requireNonNull(str);
         getWindow(windowName).putString(x, y, str, textGraphics.getForegroundColor(), textGraphics.getBackgroundColor(), sgr);
+    }
+
+    /**
+     * Retrieves a window by its name.
+     *
+     * @param name The window name.
+     * @return The Window object.
+     * @throws IllegalArgumentException If the window is not found.
+     */
+    private Window getWindow(@Nonnull final String name) {
+        final Window window = windows.stream()
+                .filter(w -> w.name.equals(name))
+                .findFirst()
+                .orElse(null);
+        if (window == null) {
+            LOGGER.debug("No window found with name: {}", name);
+            throw new IllegalArgumentException(String.format("No window found with name: %s", name));
+        }
+        return window;
     }
 
     /**
@@ -129,55 +166,6 @@ public class RogueScreen extends TerminalScreen {
     }
 
     /**
-     * Closes the specified window, displays a message, waits for a space key press, and restores the screen buffer.
-     *
-     * @param windowName The window to close.
-     * @param message    The message to display.
-     */
-    public void closeWindow(@Nonnull final String windowName, @Nonnull final String message) {
-        Objects.requireNonNull(windowName);
-        Objects.requireNonNull(message);
-        final Window window = getWindow(windowName);
-        putString(window.x, window.y, message);
-        refresh();
-        waitFor(' ');
-        clear();
-        for (int y = 0; y < getRows(); y++) {
-            for (int x = 0; x < getColumns(); x++) {
-                textGraphics.setCharacter(x, y, buffer[y][x]);
-            }
-        }
-        refresh();
-    }
-
-    /**
-     * Retrieves a window by its name.
-     *
-     * @param name The window name.
-     * @return The Window object.
-     * @throws IllegalArgumentException If the window is not found.
-     */
-    private Window getWindow(@Nonnull final String name) {
-        final Window window = windows.stream()
-                .filter(w -> w.name.equals(name))
-                .findFirst()
-                .orElse(null);
-        if (window == null) {
-            LOGGER.debug("No window found with name: {}", name);
-            throw new IllegalArgumentException(String.format("No window found with name: %s", name));
-        }
-        return window;
-    }
-
-    /**
-     * Clears the screen and refreshes it.
-     */
-    public void clearAndRefresh() {
-        clear();
-        refresh();
-    }
-
-    /**
      * Refreshes the screen with automatic refresh type.
      */
     public void refresh() {
@@ -217,12 +205,25 @@ public class RogueScreen extends TerminalScreen {
     }
 
     /**
-     * Clears a specified row with spaces.
+     * Closes the specified window, displays a message, waits for a space key press, and restores the screen buffer.
      *
-     * @param row The row to clear.
+     * @param windowName The window to close.
+     * @param message    The message to display.
      */
-    public void clearLine(int row) {
-        putString(0, row, " ".repeat(getColumns() - 1));
+    public void closeWindow(@Nonnull final String windowName, @Nonnull final String message) {
+        Objects.requireNonNull(windowName);
+        Objects.requireNonNull(message);
+        final Window window = getWindow(windowName);
+        putString(window.x, window.y, message);
+        refresh();
+        waitFor(' ');
+        clear();
+        for (int y = 0; y < getRows(); y++) {
+            for (int x = 0; x < getColumns(); x++) {
+                textGraphics.setCharacter(x, y, buffer[y][x]);
+            }
+        }
+        refresh();
     }
 
     /**
@@ -234,24 +235,6 @@ public class RogueScreen extends TerminalScreen {
      */
     public void putString(final int x, final int y, final String string) {
         textGraphics.putString(x, y, string);
-    }
-
-    /**
-     * Returns the number of columns in the terminal.
-     *
-     * @return The column count.
-     */
-    public int getColumns() {
-        return getTerminalSize().getColumns();
-    }
-
-    /**
-     * Returns the number of rows in the terminal.
-     *
-     * @return The row count.
-     */
-    public int getRows() {
-        return getTerminalSize().getRows();
     }
 
     /**
@@ -268,6 +251,23 @@ public class RogueScreen extends TerminalScreen {
                 return;
             }
         }
+    }
+
+    /**
+     * Clears the screen and refreshes it.
+     */
+    public void clearAndRefresh() {
+        clear();
+        refresh();
+    }
+
+    /**
+     * Clears a specified row with spaces.
+     *
+     * @param row The row to clear.
+     */
+    public void clearLine(int row) {
+        putString(0, row, " ".repeat(getColumns() - 1));
     }
 
     /**
@@ -422,12 +422,12 @@ public class RogueScreen extends TerminalScreen {
         /**
          * Writes a string to the window's buffer with specified colors and modifiers.
          *
-         * @param x              The x-coordinate.
-         * @param y              The y-coordinate.
-         * @param str            The string to write.
+         * @param x               The x-coordinate.
+         * @param y               The y-coordinate.
+         * @param str             The string to write.
          * @param foregroundColor The text color.
          * @param backgroundColor The background color.
-         * @param modifiers      Optional style modifiers.
+         * @param modifiers       Optional style modifiers.
          */
         void putString(int x, int y, @Nonnull final String str, @Nullable final TextColor foregroundColor,
                        @Nullable TextColor backgroundColor, SGR... modifiers) {

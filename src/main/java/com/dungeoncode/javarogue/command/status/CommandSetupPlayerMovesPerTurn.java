@@ -14,7 +14,6 @@ import java.util.Objects;
  * Initializes the player's move count to 1 and increments it by 1 if the player has the
  * {@link CreatureFlag#ISHASTE} flag, mirroring the command loop setup in the C Rogue source
  * (command.c).
- *
  */
 public class CommandSetupPlayerMovesPerTurn implements CommandEternal {
 

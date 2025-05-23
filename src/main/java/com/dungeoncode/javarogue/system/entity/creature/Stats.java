@@ -34,15 +34,15 @@ public class Stats {
         this.maxHitPoints = maxHitPoints;
     }
 
-    public Stats(@Nonnull final Stats stats){
+    public Stats(@Nonnull final Stats stats) {
         Objects.requireNonNull(stats);
-        this.strength=stats.strength;
-        this.experience=stats.experience;
-        this.level=stats.level;
-        this.armor=stats.armor;
-        this.hitPoints=stats.hitPoints;
-        this.damage=stats.damage;
-        this.maxHitPoints=stats.maxHitPoints;
+        this.strength = stats.strength;
+        this.experience = stats.experience;
+        this.level = stats.level;
+        this.armor = stats.armor;
+        this.hitPoints = stats.hitPoints;
+        this.damage = stats.damage;
+        this.maxHitPoints = stats.maxHitPoints;
     }
 
     public int getStrength() {

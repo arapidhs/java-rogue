@@ -68,7 +68,7 @@ public class CommandIllegal extends CommandParameterized<KeyStroke> {
      * @param keyStroke The keystroke to convert.
      * @return A string representation of the keystroke.
      */
-    private String unctrl (@Nonnull final KeyStroke keyStroke) {
+    private String unctrl(@Nonnull final KeyStroke keyStroke) {
         String com = "";
         if (keyStroke.isCtrlDown()) {
             com = "^";

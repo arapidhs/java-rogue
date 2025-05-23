@@ -160,7 +160,7 @@ public class Templates {
      *
      * @param objectType The {@link ObjectType} to match, or null to retrieve templates with null
      *                   {@link ItemSubtype}.
-     * @param <T> The template type extending {@link Template}.
+     * @param <T>        The template type extending {@link Template}.
      * @return An unmodifiable set of matching templates, or empty if none found.
      */
     @SuppressWarnings("unchecked")

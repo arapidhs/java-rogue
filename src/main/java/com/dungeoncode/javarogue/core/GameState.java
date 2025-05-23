@@ -18,11 +18,13 @@ import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
-import com.dungeoncode.javarogue.system.world.*;
+import com.dungeoncode.javarogue.system.world.Level;
+import com.dungeoncode.javarogue.system.world.Place;
+import com.dungeoncode.javarogue.system.world.Room;
+import com.dungeoncode.javarogue.system.world.RoomFlag;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
-import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -31,7 +33,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class GameState {
@@ -86,7 +91,7 @@ public class GameState {
         this.initializer = initializer;
         this.messageSystem = messageSystem;
         this.screen = screen;
-        this.rogueFactory=new RogueFactory(config,rogueRandom);
+        this.rogueFactory = new RogueFactory(config, rogueRandom);
         phaseActivity = new HashMap<>();
         init();
     }
@@ -233,16 +238,16 @@ public class GameState {
         return keyStroke;
     }
 
-    public Monster newMonster(@Nonnull final MonsterType monsterType, @Nonnull Position monsterPosition){
+    public Monster newMonster(@Nonnull final MonsterType monsterType, @Nonnull Position monsterPosition) {
         Objects.requireNonNull(monsterType);
         Objects.requireNonNull(monsterPosition);
 
         final Monster monster = rogueFactory.monster(monsterType, levelNum);
         currentLevel.addMonster(monster);
 
-        final int mx=monsterPosition.getX();
-        final int my=monsterPosition.getY();
-        monster.setPosition(mx,my);
+        final int mx = monsterPosition.getX();
+        final int my = monsterPosition.getY();
+        monster.setPosition(mx, my);
 
         final Place place = getCurrentLevel().getPlaceAt(mx, my);
         assert place != null;
@@ -252,10 +257,59 @@ public class GameState {
         final Room room = roomIn(mx, my);
         monster.setRoom(room);
 
-        if (player.isWearing(RingType.R_AGGR)){
-            runTo(monster.getPosition());;
+        if (player.isWearing(RingType.R_AGGR)) {
+            runTo(monster.getPosition());
         }
         return monster;
+    }
+
+    public Level getCurrentLevel() {
+        return currentLevel;
+    }
+
+    @Nullable
+    public Room roomIn(final int x, final int y) {
+        final Room room = currentLevel.roomIn(x, y);
+        if (room == null) {
+            messageSystem.msg(String.format("in some bizarre place (%d, %d)", x, y));
+            LOGGER.debug("in some bizarre place ({}, {})", x, y);
+            if (config.isMaster()) {
+                abort();
+            }
+        }
+        return room;
+    }
+
+    /**
+     * Sets a monster at the specified position to run toward a destination, enabling its
+     * running state and clearing its held state. If no monster is found and master mode is
+     * enabled, logs a debug message. The destination is determined by {@link #findDest(Monster)}.
+     * <p>
+     * Equivalent to the <code>runto</code> function in the C Rogue source (chase.c).
+     * </p>
+     *
+     * @param monsterPosition The position of the monster to set running.
+     * @throws NullPointerException if monsterPosition is null.
+     */
+    public void runTo(@Nonnull final Position monsterPosition) {
+        Objects.requireNonNull(monsterPosition);
+        final int mx = monsterPosition.getX();
+        final int my = monsterPosition.getY();
+        final Place place = currentLevel.getPlaceAt(mx, my);
+        assert place != null;
+        final Monster monster = place.getMonster();
+        if (monster == null && config.isMaster()) {
+            messageSystem.msg(String.format("couldn't find monster in runto at (%d,%d)", mx, my));
+        } else if (monster != null) {
+            monster.addFlag(CreatureFlag.ISRUN);
+            monster.removeFlag(CreatureFlag.ISHELD);
+            monster.setDestination(findDest(monster));
+        }
+    }
+
+    private void abort() {
+        LOGGER.debug("Aborting java-rogue..");
+        System.exit(1);
     }
 
     /**
@@ -306,33 +360,6 @@ public class GameState {
     }
 
     /**
-     * Sets a monster at the specified position to run toward a destination, enabling its
-     * running state and clearing its held state. If no monster is found and master mode is
-     * enabled, logs a debug message. The destination is determined by {@link #findDest(Monster)}.
-     * <p>
-     * Equivalent to the <code>runto</code> function in the C Rogue source (chase.c).
-     * </p>
-     *
-     * @param monsterPosition The position of the monster to set running.
-     * @throws NullPointerException if monsterPosition is null.
-     */
-    public void runTo(@Nonnull final Position monsterPosition){
-        Objects.requireNonNull(monsterPosition);
-        final int mx=monsterPosition.getX();
-        final int my=monsterPosition.getY();
-        final Place place = currentLevel.getPlaceAt(mx, my);
-        assert place!=null;
-        final Monster monster=place.getMonster();
-        if(monster==null && config.isMaster()){
-            messageSystem.msg(String.format("couldn't find monster in runto at (%d,%d)",mx,my));
-        } else if(monster!=null){
-            monster.addFlag(CreatureFlag.ISRUN);
-            monster.removeFlag(CreatureFlag.ISHELD);
-            monster.setDestination(findDest(monster));
-        }
-    }
-
-    /**
      * Determines if the player can see the specified monster, considering blindness,
      * invisibility, proximity, and room visibility.
      * <p>
@@ -364,21 +391,51 @@ public class GameState {
         final int mx = monster.getX();
         final int my = monster.getY();
         final int dist = RogueUtils.dist(mx, my, px, py);
-        if(dist<config.getLampDist()){
-            final Place placepm = currentLevel.getPlaceAt(px,my);
-            final Place placemp = currentLevel.getPlaceAt(mx,py);
+        if (dist < config.getLampDist()) {
+            final Place placepm = currentLevel.getPlaceAt(px, my);
+            final Place placemp = currentLevel.getPlaceAt(mx, py);
             assert placemp != null;
             assert placepm != null;
             return my == py || mx == px || placepm.isStepOk() || placemp.isStepOk();
         }
-        if(!Objects.equals(monster.getRoom(),player.getRoom())){
+        if (!Objects.equals(monster.getRoom(), player.getRoom())) {
             return false;
         }
         return !monster.getRoom().hasFlag(RoomFlag.DARK);
     }
 
+    public void setCurrentLevel(Level currentLevel) {
+        this.currentLevel = currentLevel;
+        this.player.setCurrentLevel(currentLevel.getLevelNum());
+    }
+
     public MessageSystem getMessageSystem() {
         return messageSystem;
+    }
+
+    /**
+     * Grants an item to a monster's inventory if the current level is at or above the maximum level
+     * and a random check based on the monster's carry probability succeeds. Creates a new inventory
+     * with the configured maximum pack size and adds a random item via {@link #newThing()}.
+     * <p>
+     * Equivalent to item assignment logic in the C Rogue source (e.g., <code>give_pack</code> in monsters.c).
+     * </p>
+     *
+     * @param monster  The {@link Monster} to potentially grant an item.
+     * @param level    The current dungeon level.
+     * @param maxLevel The maximum level required for item assignment.
+     * @throws NullPointerException if monster is null.
+     */
+    public void givePack(@Nonnull final Monster monster, final int level, final int maxLevel) {
+        Objects.requireNonNull(monster);
+        final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(monster.getMonsterType());
+        assert monsterTemplate != null;
+        if (level >= maxLevel) {
+            if (rogueRandom.rnd(100) < monsterTemplate.getCarryProbability()) {
+                monster.setInventory(new Inventory(config.getMaxPack()));
+                monster.getInventory().getItems().add(newThing());
+            }
+        }
     }
 
     /**
@@ -394,52 +451,52 @@ public class GameState {
      * @return A newly created {@link Item}.
      */
     @Nonnull
-    public Item newThing(){
+    public Item newThing() {
         Item item = null;
         ObjectType objectType;
-        if(noFood>3){
-            objectType=ObjectType.FOOD;
-        }else{
-            objectType=pickOne(null).objectType();
+        if (noFood > 3) {
+            objectType = ObjectType.FOOD;
+        } else {
+            objectType = pickOne(null).objectType();
         }
-        switch (objectType){
+        switch (objectType) {
             case POTION -> {
                 final PotionType potionType = (PotionType) pickOne(ObjectType.POTION).itemSubType();
                 assert potionType != null;
-                item=rogueFactory.potion(potionType);
+                item = rogueFactory.potion(potionType);
             }
             case SCROLL -> {
                 final ScrollType scrollType = (ScrollType) pickOne(ObjectType.SCROLL).itemSubType();
                 assert scrollType != null;
-                item=rogueFactory.scroll(scrollType);
+                item = rogueFactory.scroll(scrollType);
             }
-            case FOOD ->{
+            case FOOD -> {
                 setNoFood(0);
-                item=rogueFactory.food();
+                item = rogueFactory.food();
             }
             case WEAPON -> {
                 final WeaponType weaponType = (WeaponType) pickOne(ObjectType.WEAPON).itemSubType();
                 assert weaponType != null;
-                item=rogueFactory.weapon(weaponType);
+                item = rogueFactory.weapon(weaponType);
             }
             case ARMOR -> {
                 final ArmorType armorType = (ArmorType) pickOne(ObjectType.ARMOR).itemSubType();
                 assert armorType != null;
-                item=rogueFactory.armor(armorType);
+                item = rogueFactory.armor(armorType);
             }
             case RING -> {
                 final RingType ringType = (RingType) pickOne(ObjectType.RING).itemSubType();
                 assert ringType != null;
-                item=rogueFactory.ring(ringType);
+                item = rogueFactory.ring(ringType);
             }
             case ROD -> {
                 final RodType rodType = (RodType) pickOne(ObjectType.ROD).itemSubType();
                 assert rodType != null;
-                item=rogueFactory.rod(rodType);
+                item = rogueFactory.rod(rodType);
             }
             default -> {
-                LOGGER.debug("Picked a bad kind of object {}",objectType);
-                if(config.isMaster()){
+                LOGGER.debug("Picked a bad kind of object {}", objectType);
+                if (config.isMaster()) {
                     messageSystem.msg("Picked a bad kind of object");
                     screen.waitFor(' ');
                 }
@@ -447,31 +504,6 @@ public class GameState {
         }
         assert item != null;
         return item;
-    }
-
-    /**
-     * Grants an item to a monster's inventory if the current level is at or above the maximum level
-     * and a random check based on the monster's carry probability succeeds. Creates a new inventory
-     * with the configured maximum pack size and adds a random item via {@link #newThing()}.
-     * <p>
-     * Equivalent to item assignment logic in the C Rogue source (e.g., <code>give_pack</code> in monsters.c).
-     * </p>
-     *
-     * @param monster The {@link Monster} to potentially grant an item.
-     * @param level The current dungeon level.
-     * @param maxLevel The maximum level required for item assignment.
-     * @throws NullPointerException if monster is null.
-     */
-    public void givePack(@Nonnull final Monster monster, final int level, final int maxLevel){
-        Objects.requireNonNull(monster);
-        final MonsterTemplate monsterTemplate=Templates.getMonsterTemplate(monster.getMonsterType());
-        assert monsterTemplate != null;
-        if(level >= maxLevel) {
-            if (rogueRandom.rnd(100) < monsterTemplate.getCarryProbability()) {
-                monster.setInventory(new Inventory(config.getMaxPack()));
-                monster.getInventory().getItems().add(newThing());
-            }
-        }
     }
 
     /**
@@ -487,7 +519,7 @@ public class GameState {
      * @param objectType The {@link ObjectType} to match, or null to select from all
      *                   {@link ObjectInfoTemplate} instances with null {@link ItemSubtype}.
      * @return A {@link RogueFactory.PickResult} with the selected {@link ObjectType},
-     *         {@link ItemSubtype}, bad pick status, message, and checked templates.
+     * {@link ItemSubtype}, bad pick status, message, and checked templates.
      * @throws IllegalStateException if no templates with positive probability exist.
      */
     @Nonnull
@@ -537,24 +569,6 @@ public class GameState {
                 }
             }
         }
-    }
-
-    @Nullable
-    public Room roomIn(final int x, final int y) {
-        final Room room = currentLevel.roomIn(x, y);
-        if (room == null) {
-            messageSystem.msg(String.format("in some bizarre place (%d, %d)", x, y));
-            LOGGER.debug("in some bizarre place ({}, {})", x, y);
-            if (config.isMaster()) {
-                abort();
-            }
-        }
-        return room;
-    }
-
-    private void abort() {
-        LOGGER.debug("Aborting java-rogue..");
-        System.exit(1);
     }
 
     public int goldCalc(final int level) {
@@ -830,15 +844,6 @@ public class GameState {
 
     public void setDeathSource(final DeathSource deathSource) {
         this.deathSource = deathSource;
-    }
-
-    public Level getCurrentLevel() {
-        return currentLevel;
-    }
-
-    public void setCurrentLevel(Level currentLevel) {
-        this.currentLevel = currentLevel;
-        this.player.setCurrentLevel(currentLevel.getLevelNum());
     }
 
     public RogueScreen getScreen() {

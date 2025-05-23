@@ -78,20 +78,20 @@ public abstract class Creature extends Entity {
         this.room = room;
     }
 
-    public void setInventory(Inventory inventory) {
-        this.inventory = inventory;
-    }
-
     public Inventory getInventory() {
         return inventory;
     }
 
-    public void setCreatureFlags(EnumSet<CreatureFlag> creatureFlags) {
-        this.creatureFlags = creatureFlags;
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
     }
 
     public EnumSet<CreatureFlag> getCreatureFlags() {
         return creatureFlags;
+    }
+
+    public void setCreatureFlags(EnumSet<CreatureFlag> creatureFlags) {
+        this.creatureFlags = creatureFlags;
     }
 
     public boolean isTurn() {

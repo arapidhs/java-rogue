@@ -27,7 +27,7 @@ public class Monster extends Creature {
         final MonsterTemplate template = Templates.getMonsterTemplate(monsterType);
         assert template != null;
         this.symbolType = template.getSymbolType();
-        this.disguiseSymbolType=symbolType;
+        this.disguiseSymbolType = symbolType;
     }
 
     public MonsterType getMonsterType() {

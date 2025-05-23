@@ -38,14 +38,14 @@ public class MonsterTemplate extends AbstractTemplate {
         Objects.requireNonNull(stats);
 
         this.id = id;
-        this.monsterType=monsterType;
+        this.monsterType = monsterType;
         this.name = name;
         this.carryProbability = carryProbability;
         this.creatureFlags = creatureFlags == null
                 ? EnumSet.noneOf(CreatureFlag.class)
                 : EnumSet.copyOf(creatureFlags);
         this.stats = stats;
-        this.symbolType=symbolType;
+        this.symbolType = symbolType;
     }
 
     public long getId() {

@@ -5,12 +5,7 @@ import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.Armor;
-import com.dungeoncode.javarogue.system.entity.item.ArmorType;
-import com.dungeoncode.javarogue.system.entity.item.Food;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
-import com.dungeoncode.javarogue.system.entity.item.WeaponType;
+import com.dungeoncode.javarogue.system.entity.item.*;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;

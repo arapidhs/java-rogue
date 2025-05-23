@@ -87,39 +87,41 @@ public class Config {
 
     private final EnumSet<PlayerFlag> initialPlayerFlags;
     private final Stats initialPlayerStats;
-    private boolean messageSave;
     private final boolean messageAllowLowercase;
     private final boolean messageAllowEscape;
-
     /**
      * Equivalent of MAXCOLS.
      */
     private final int levelMaxWidth;
-
     /**
      * Equivalent of MAXLINES.
      */
     private final int levelMaxHeight;
-
     private final int maxPack;
     private final int foodLeft;
     private final String homeDirName;
     private final int maxScrollItemGeneratedNameLength;
     private final int minArmorClass;
-
     /**
      * Say which way items are being used.
      * <p>Equivalent of:
      * <pre>bool inv_describe = TRUE;</pre>
      */
     private final boolean inventoryDescribe;
-
     private final int maxRooms;
     private final int maxGoneRooms;
     private final int maxPassages;
     private final int amuletLevel;
     private final boolean statMsg;
     private final int statLine;
+    private final String releaseVersion;
+    /**
+     * The squared distance threshold for proximity checks,
+     * defining the range within which monsters can react to the player (e.g., chasing or visibility).
+     * Mirrors the <code>LAMPDIST</code> constant in the C Rogue source (set to 3).
+     */
+    private final int lampDist;
+    private boolean messageSave;
     private boolean master;
     private boolean wizard;
     private boolean terse;
@@ -136,14 +138,6 @@ public class Config {
     private int optionsSeed;
     private boolean scoring;
     private boolean allowMultipleScores;
-    private final String releaseVersion;
-
-    /**
-     * The squared distance threshold for proximity checks,
-     * defining the range within which monsters can react to the player (e.g., chasing or visibility).
-     * Mirrors the <code>LAMPDIST</code> constant in the C Rogue source (set to 3).
-     */
-    private final int lampDist;
 
     public Config() {
         this(null);
@@ -195,8 +189,8 @@ public class Config {
         this.amuletLevel = DEFAULT_AMULET_LEVEL;
         this.statMsg = DEFAULT_STATUS_AS_MESSAGE;
         this.statLine = this.terminalRows - 1;
-        this.lampDist=DEFAULT_LEVEL_LAM_DIST;
-        this.releaseVersion =RELEASE_VERSION;
+        this.lampDist = DEFAULT_LEVEL_LAM_DIST;
+        this.releaseVersion = RELEASE_VERSION;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -241,6 +235,10 @@ public class Config {
 
     public boolean isMaster() {
         return master;
+    }
+
+    public void setMaster(boolean master) {
+        this.master = master;
     }
 
     public boolean isWizard() {
@@ -382,6 +380,10 @@ public class Config {
         return messageSave;
     }
 
+    public void setMessageSave(boolean messageSave) {
+        this.messageSave = messageSave;
+    }
+
     public boolean isMessageAllowEscape() {
         return messageAllowEscape;
     }
@@ -448,14 +450,6 @@ public class Config {
 
     public int getLampDist() {
         return lampDist;
-    }
-
-    public void setMessageSave(boolean messageSave) {
-        this.messageSave = messageSave;
-    }
-
-    public void setMaster(boolean master) {
-        this.master = master;
     }
 
     public String getReleaseVersion() {

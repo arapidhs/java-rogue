@@ -5,7 +5,7 @@ import picocli.CommandLine;
 public class Options {
 
     @CommandLine.Option(names = "-debug", description = "Debug mode used to override master and wizard modes.")
-    public Boolean debug=false;
+    public Boolean debug = false;
 
     @CommandLine.Option(names = "-master", description = "Enable master switch (true/false)")
     public Boolean master = false;
@@ -62,5 +62,4 @@ public class Options {
 
     @CommandLine.Option(names = "-seed", description = "Dungeon seed for RNG")
     public Integer seed;
-     ;
 }

@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.system.world;
 
 import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.Entity;
 import com.dungeoncode.javarogue.system.entity.Position;
-import com.dungeoncode.javarogue.system.SymbolType;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;

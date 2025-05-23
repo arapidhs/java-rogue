@@ -15,7 +15,7 @@ import java.util.Objects;
  * where actions are triggered in specific turn stages (main.c).
  * </p>
  */
-public abstract class AbstractCommand implements Command  {
+public abstract class AbstractCommand implements Command {
 
     private final Phase phase;
 

@@ -93,12 +93,28 @@ public class Player extends Creature {
      * @return True if the player is wearing a ring of the specified type, false otherwise.
      * @throws NullPointerException if ringType is null.
      */
-    public boolean isWearing(@Nonnull RingType ringType){
+    public boolean isWearing(@Nonnull RingType ringType) {
         Objects.requireNonNull(ringType);
-        if(getRightRing()!=null && getRightRing().getItemSubType().equals(ringType)){
+        if (getRightRing() != null && getRightRing().getItemSubType().equals(ringType)) {
             return true;
         }
         return getLeftRing() != null && getLeftRing().getItemSubType().equals(ringType);
+    }
+
+    public Ring getRightRing() {
+        return rightRing;
+    }
+
+    public void setRightRing(final Ring rightRing) {
+        this.rightRing = rightRing;
+    }
+
+    public Ring getLeftRing() {
+        return leftRing;
+    }
+
+    public void setLeftRing(final Ring leftRing) {
+        this.leftRing = leftRing;
     }
 
     public boolean hasFlag(@Nonnull final PlayerFlag playerFlag) {
@@ -123,22 +139,6 @@ public class Player extends Creature {
 
     public void setCurrentArmor(@Nullable final Armor currentArmor) {
         this.currentArmor = currentArmor;
-    }
-
-    public Ring getRightRing() {
-        return rightRing;
-    }
-
-    public void setRightRing(final Ring rightRing) {
-        this.rightRing = rightRing;
-    }
-
-    public Ring getLeftRing() {
-        return leftRing;
-    }
-
-    public void setLeftRing(final Ring leftRing) {
-        this.leftRing = leftRing;
     }
 
     public Weapon getCurrentWeapon() {

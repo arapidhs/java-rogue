@@ -4,11 +4,11 @@ import com.dungeoncode.javarogue.command.core.CommandParameterized;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
-import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.main.Rogue;
-import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.RogueScreen;
+import com.dungeoncode.javarogue.system.ScoreManager;
+import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 
@@ -20,7 +20,7 @@ import java.util.Objects;
  * <code>quit</code> function. Exits with a score display if confirmed, or restores
  * the game state if canceled.
  * <p>
- *  Equivalent of <pre>quit(int sig) from main.c</pre>
+ * Equivalent of <pre>quit(int sig) from main.c</pre>
  */
 public class CommandQuit extends CommandParameterized<Boolean> {
 

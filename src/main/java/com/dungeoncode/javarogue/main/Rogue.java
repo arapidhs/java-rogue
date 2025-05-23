@@ -1,16 +1,16 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.*;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.RogueScreen;
 import com.dungeoncode.javarogue.system.ScoreManager;
+import com.dungeoncode.javarogue.system.TombstoneRenderer;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.system.initializer.DeathSimulationInitializer;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.template.KillTypeTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
-import com.dungeoncode.javarogue.system.MessageSystem;
-import com.dungeoncode.javarogue.system.RogueScreen;
-import com.dungeoncode.javarogue.system.TombstoneRenderer;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
@@ -45,9 +45,9 @@ public class Rogue {
     private static final String PASSWORD_SALT = "mT";
     private static final String PASSWORD_HASH = "62851374aa4abd12095d7246ae1e3c273ab5619e9967be902dc0847047d333ae";
 
-    private static final String PATH_FONT_IBM_VGA_8x16= "/fonts/IBM-VGA-8x16/Ac437_IBM_VGA_8x16.ttf";
-    private static final String PATH_FONT_MODERN_TERMINUS="/fonts/modern-terminus/TerminusTTF-4.38.2.ttf";
-    private static final String PATH_ROGUE_ICON_64="/icons/icon-java-rogue-64.png";
+    private static final String PATH_FONT_IBM_VGA_8x16 = "/fonts/IBM-VGA-8x16/Ac437_IBM_VGA_8x16.ttf";
+    private static final String PATH_FONT_MODERN_TERMINUS = "/fonts/modern-terminus/TerminusTTF-4.38.2.ttf";
+    private static final String PATH_ROGUE_ICON_64 = "/icons/icon-java-rogue-64.png";
 
     public static BufferedImage ICON_ROGUE_64 = null;
 
@@ -60,7 +60,7 @@ public class Rogue {
         MessageSystem messageSystem;
         try {
 
-            ICON_ROGUE_64= ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
+            ICON_ROGUE_64 = ImageIO.read(Objects.requireNonNull(Rogue.class.getResourceAsStream(PATH_ROGUE_ICON_64)));
 
             final InputStream ibmVgaFontStream = Rogue.class.getResourceAsStream(PATH_FONT_IBM_VGA_8x16);
             assert ibmVgaFontStream != null;
@@ -109,7 +109,7 @@ public class Rogue {
             // override master and wizard in debug mode
             if (options.debug) {
                 config.setMaster(true);
-                config.setWizard(true,rogueRandom);
+                config.setWizard(true, rogueRandom);
             }
 
             if (options.showScores) {

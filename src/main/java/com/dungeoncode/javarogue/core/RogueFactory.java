@@ -24,43 +24,9 @@ import java.util.*;
  */
 public class RogueFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RogueFactory.class);
-
-    private static final int DEFAULT_ITEM_ARMOR=11;
-    private static final int DEFAULT_ITEM_COUNT=1;
-    private static final int DEFAULT_ITEM_GROUP=0;
-    private static final String DEFAULT_ITEM_WIELD_DAMAGE="0x0";
-    private static final String DEFAULT_ITEM_THROW_DAMAGE="0x0";
-
-    private static final String FORM_WAND = "wand";
-    private static final String FORM_STAFF = "staff";
-
-    private static final String SYLLABLES_JSON_PATH = "/data/syllables.json";
-    private static final String COLORS_JSON_PATH = "/data/colors.json";
-    private static final String STONES_JSON_PATH = "/data/stones.json";
-    private static final String METALS_JSON_PATH = "/data/metals.json";
-    private static final String WOODS_JSON_PATH = "/data/woods.json";
-
-    /**
-     * List of possible object types that can be randomly selected, mirroring the
-     * thing_list in the C Rogue source.
-     */
-    private static final ObjectType[] THING_LIST = {
-            ObjectType.POTION,
-            ObjectType.SCROLL,
-            ObjectType.RING,
-            ObjectType.ROD,
-            ObjectType.FOOD,
-            ObjectType.WEAPON,
-            ObjectType.ARMOR,
-            ObjectType.STAIRS,
-            ObjectType.GOLD,
-            ObjectType.AMULET
-    };
-
     /**
      * An ordered list of {@link MonsterType} values representing monsters in approximate order of
-     * increasing difficulty for dungeon levels. Used by {@link #randMonster(boolean,int)} to select
+     * increasing difficulty for dungeon levels. Used by {@link #randMonster(boolean, int)} to select
      * monsters for standard level generation, favoring meaner monsters at higher levels.
      * Mirrors the <code>lvl_mons</code> array in the C Rogue source.
      */
@@ -92,10 +58,9 @@ public class RogueFactory {
             MonsterType.JABBERWOCK,
             MonsterType.DRAGON
     );
-
     /**
      * An ordered list of {@link MonsterType} values representing monsters available for wandering
-     * encounters, with gaps for excluded types. Used by {@link #randMonster(boolean,int)} to select
+     * encounters, with gaps for excluded types. Used by {@link #randMonster(boolean, int)} to select
      * monsters for wandering spawns, favoring a subset of monsters. Mirrors the
      * <code>wand_mons</code> array in the C Rogue source.
      */
@@ -121,7 +86,35 @@ public class RogueFactory {
             MonsterType.GRIFFIN,
             MonsterType.JABBERWOCK
     );
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(RogueFactory.class);
+    private static final int DEFAULT_ITEM_ARMOR = 11;
+    private static final int DEFAULT_ITEM_COUNT = 1;
+    private static final int DEFAULT_ITEM_GROUP = 0;
+    private static final String DEFAULT_ITEM_WIELD_DAMAGE = "0x0";
+    private static final String DEFAULT_ITEM_THROW_DAMAGE = "0x0";
+    private static final String FORM_WAND = "wand";
+    private static final String FORM_STAFF = "staff";
+    private static final String SYLLABLES_JSON_PATH = "/data/syllables.json";
+    private static final String COLORS_JSON_PATH = "/data/colors.json";
+    private static final String STONES_JSON_PATH = "/data/stones.json";
+    private static final String METALS_JSON_PATH = "/data/metals.json";
+    private static final String WOODS_JSON_PATH = "/data/woods.json";
+    /**
+     * List of possible object types that can be randomly selected, mirroring the
+     * thing_list in the C Rogue source.
+     */
+    private static final ObjectType[] THING_LIST = {
+            ObjectType.POTION,
+            ObjectType.SCROLL,
+            ObjectType.RING,
+            ObjectType.ROD,
+            ObjectType.FOOD,
+            ObjectType.WEAPON,
+            ObjectType.ARMOR,
+            ObjectType.STAIRS,
+            ObjectType.GOLD,
+            ObjectType.AMULET
+    };
     private static final int DEFAULT_WEAPONS_GROUP = 2;
 
     private final Config config;
@@ -162,7 +155,7 @@ public class RogueFactory {
     }
 
     public void init() {
-        weaponsGroup=DEFAULT_WEAPONS_GROUP;
+        weaponsGroup = DEFAULT_WEAPONS_GROUP;
         itemSubTypeNames.clear();
         ringWorthMap.clear();
         rodFormData.clear();
@@ -175,23 +168,154 @@ public class RogueFactory {
     }
 
     /**
-     * Selects a random object type appropriate for the given level, excluding the amulet
-     * unless the level is at or above the configured amulet level.
-     * <p>
-     * Equivalent to the <code>rnd_thing</code> function in the C Rogue source (things.c).
-     * </p>
-     *
-     * @param level The current dungeon level.
-     * @return A randomly selected {@link ObjectType}.
+     * Initializes random names for each ScrollType by generating combinations of syllables.
+     * ItemData are stored in the itemSubTypeNames map for ScrollType subtypes.
      */
-    public ObjectType rndThing(final int level) {
-        final int i;
-        if (level >= config.getAmuletLevel()) {
-            i = rogueRandom.rnd(THING_LIST.length);
-        } else {
-            i = rogueRandom.rnd(THING_LIST.length - 1);
+    private void initializeScrollNames() {
+        try (InputStream in = getClass().getResourceAsStream(SYLLABLES_JSON_PATH)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final List<String> syllables = mapper.readValue(
+                    in, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+
+            // Generate a random name for each ScrollType
+            for (ScrollType scrollType : ScrollType.values()) {
+                StringBuilder nameBuilder = new StringBuilder();
+                // 2 to 4 words, per C code
+                int numWords = rogueRandom.rnd(3) + 2;
+
+                while (numWords-- > 0) {
+                    // 1 to 3 syllables per word
+                    int numSyllables = rogueRandom.rnd(3) + 1;
+                    while (numSyllables-- > 0) {
+                        // Randomly select a syllable
+                        String syllable = syllables.get(rogueRandom.rnd(syllables.size()));
+                        // Check if adding syllable exceeds max length (including space)
+                        if (nameBuilder.length() + syllable.length() + 1 > maxScrollGeneratedNameLength) {
+                            break;
+                        }
+                        nameBuilder.append(syllable);
+                    }
+                    // Add space between words, except for the last word
+                    if (numWords > 0) {
+                        nameBuilder.append(' ');
+                    }
+                }
+
+                // Trim trailing space and ensure name fits within max length
+                String name = nameBuilder.toString().trim();
+                if (name.length() > maxScrollGeneratedNameLength) {
+                    name = name.substring(0, maxScrollGeneratedNameLength).trim();
+                }
+
+                // Assign the generated name to the ScrollType
+                setName(scrollType, name);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(String.format(Messages.ERROR_FAILED_LOAD_SYLLABLES, SYLLABLES_JSON_PATH), e);
         }
-        return THING_LIST[i];
+    }
+
+    /**
+     * Initializes unique random color names for each PotionType, ensuring no color is reused.
+     * ItemData are stored in the itemSubTypeNames map for PotionType subtypes.
+     */
+    private void initializePotionNames() {
+        try (InputStream in = getClass().getResourceAsStream(COLORS_JSON_PATH)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final List<String> colors = mapper.readValue(
+                    in, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            final Set<String> setColors = new HashSet<>(colors);
+            final List<String> availableColors = new ArrayList<>(setColors);
+
+            // Assign a unique color to each PotionType
+            for (PotionType potionType : PotionType.values()) {
+                // Randomly select an available color
+                int index = rogueRandom.rnd(availableColors.size());
+                final String color = availableColors.remove(index);
+                // Assign the color to the PotionType
+                setName(potionType, color);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(String.format(Messages.ERROR_FAILED_TO_LOAD_DATA, COLORS_JSON_PATH), e);
+        }
+    }
+
+    /**
+     * Initializes random stone names and updated worth for each RingType, ensuring no stone is reused.
+     * Stores names in itemSubTypeNames and worth in ringWorth.
+     */
+    private void initializeRings() {
+        try (InputStream in = getClass().getResourceAsStream(STONES_JSON_PATH)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final List<Stone> stones = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(List.class, Stone.class));
+            final List<Stone> availableStones = new ArrayList<>(stones);
+
+            for (RingType ringType : RingType.values()) {
+                int index = rogueRandom.rnd(availableStones.size());
+                final Stone stone = availableStones.remove(index);
+                setName(ringType, stone.name);
+                final RingInfoTemplate template = (RingInfoTemplate) Templates.findTemplateBySubType(ringType);
+                ringWorthMap.put(ringType, template.getWorth() + stone.value);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(String.format(Messages.ERROR_FAILED_TO_LOAD_DATA, STONES_JSON_PATH), e);
+        }
+    }
+
+    /**
+     * Initializes random forms (wand or staff) and materials (metal or wood) for each RodType, ensuring no material is reused.
+     * Stores form and material in rodFormData map.
+     */
+    private void initializeRodMaterials() {
+        try (final InputStream metalIn = getClass().getResourceAsStream(METALS_JSON_PATH);
+             final InputStream woodIn = getClass().getResourceAsStream(WOODS_JSON_PATH)) {
+            final ObjectMapper mapper = new ObjectMapper();
+            final List<String> metals = mapper.readValue(
+                    metalIn, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            final List<String> woods = mapper.readValue(
+                    woodIn, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
+            final List<String> availableMetals = new ArrayList<>(metals);
+            final List<String> availableWoods = new ArrayList<>(woods);
+
+            for (RodType rodType : RodType.values()) {
+                RodForm form;
+                String material;
+                while (true) {
+                    if (rogueRandom.rnd(2) == 0 && !availableMetals.isEmpty()) {
+                        // Select wand with random metal
+                        int index = rogueRandom.rnd(availableMetals.size());
+                        material = availableMetals.remove(index);
+                        form = RodForm.WAND;
+                        break;
+                    } else if (!availableWoods.isEmpty()) {
+                        // Select staff with random wood
+                        int index = rogueRandom.rnd(availableWoods.size());
+                        material = availableWoods.remove(index);
+                        form = RodForm.STAFF;
+                        break;
+                    }
+                }
+                rodFormData.put(rodType, new RogueFactory.RodFormData(form, material));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(Messages.ERROR_FAILED_TO_LOAD_DATA_FROM_JSON, e);
+        }
+    }
+
+    /**
+     * Sets a custom name for the specified item subtype.
+     *
+     * @param itemSubType The item subtype to name (e.g., ScrollType.IDENTIFY_SCROLL).
+     * @param name        The custom name to assign.
+     * @throws IllegalArgumentException If the name is null or empty.
+     */
+    private void setName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nonnull final String name) {
+        Objects.requireNonNull(itemSubType);
+        Objects.requireNonNull(name);
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException(Messages.ERROR_EMPTY_NAME);
+        }
+        itemSubTypeNames.put(itemSubType, name);
     }
 
     /**
@@ -206,7 +330,7 @@ public class RogueFactory {
      * @param objectType The {@link ObjectType} to match, or null to select from all
      *                   {@link ObjectInfoTemplate} instances with null {@link ItemSubtype}.
      * @return A {@link PickResult} with the selected {@link ObjectType}, {@link ItemSubtype},
-     *         bad pick status, formatted message, and checked templates (non-empty only for bad picks).
+     * bad pick status, formatted message, and checked templates (non-empty only for bad picks).
      * @throws IllegalStateException if no templates with positive probability exist.
      */
     @Nonnull
@@ -259,7 +383,7 @@ public class RogueFactory {
      * </p>
      *
      * @param wander True to select from wandering monsters, false for level monsters.
-     * @param level The current dungeon level, influencing monster selection.
+     * @param level  The current dungeon level, influencing monster selection.
      * @return A randomly selected {@link MonsterType}.
      */
     @Nonnull
@@ -279,35 +403,6 @@ public class RogueFactory {
     }
 
     /**
-     * Creates and initializes a {@link Weapon} of the specified {@link WeaponType}, setting
-     * its count and group based on type and flags. Daggers receive 2-5 units, weapons with
-     * {@link ItemFlag#ISMANY} receive 8-15 units with a unique group ID, and others receive
-     * 1 unit with no group. Increments the weapons group counter for stackable weapons.
-     * <p>
-     * Equivalent to weapon initialization logic in the C Rogue source (things.c).
-     * </p>
-     *
-     * @param weaponType The {@link WeaponType} to create.
-     * @return The initialized {@link Weapon}.
-     * @throws NullPointerException if weaponType is null.
-     */
-    public Weapon initWeapon(@Nonnull final WeaponType weaponType) {
-        Objects.requireNonNull(weaponType);
-        final Weapon weapon = new Weapon(weaponType);
-        if (WeaponType.DAGGER.equals(weapon.getWeaponType())) {
-            weapon.setCount(rogueRandom.rnd(4) + 2);
-            weapon.setGroup(weaponsGroup++);
-        } else if (weapon.hasFlag(ItemFlag.ISMANY)) {
-            weapon.setCount(rogueRandom.rnd(8) + 8);
-            weapon.setGroup(weaponsGroup++);
-        } else {
-            weapon.setCount(1);
-            weapon.setGroup(0);
-        }
-        return weapon;
-    }
-
-    /**
      * Creates and initializes a new {@link Monster} of the specified {@link MonsterType} for the given
      * dungeon level. Sets stats, flags, and disguise based on the monster's template, adjusting for level
      * relative to the amulet level. Applies haste for levels above 29 and sets a random disguise for Xeroc.
@@ -316,7 +411,7 @@ public class RogueFactory {
      * </p>
      *
      * @param monsterType The {@link MonsterType} to create.
-     * @param level The current dungeon level, influencing stats and flags.
+     * @param level       The current dungeon level, influencing stats and flags.
      * @return The initialized {@link Monster}.
      * @throws NullPointerException if monsterType is null.
      */
@@ -365,7 +460,7 @@ public class RogueFactory {
      * Equivalent to the <code>exp_add</code> function in the C Rogue source (monsters.c).
      * </p>
      *
-     * @param level The level of the monster.
+     * @param level        The level of the monster.
      * @param maxHitPoints The maximum hit points of the monster.
      * @return The additional experience points.
      */
@@ -385,6 +480,26 @@ public class RogueFactory {
     }
 
     /**
+     * Selects a random object type appropriate for the given level, excluding the amulet
+     * unless the level is at or above the configured amulet level.
+     * <p>
+     * Equivalent to the <code>rnd_thing</code> function in the C Rogue source (things.c).
+     * </p>
+     *
+     * @param level The current dungeon level.
+     * @return A randomly selected {@link ObjectType}.
+     */
+    public ObjectType rndThing(final int level) {
+        final int i;
+        if (level >= config.getAmuletLevel()) {
+            i = rogueRandom.rnd(THING_LIST.length);
+        } else {
+            i = rogueRandom.rnd(THING_LIST.length - 1);
+        }
+        return THING_LIST[i];
+    }
+
+    /**
      * Creates and initializes a {@link Food} item, randomly setting it as fruit (10% chance)
      * or non-fruit (90% chance) based on a random roll.
      *
@@ -392,11 +507,8 @@ public class RogueFactory {
      */
     public Food food() {
         final Food food = new Food();
-        if (rogueRandom.rnd(10) != 0) {
-            food.setFruit(false); // 90% chance for non-fruit
-        } else {
-            food.setFruit(true); // 10% chance for fruit
-        }
+        // 10% chance for fruit
+        food.setFruit(rogueRandom.rnd(10) == 0); // 90% chance for non-fruit
         return food;
     }
 
@@ -413,6 +525,22 @@ public class RogueFactory {
         final Potion potion = new Potion(potionType);
         initItem(potion); // Set default count, armor, group, and clear flags
         return potion;
+    }
+
+    /**
+     * Initializes an {@link Item} with default properties: count, armor class, group,
+     * wield damage, throw damage, and clears all flags.
+     *
+     * @param item The {@link Item} to initialize.
+     * @throws NullPointerException if item is null.
+     */
+    private void initItem(@Nonnull final Item item) {
+        item.setCount(DEFAULT_ITEM_COUNT); // Set default quantity
+        item.setArmorClass(DEFAULT_ITEM_ARMOR); // Set default armor class
+        item.setGroup(DEFAULT_ITEM_GROUP); // Set default group ID
+        item.setWieldDamage(DEFAULT_ITEM_WIELD_DAMAGE); // Set default wield damage
+        item.setThrowDamage(DEFAULT_ITEM_THROW_DAMAGE); // Set default throw damage
+        item.getItemFlags().clear(); // Reset all flags
     }
 
     /**
@@ -452,6 +580,35 @@ public class RogueFactory {
         } else if (r < 15) {
             hitPlus += rogueRandom.rnd(3) + 1; // 5% chance for enhanced, increase by 1-3
             weapon.setHitPlus(hitPlus);
+        }
+        return weapon;
+    }
+
+    /**
+     * Creates and initializes a {@link Weapon} of the specified {@link WeaponType}, setting
+     * its count and group based on type and flags. Daggers receive 2-5 units, weapons with
+     * {@link ItemFlag#ISMANY} receive 8-15 units with a unique group ID, and others receive
+     * 1 unit with no group. Increments the weapons group counter for stackable weapons.
+     * <p>
+     * Equivalent to weapon initialization logic in the C Rogue source (things.c).
+     * </p>
+     *
+     * @param weaponType The {@link WeaponType} to create.
+     * @return The initialized {@link Weapon}.
+     * @throws NullPointerException if weaponType is null.
+     */
+    public Weapon initWeapon(@Nonnull final WeaponType weaponType) {
+        Objects.requireNonNull(weaponType);
+        final Weapon weapon = new Weapon(weaponType);
+        if (WeaponType.DAGGER.equals(weapon.getWeaponType())) {
+            weapon.setCount(rogueRandom.rnd(4) + 2);
+            weapon.setGroup(weaponsGroup++);
+        } else if (weapon.hasFlag(ItemFlag.ISMANY)) {
+            weapon.setCount(rogueRandom.rnd(8) + 8);
+            weapon.setGroup(weaponsGroup++);
+        } else {
+            weapon.setCount(1);
+            weapon.setGroup(0);
         }
         return weapon;
     }
@@ -498,10 +655,10 @@ public class RogueFactory {
         Objects.requireNonNull(ringType);
         final Ring ring = new Ring(ringType);
         initItem(ring);
-        switch (ringType){
+        switch (ringType) {
             case R_ADDSTR, R_PROTECT, R_ADDHIT, R_ADDDAM -> {
                 ring.setArmorClass(rogueRandom.rnd(3));
-                if(ring.getArmorClass()==0){
+                if (ring.getArmorClass() == 0) {
                     ring.setArmorClass(-1);
                     ring.addFlag(ItemFlag.ISCURSED);
                 }
@@ -531,16 +688,6 @@ public class RogueFactory {
     }
 
     /**
-     * Creates a {@link Gold} item with the specified gold value.
-     *
-     * @param goldValue The amount of gold for the item.
-     * @return The initialized {@link Gold} item.
-     */
-    public Gold gold(final int goldValue) {
-        return new Gold(goldValue);
-    }
-
-    /**
      * Configures a rod (wand or staff) by setting its wield damage, throw damage, and charges.
      * Staffs receive stronger wield damage ("2x3"), while wands get weaker ("1x1"). All rods
      * have minimal throw damage ("1x1"). Charges are set to 10-19 for light rods or 3-7 for others.
@@ -551,84 +698,19 @@ public class RogueFactory {
      * @param rod The rod to configure.
      * @throws NullPointerException if rod is null.
      */
-    public void fixStick(@Nonnull Rod rod){
+    public void fixStick(@Nonnull Rod rod) {
         Objects.requireNonNull(rod);
-        if(Objects.equals(getRodForm(rod.getItemSubType()),RodForm.STAFF)){
+        if (Objects.equals(getRodForm(rod.getItemSubType()), RodForm.STAFF)) {
             rod.setWieldDamage("2x3");
         } else {
             rod.setWieldDamage("1x1");
         }
         rod.setThrowDamage("1x1");
-        if(rod.isType(RodType.WS_LIGHT)){
-            rod.setCharges(rogueRandom.rnd(10)+10);
+        if (rod.isType(RodType.WS_LIGHT)) {
+            rod.setCharges(rogueRandom.rnd(10) + 10);
         } else {
-            rod.setCharges(rogueRandom.rnd(5)+3);
+            rod.setCharges(rogueRandom.rnd(5) + 3);
         }
-    }
-
-    /**
-     * Initializes an {@link Item} with default properties: count, armor class, group,
-     * wield damage, throw damage, and clears all flags.
-     *
-     * @param item The {@link Item} to initialize.
-     * @throws NullPointerException if item is null.
-     */
-    private void initItem(@Nonnull final Item item) {
-        item.setCount(DEFAULT_ITEM_COUNT); // Set default quantity
-        item.setArmorClass(DEFAULT_ITEM_ARMOR); // Set default armor class
-        item.setGroup(DEFAULT_ITEM_GROUP); // Set default group ID
-        item.setWieldDamage(DEFAULT_ITEM_WIELD_DAMAGE); // Set default wield damage
-        item.setThrowDamage(DEFAULT_ITEM_THROW_DAMAGE); // Set default throw damage
-        item.getItemFlags().clear(); // Reset all flags
-    }
-
-    /**
-     * Checks if an item subtype is known.
-     *
-     * @param itemSubType The item subtype to check.
-     * @return True if the subtype is known, false otherwise.
-     */
-    public boolean isKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
-        Objects.requireNonNull(itemSubType);
-        return itemSubTypeKnown.getOrDefault(itemSubType, false);
-    }
-
-    /**
-     * Retrieves the guess name for an item subtype.
-     *
-     * @param itemSubType The item subtype to query.
-     * @return The guess name, or null if not set.
-     */
-    @Nullable
-    public String getGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
-        Objects.requireNonNull(itemSubType);
-        return itemSubTypeGuessNames.get(itemSubType);
-    }
-
-    /**
-     * Returns the name for the specified item subtype, if set.
-     *
-     * @param itemSubType The item subtype to query (e.g., ScrollType.IDENTIFY_SCROLL).
-     * @return The name, or null if not set.
-     */
-    @Nullable
-    public String getName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
-        Objects.requireNonNull(itemSubType);
-        return itemSubTypeNames.get(itemSubType);
-    }
-
-    /**
-     * Returns the form ("wand" or "staff") for the specified RodType.
-     *
-     * @param rodType The RodType to query.
-     * @return The form as a String ("wand" or "staff"), or null if not set.
-     */
-    @Nonnull
-    public String getRodFormAsString(@Nonnull final RodType rodType) {
-        Objects.requireNonNull(rodType);
-        final RodFormData data = rodFormData.get(rodType);
-        if (data == null) throw new IllegalArgumentException();
-        return data.form == RodForm.WAND ? FORM_WAND : FORM_STAFF;
     }
 
     /**
@@ -644,6 +726,16 @@ public class RogueFactory {
         final RodFormData data = rodFormData.get(rodType);
         if (data == null) throw new IllegalArgumentException();
         return data.form;
+    }
+
+    /**
+     * Creates a {@link Gold} item with the specified gold value.
+     *
+     * @param goldValue The amount of gold for the item.
+     * @return The initialized {@link Gold} item.
+     */
+    public Gold gold(final int goldValue) {
+        return new Gold(goldValue);
     }
 
     /**
@@ -783,70 +875,6 @@ public class RogueFactory {
     }
 
     /**
-     * Sets a custom name for the specified item subtype.
-     *
-     * @param itemSubType The item subtype to name (e.g., ScrollType.IDENTIFY_SCROLL).
-     * @param name        The custom name to assign.
-     * @throws IllegalArgumentException If the name is null or empty.
-     */
-    private void setName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nonnull final String name) {
-        Objects.requireNonNull(itemSubType);
-        Objects.requireNonNull(name);
-        if (name.isEmpty()) {
-            throw new IllegalArgumentException(Messages.ERROR_EMPTY_NAME);
-        }
-        itemSubTypeNames.put(itemSubType, name);
-    }
-
-    /**
-     * Returns the material (metal or wood) for the specified RodType.
-     *
-     * @param rodType The RodType to query.
-     * @return The material name, or null if not set.
-     */
-    @Nonnull
-    public String getRodMaterial(@Nonnull final RodType rodType) {
-        Objects.requireNonNull(rodType);
-        final RodFormData data = rodFormData.get(rodType);
-        if (data == null) throw new IllegalArgumentException();
-        return data.material;
-    }
-
-    /**
-     * Sets whether an item subtype is known.
-     *
-     * @param itemSubType The item subtype to mark as known or unknown.
-     * @param isKnown     True if the subtype is known, false otherwise.
-     */
-    public void setKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType, boolean isKnown) {
-        Objects.requireNonNull(itemSubType);
-        itemSubTypeKnown.put(itemSubType, isKnown);
-    }
-
-    /**
-     * Assigns a guess name to an item subtype.
-     *
-     * @param itemSubType The item subtype to assign a guess name to.
-     * @param guessName   The guess name to assign, or null to clear.
-     */
-    public void setGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nullable final String guessName) {
-        Objects.requireNonNull(itemSubType);
-        itemSubTypeGuessNames.put(itemSubType, guessName);
-    }
-
-    public int getRingWorth(@Nonnull final RingType ringType) {
-        return ringWorthMap.get(ringType);
-    }
-
-    public Config getConfig() {
-        return config;
-    }
-
-    public RogueRandom getRogueRandom() {
-        return rogueRandom;
-    }
-
-    /**
      * Generates the display name for potions, rings, or rods, reflecting their known, guessed, or unknown state.
      * Mimics the Rogue C `nameit` function, formatting names based on item count, type, material/color, and effect.
      */
@@ -930,138 +958,100 @@ public class RogueFactory {
     }
 
     /**
-     * Initializes random names for each ScrollType by generating combinations of syllables.
-     * ItemData are stored in the itemSubTypeNames map for ScrollType subtypes.
+     * Checks if an item subtype is known.
+     *
+     * @param itemSubType The item subtype to check.
+     * @return True if the subtype is known, false otherwise.
      */
-    private void initializeScrollNames() {
-        try (InputStream in = getClass().getResourceAsStream(SYLLABLES_JSON_PATH)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            final List<String> syllables = mapper.readValue(
-                    in, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-
-            // Generate a random name for each ScrollType
-            for (ScrollType scrollType : ScrollType.values()) {
-                StringBuilder nameBuilder = new StringBuilder();
-                // 2 to 4 words, per C code
-                int numWords = rogueRandom.rnd(3) + 2;
-
-                while (numWords-- > 0) {
-                    // 1 to 3 syllables per word
-                    int numSyllables = rogueRandom.rnd(3) + 1;
-                    while (numSyllables-- > 0) {
-                        // Randomly select a syllable
-                        String syllable = syllables.get(rogueRandom.rnd(syllables.size()));
-                        // Check if adding syllable exceeds max length (including space)
-                        if (nameBuilder.length() + syllable.length() + 1 > maxScrollGeneratedNameLength) {
-                            break;
-                        }
-                        nameBuilder.append(syllable);
-                    }
-                    // Add space between words, except for the last word
-                    if (numWords > 0) {
-                        nameBuilder.append(' ');
-                    }
-                }
-
-                // Trim trailing space and ensure name fits within max length
-                String name = nameBuilder.toString().trim();
-                if (name.length() > maxScrollGeneratedNameLength) {
-                    name = name.substring(0, maxScrollGeneratedNameLength).trim();
-                }
-
-                // Assign the generated name to the ScrollType
-                setName(scrollType, name);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(String.format(Messages.ERROR_FAILED_LOAD_SYLLABLES, SYLLABLES_JSON_PATH), e);
-        }
+    public boolean isKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(itemSubType);
+        return itemSubTypeKnown.getOrDefault(itemSubType, false);
     }
 
     /**
-     * Initializes unique random color names for each PotionType, ensuring no color is reused.
-     * ItemData are stored in the itemSubTypeNames map for PotionType subtypes.
+     * Retrieves the guess name for an item subtype.
+     *
+     * @param itemSubType The item subtype to query.
+     * @return The guess name, or null if not set.
      */
-    private void initializePotionNames() {
-        try (InputStream in = getClass().getResourceAsStream(COLORS_JSON_PATH)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            final List<String> colors = mapper.readValue(
-                    in, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-            final Set<String> setColors = new HashSet<>(colors);
-            final List<String> availableColors = new ArrayList<>(setColors);
-
-            // Assign a unique color to each PotionType
-            for (PotionType potionType : PotionType.values()) {
-                // Randomly select an available color
-                int index = rogueRandom.rnd(availableColors.size());
-                final String color = availableColors.remove(index);
-                // Assign the color to the PotionType
-                setName(potionType, color);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(String.format(Messages.ERROR_FAILED_TO_LOAD_DATA, COLORS_JSON_PATH), e);
-        }
+    @Nullable
+    public String getGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(itemSubType);
+        return itemSubTypeGuessNames.get(itemSubType);
     }
 
     /**
-     * Initializes random stone names and updated worth for each RingType, ensuring no stone is reused.
-     * Stores names in itemSubTypeNames and worth in ringWorth.
+     * Returns the name for the specified item subtype, if set.
+     *
+     * @param itemSubType The item subtype to query (e.g., ScrollType.IDENTIFY_SCROLL).
+     * @return The name, or null if not set.
      */
-    private void initializeRings() {
-        try (InputStream in = getClass().getResourceAsStream(STONES_JSON_PATH)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            final List<Stone> stones = mapper.readValue(in, mapper.getTypeFactory().constructCollectionType(List.class, Stone.class));
-            final List<Stone> availableStones = new ArrayList<>(stones);
-
-            for (RingType ringType : RingType.values()) {
-                int index = rogueRandom.rnd(availableStones.size());
-                final Stone stone = availableStones.remove(index);
-                setName(ringType, stone.name);
-                final RingInfoTemplate template = (RingInfoTemplate) Templates.findTemplateBySubType(ringType);
-                ringWorthMap.put(ringType, template.getWorth() + stone.value);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(String.format(Messages.ERROR_FAILED_TO_LOAD_DATA, STONES_JSON_PATH), e);
-        }
+    @Nullable
+    public String getName(@Nonnull final Enum<? extends ItemSubtype> itemSubType) {
+        Objects.requireNonNull(itemSubType);
+        return itemSubTypeNames.get(itemSubType);
     }
 
     /**
-     * Initializes random forms (wand or staff) and materials (metal or wood) for each RodType, ensuring no material is reused.
-     * Stores form and material in rodFormData map.
+     * Returns the form ("wand" or "staff") for the specified RodType.
+     *
+     * @param rodType The RodType to query.
+     * @return The form as a String ("wand" or "staff"), or null if not set.
      */
-    private void initializeRodMaterials() {
-        try (final InputStream metalIn = getClass().getResourceAsStream(METALS_JSON_PATH);
-             final InputStream woodIn = getClass().getResourceAsStream(WOODS_JSON_PATH)) {
-            final ObjectMapper mapper = new ObjectMapper();
-            final List<String> metals = mapper.readValue(
-                    metalIn, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-            final List<String> woods = mapper.readValue(
-                    woodIn, mapper.getTypeFactory().constructCollectionType(List.class, String.class));
-            final List<String> availableMetals = new ArrayList<>(metals);
-            final List<String> availableWoods = new ArrayList<>(woods);
+    @Nonnull
+    public String getRodFormAsString(@Nonnull final RodType rodType) {
+        Objects.requireNonNull(rodType);
+        final RodFormData data = rodFormData.get(rodType);
+        if (data == null) throw new IllegalArgumentException();
+        return data.form == RodForm.WAND ? FORM_WAND : FORM_STAFF;
+    }
 
-            for (RodType rodType : RodType.values()) {
-                RodForm form;
-                String material;
-                while (true) {
-                    if (rogueRandom.rnd(2) == 0 && !availableMetals.isEmpty()) {
-                        // Select wand with random metal
-                        int index = rogueRandom.rnd(availableMetals.size());
-                        material = availableMetals.remove(index);
-                        form = RodForm.WAND;
-                        break;
-                    } else if (!availableWoods.isEmpty()) {
-                        // Select staff with random wood
-                        int index = rogueRandom.rnd(availableWoods.size());
-                        material = availableWoods.remove(index);
-                        form = RodForm.STAFF;
-                        break;
-                    }
-                }
-                rodFormData.put(rodType, new RogueFactory.RodFormData(form, material));
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(Messages.ERROR_FAILED_TO_LOAD_DATA_FROM_JSON, e);
-        }
+    /**
+     * Returns the material (metal or wood) for the specified RodType.
+     *
+     * @param rodType The RodType to query.
+     * @return The material name, or null if not set.
+     */
+    @Nonnull
+    public String getRodMaterial(@Nonnull final RodType rodType) {
+        Objects.requireNonNull(rodType);
+        final RodFormData data = rodFormData.get(rodType);
+        if (data == null) throw new IllegalArgumentException();
+        return data.material;
+    }
+
+    /**
+     * Sets whether an item subtype is known.
+     *
+     * @param itemSubType The item subtype to mark as known or unknown.
+     * @param isKnown     True if the subtype is known, false otherwise.
+     */
+    public void setKnown(@Nonnull final Enum<? extends ItemSubtype> itemSubType, boolean isKnown) {
+        Objects.requireNonNull(itemSubType);
+        itemSubTypeKnown.put(itemSubType, isKnown);
+    }
+
+    /**
+     * Assigns a guess name to an item subtype.
+     *
+     * @param itemSubType The item subtype to assign a guess name to.
+     * @param guessName   The guess name to assign, or null to clear.
+     */
+    public void setGuessName(@Nonnull final Enum<? extends ItemSubtype> itemSubType, @Nullable final String guessName) {
+        Objects.requireNonNull(itemSubType);
+        itemSubTypeGuessNames.put(itemSubType, guessName);
+    }
+
+    public int getRingWorth(@Nonnull final RingType ringType) {
+        return ringWorthMap.get(ringType);
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    public RogueRandom getRogueRandom() {
+        return rogueRandom;
     }
 
     /**
@@ -1069,10 +1059,10 @@ public class RogueFactory {
      * the selected type, optional {@link ItemSubtype}, bad pick status, a formatted message,
      * and the templates checked for bad picks.
      *
-     * @param objectType The selected {@link ObjectType}.
-     * @param itemSubType The selected {@link ItemSubtype}, or null if not applicable.
-     * @param isBadPick True if no template matched the random number, false otherwise.
-     * @param badPickMessage The formatted message for bad picks, null if no issue.
+     * @param objectType       The selected {@link ObjectType}.
+     * @param itemSubType      The selected {@link ItemSubtype}, or null if not applicable.
+     * @param isBadPick        True if no template matched the random number, false otherwise.
+     * @param badPickMessage   The formatted message for bad picks, null if no issue.
      * @param checkedTemplates The templates checked for bad picks, null for successful picks.
      */
     public record PickResult(

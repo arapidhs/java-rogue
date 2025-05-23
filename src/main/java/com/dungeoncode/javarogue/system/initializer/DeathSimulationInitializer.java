@@ -2,8 +2,8 @@ package com.dungeoncode.javarogue.system.initializer;
 
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
 
 import javax.annotation.Nonnull;
 import java.util.Objects;
