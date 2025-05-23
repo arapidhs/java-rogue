@@ -55,8 +55,31 @@ public class LevelGenerator {
         /* Place objects (if any) */
         putThings();
 
-        // TODO continue with traps placement
-
+        /*
+         * Place the traps
+         */
+        if ( rnd(10) < getLevel().getLevelNum() ){
+            int ntraps = rnd(getLevel().getLevelNum()/2)+1;
+            if(ntraps>config.getMaxTraps()){
+                ntraps=config.getMaxTraps();
+            }
+            int i=ntraps;
+            while (i-- > 0) {
+                Position trapPos;
+                SymbolType symbolType;
+                Place place;
+                do {
+                    trapPos = getLevel().findFloor(null, 0, false);
+                    assert trapPos != null;
+                    place = getLevel().getPlaceAt(trapPos.getX(), trapPos.getY());
+                    assert place != null;
+                    symbolType = place.getSymbolType();
+                } while (symbolType != SymbolType.FLOOR);
+                place.removeFlag(PlaceFlag.REAL);
+                // Set random trap type
+                place.addFlag(TrapFlag.values()[rogueRandom.rnd(TrapFlag.values().length)]);
+            }
+        }
         return level;
     }
 
@@ -101,15 +124,13 @@ public class LevelGenerator {
      *
      * @param rooms The array of {@link Room} objects to connect. Must not be null and should
      *              contain exactly {@link Config#getMaxRooms()} elements.
-     * @return An array of {@link Passage} objects representing the passages created, with door
-     * positions stored in their exits.
      * @throws NullPointerException if {@code rooms} is null.
      * @see Room
      * @see Passage
      * @see #conn(int, int, Room[])
      * @see #passnum(Passage[])
      */
-    public Passage[] doPassages(@Nonnull final Room[] rooms) {
+    public void doPassages(@Nonnull final Room[] rooms) {
         Objects.requireNonNull(rooms);
         final Passage[] passages = new Passage[config.getMaxPassages()];
         for (int i = 0; i < passages.length; i++) {
@@ -230,7 +251,6 @@ public class LevelGenerator {
 
         Arrays.stream(passages).forEach(level::addPassage);
 
-        return passages;
     }
 
     public Room[] doRooms() {

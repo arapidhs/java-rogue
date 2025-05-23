@@ -87,6 +87,7 @@ public class Config {
      * Equivalent of <code>#define MAXOBJ</code> in <code>rogue.h</code>.
      */
     private static final int DEFAULT_MAX_OBJ_TRIES = 9;
+    private static final int DEFAULT_MAX_TRAPS = 10;
 
     private final int maxStringLength;
     private final String javaRogueDirName;
@@ -148,6 +149,11 @@ public class Config {
      * Equivalent of <code>#define MAXOBJ</code> in <code>rogue.h</code>.
      */
     private final int maxObjTries;
+    /**
+     * Max number of traps per level.
+     * Equivalent of <code>#define MAXTRAPS</code> in <code>rogue.h</code>.
+     */
+    private final int maxTraps;
     /**
      * Say which way items are being used.
      * <p>Equivalent of:
@@ -242,6 +248,7 @@ public class Config {
         this.maxTreasure = DEFAULT_MAX_TREAS;
         this.maxTriesFindFloor = DEFAULT_MAX_TRIES_FIND_FLOOR;
         this.maxObjTries = DEFAULT_MAX_OBJ_TRIES;
+        this.maxTraps = DEFAULT_MAX_TRAPS;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -525,6 +532,10 @@ public class Config {
 
     public int getMaxObjTries() {
         return maxObjTries;
+    }
+
+    public int getMaxTraps() {
+        return maxTraps;
     }
 
 }

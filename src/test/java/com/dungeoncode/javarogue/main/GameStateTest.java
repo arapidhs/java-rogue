@@ -16,6 +16,7 @@ import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -374,11 +375,11 @@ public class GameStateTest extends RogueBaseTest {
      *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Passage}.</li>
      *   <li>The {@link GameState#floorAt()} method returns {@link SymbolType#PASSAGE} for the player's position.</li>
      * </ul>
-     * Uses a specific seed (-498145787) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
+     * Uses a specific seed (693244198) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
      */
     @Test
     void testFloorAtMaze() {
-        final long startInMazeSeed=-498145787;
+        final long startInMazeSeed=693244198;
         final Config config=new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
@@ -397,6 +398,9 @@ public class GameStateTest extends RogueBaseTest {
         // Starting in maze
         final Room maze = gameState.getCurrentLevel().findRoomAt(px,py);
         assertNotNull(maze);
+        if(maze.hasFlag(RoomFlag.MAZE)){
+            System.out.println(config.getSeed());
+        }
         assertTrue(maze.hasFlag(RoomFlag.MAZE));
 
         final Room room = gameState.getCurrentLevel().roomIn(px, py);
@@ -506,11 +510,11 @@ public class GameStateTest extends RogueBaseTest {
      * Verifies that the method returns the player’s position when the monster has no carry probability,
      * is in the same room as the player, is visible to the player, or when an item is already targeted by
      * another monster. Confirms it returns an item’s position when the monster is in the same room as an
-     * untargeted item and passes the carry probability check. Uses a fixed seed (200) for reproducible results.
+     * untargeted item and passes the carry probability check. Uses a fixed seed (400) for reproducible results.
      */
     @Test
     void testFindDest() {
-        final long seed = 200;
+        final long seed = 400;
         final RogueRandom rogueRandom = new RogueRandom(seed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);

@@ -16,6 +16,7 @@ import java.util.Objects;
 public class Place extends Entity {
 
     private final EnumSet<PlaceFlag> placeFlags;
+    private final EnumSet<TrapFlag> trapFlags;
     private PlaceType placeType;
     private SymbolType symbolType;
     private Monster monster;
@@ -26,12 +27,17 @@ public class Place extends Entity {
         this.placeType = PlaceType.EMPTY;
         this.symbolType = SymbolType.EMPTY;
         this.placeFlags = EnumSet.noneOf(PlaceFlag.class);
+        this.trapFlags = EnumSet.noneOf(TrapFlag.class);
         this.monster = null;
         this.addFlag(PlaceFlag.REAL);
     }
 
     public void addFlag(@Nonnull final PlaceFlag placeFlag) {
         placeFlags.add(placeFlag);
+    }
+
+    public void addFlag(@Nonnull final TrapFlag trapFlag) {
+        trapFlags.add(trapFlag);
     }
 
     public boolean isReal() {
