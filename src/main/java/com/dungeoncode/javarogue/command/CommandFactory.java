@@ -1,6 +1,13 @@
+/**
+ * Factory for creating command instances based on user input keystrokes, equivalent to command 
+ * dispatching logic in <code>command.c</code> from the original Rogue C source. Maps keystrokes 
+ * to specific commands for player movement, item pick-up, UI actions, or system operations, 
+ * handling both regular and wizard-mode commands.
+ */
 package com.dungeoncode.javarogue.command;
 
 import com.dungeoncode.javarogue.command.action.CommandPlayerMove;
+import com.dungeoncode.javarogue.command.action.CommandPlayerPickUp;
 import com.dungeoncode.javarogue.command.system.CommandIllegal;
 import com.dungeoncode.javarogue.command.system.CommandNewLevel;
 import com.dungeoncode.javarogue.command.system.CommandQuit;
@@ -18,11 +25,25 @@ public class CommandFactory {
     private final Config config;
     private final GameState gameState;
 
+    /**
+     * Constructs a CommandFactory instance with the specified game state.
+     *
+     * @param gameState The game state, providing access to configuration and game context.
+     */
     public CommandFactory(@Nonnull final GameState gameState) {
         this.gameState = gameState;
         this.config = gameState.getConfig();
     }
 
+    /**
+     * Creates a command instance based on the provided keystroke. Maps character keys, control-modified 
+     * keys, and arrow keys to specific commands such as movement, pick-up, or UI actions. Supports 
+     * wizard-mode commands (e.g., level change, map display) if master and wizard modes are enabled. 
+     * Returns a {@link CommandIllegal} for unrecognized or invalid keystrokes.
+     *
+     * @param keyStroke The keystroke input from the player.
+     * @return A command instance corresponding to the keystroke, or {@link CommandIllegal} if invalid.
+     */
     public Command fromKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.isCtrlDown()) {
             if (keyStroke.getKeyType() == KeyType.Character) {
@@ -83,6 +104,8 @@ public class CommandFactory {
                         new CommandPlayerMove(new Position(-1, 1));
                 case 'n' -> // move down right
                         new CommandPlayerMove(new Position(1, 1));
+                case ',' -> // pick up item at current position
+                        new CommandPlayerPickUp();
                 case 'v' -> new CommandShowVersion();
                 case 'Q' -> new CommandQuit(true);
                 case '|' -> {
@@ -107,7 +130,6 @@ public class CommandFactory {
                 case End -> fromKeyStroke(KeyStroke.fromString("b"));
                 default -> new CommandIllegal(keyStroke);
             };
-
         }
         return new CommandIllegal(keyStroke);
     }

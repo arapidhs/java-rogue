@@ -35,6 +35,12 @@ public class Player extends Creature {
     private int currentLevel;
 
     /**
+     * If true Next move shouldn't pick up items.
+     * Equivalent to <code>bool move_on = FALSE;</code> in <code>extern.c</code>.
+     */
+    private boolean moveOn;
+
+    /**
      * Number of times the player can act (execute a command) in a turn.
      * Equivalent of <pre>register int ntimes = 1; Number of player moves</pre>
      * from the original Rogue source code.
@@ -175,6 +181,17 @@ public class Player extends Creature {
 
     public void setNtimes(int ntimes) {
         this.ntimes = ntimes;
+    }
+
+    /**
+     * If true Next move shouldn't pick up items.
+     */
+    public boolean isMoveOn() {
+        return moveOn;
+    }
+
+    public void setMoveOn(boolean moveOn) {
+        this.moveOn = moveOn;
     }
 
     public enum HungryState {

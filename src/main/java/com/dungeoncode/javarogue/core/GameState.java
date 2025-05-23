@@ -12,10 +12,7 @@ import com.dungeoncode.javarogue.system.*;
 import com.dungeoncode.javarogue.system.death.DeathSource;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 import com.dungeoncode.javarogue.system.entity.Position;
-import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.system.entity.creature.Monster;
-import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
-import com.dungeoncode.javarogue.system.entity.creature.Player;
+import com.dungeoncode.javarogue.system.entity.creature.*;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
 import com.dungeoncode.javarogue.system.world.Level;
@@ -549,6 +546,7 @@ public class GameState {
         setCurrentLevel(level);
 
         final Position pos = getPlayer().getPosition();
+        // TODO: continue with implementation of enter_room()
         enterRoom(pos.getX(), pos.getY());
         screen.putChar(pos.getX(), pos.getY(), SymbolMapper.getSymbol(player.getClass()));
         screen.refresh();
@@ -613,6 +611,86 @@ public class GameState {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Handles the player picking up an item of the specified type from the current position.
+     * Checks if the player is not levitating before proceeding. For gold, updates the player's gold
+     * and removes the item; for other items, calls {@link #pickupItemFromFloor()}. Logs an error for
+     * invalid item types in master mode.
+     * <p>
+     * Equivalent to <code>void pick_up(char ch)</code> in <code>pack.c</code>.
+     * @param objectType The type of object to pick up (e.g., {@link ObjectType#GOLD}, {@link ObjectType#POTION}).
+     * @throws NullPointerException if {@code objectType} is null.
+     */
+    public void pickUp(@Nonnull ObjectType objectType) {
+        Objects.requireNonNull(objectType);
+        if (!player.hasFlag(PlayerFlag.ISLEVIT)) {
+            final Position pos = player.getPosition();
+            final Item item = currentLevel.findItemAt(pos.getX(), pos.getY());
+            if (player.isMoveOn()) {
+                moveMsg(item);
+            } else {
+                switch (objectType) {
+                    case GOLD -> {
+                        if (item != null) {
+                            money(item.getGoldValue());
+                            currentLevel.removeItem(item);
+                            player.getRoom().setGoldValue(0);
+                        }
+                    }
+                    case ARMOR, POTION, FOOD, WEAPON, SCROLL, AMULET, RING, ROD -> {
+                        pickupItemFromFloor();
+                    }
+                    default -> {
+                        if (config.isMaster()) {
+                            LOGGER.debug("Where did you pick a {} up???", objectType.name());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Handles the player picking up gold, updating the player's gold amount and the level's map.
+     * Sets the appropriate symbol (passage or floor) based on the room's state and displays a message
+     * if gold is found.
+     * <p>
+     * Equivalent to <code>void money(int value)</code> in <code>pack.c</code>.
+     *
+     * @param goldValue The amount of gold to add to the player's inventory.
+     */
+    private void money(final int goldValue) {
+        player.setGoldAmount(player.getGoldAmount() + goldValue);
+        screen.putChar(player.getX(), player.getY(), SymbolMapper.getSymbol(floorCh()));
+        final Place place = currentLevel.getPlaceAt(player.getX(), player.getY());
+        assert place != null;
+        if (player.getRoom().hasFlag(RoomFlag.GONE)) {
+            place.setSymbolType(SymbolType.PASSAGE);
+        } else {
+            place.setSymbolType(SymbolType.FLOOR);
+        }
+        if (goldValue > 0) {
+            if (!config.isTerse()) {
+                messageSystem.addmssg("you found ");
+            }
+            messageSystem.msg(String.format("%d gold pieces", goldValue));
+        }
+    }
+
+    /**
+     * Print out the message if you are just moving onto an object.
+     * Equivalent to <code>void move_msg(THING * obj)</code> in <code>pack.c</code>.
+     * @param item item player moved on.
+     */
+    private void moveMsg(@Nullable  Item item) {
+        if(item!=null) {
+            if (!config.isTerse()) {
+                messageSystem.addmssg("you ");
+            }
+            messageSystem.msg(String.format("moved ont %s", rogueFactory.invName(getPlayer(), item, true)));
         }
     }
 
@@ -712,6 +790,23 @@ public class GameState {
             }
         }
         return itemAdded;
+    }
+
+    /**
+     * Checks if the player is levitating, preventing certain actions.
+     * If the player has the {@link PlayerFlag#ISLEVIT} flag, displays a message indicating
+     * they are floating and cannot perform the action.
+     * <p>
+     * Equivalent to <pre>bool levit_check()</pre> in <pre>command.c</pre>
+     *
+     * @return {@code true} if the player is levitating, {@code false} otherwise.
+     */
+    public boolean levitCheck() {
+        if (player.hasFlag(PlayerFlag.ISLEVIT)) {
+            messageSystem.msg("You can't. You're floating off the ground!");
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -884,4 +979,5 @@ public class GameState {
     public void setSeenStairs(boolean seenStairs) {
         this.seenStairs = seenStairs;
     }
+
 }
