@@ -36,8 +36,12 @@ public class DefaultInitializerTest extends RogueBaseTest {
     @Test
     void testPlayerInitialization() {
 
-        // Set up game state with necessary dependencies
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        // Set up game state with necessary dependencies and a specific seed
+        // The specific seed is needed to make sure the generated and initialized
+        // first level does not contain any food item, which in cas it had,
+        // it would reset gameState#noFood back to zero.
+        final long seed = 100;
+        final RogueRandom rogueRandom = new RogueRandom(seed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final DefaultInitializer initializer = new DefaultInitializer();
 
@@ -84,7 +88,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
         assertEquals(0,gameState.getPlayer().getGoldAmount());
 
         // assert 0 levels without food
-        assertEquals(0,gameState.getNoFood());
+        assertEquals(1,gameState.getNoFood());
 
     }
 

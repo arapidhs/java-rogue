@@ -52,10 +52,10 @@ public class LevelGenerator {
 
         gameState.setNoFood(gameState.getNoFood() + 1);
 
-        // TODO continue with put_thins()
-
         /* Place objects (if any) */
         putThings();
+
+        // TODO continue with traps placement
 
         return level;
     }

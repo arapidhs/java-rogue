@@ -374,11 +374,11 @@ public class GameStateTest extends RogueBaseTest {
      *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Passage}.</li>
      *   <li>The {@link GameState#floorAt()} method returns {@link SymbolType#PASSAGE} for the player's position.</li>
      * </ul>
-     * Uses a specific seed (336362311) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
+     * Uses a specific seed (-498145787) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
      */
     @Test
     void testFloorAtMaze() {
-        final long startInMazeSeed=1236129691;
+        final long startInMazeSeed=-498145787;
         final Config config=new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
