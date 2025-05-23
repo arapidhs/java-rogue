@@ -80,6 +80,18 @@ public class LevelGenerator {
                 place.addFlag(TrapFlag.values()[rogueRandom.rnd(TrapFlag.values().length)]);
             }
         }
+
+        /*
+         * Place the staircase down.
+         */
+        final Position pos = getLevel().findFloor(null, 0, false);
+        assert pos != null;
+        final Place place = getLevel().getPlaceAt(pos.getX(), pos.getY());
+        assert place != null;
+        place.setSymbolType(SymbolType.STAIRS);
+        getLevel().setStairs(pos);
+        gameState.setSeenStairs(false);
+
         return level;
     }
 
@@ -326,6 +338,16 @@ public class LevelGenerator {
                 final Monster monster = gameState.newMonster(monsterType, monsterPosition);
                 gameState.givePack(monster, gameState.getLevelNum(), gameState.getMaxLevel());
             }
+
+            for(Monster monster: getLevel().getMonsters()){
+                final Position pos = monster.getPosition();
+                final Room mroom = getLevel().roomIn(pos.getX(), pos.getY());
+                monster.setRoom(mroom);
+            }
+
+            final Position pos = level.findFloor(null, 0, true);
+            assert pos != null;
+            gameState.getPlayer().setPosition(pos.getX(), pos.getY());
 
         }
         return rooms;

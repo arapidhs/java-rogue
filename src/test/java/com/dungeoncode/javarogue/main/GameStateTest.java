@@ -262,16 +262,21 @@ public class GameStateTest extends RogueBaseTest {
         assertEquals(expectedQueueSizeAfterEnd, gameState.getCommandQueue().size()); // CommandEternal still persists
     }
 
+    /**
+     * Tests the creation of a new dungeon level starting in a maze, using a specific seed to reproduce a problematic case.
+     * Verifies that the player's starting room is a maze, the room at the player's position is marked as gone and dark,
+     * and is an instance of {@link Passage}.
+     */
     @Test
     void testNewLevelStartingAtMaze() {
-        final long problematicSeed=-1482531755;
+        final long problematicSeed = -147134407;
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(problematicSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
 
         final Player player = new Player(config);
-        final int levelNum=20;
+        final int levelNum = 20;
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
 
@@ -279,13 +284,27 @@ public class GameStateTest extends RogueBaseTest {
         assertNotNull(maze);
         assertTrue(maze.hasFlag(RoomFlag.MAZE));
 
-        final int px=gameState.getPlayer().getX();
-        final int py=gameState.getPlayer().getY();
+        final int px = gameState.getPlayer().getX();
+        final int py = gameState.getPlayer().getY();
         final Room room = gameState.getCurrentLevel().roomIn(px, py);
         assertNotNull(room);
         assertTrue(room.hasFlag(RoomFlag.GONE));
         assertTrue(room.hasFlag(RoomFlag.DARK));
         assertInstanceOf(Passage.class, room);
+    }
+
+    /**
+     * Tests the initialization of a new dungeon level with default configuration.
+     * Verifies that the {@link GameState#isSeenStairs()} method returns false, indicating
+     * that stairs are not visible at the start of a new level.
+     */
+    @Test
+    void testNewLevel() {
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
+        assertFalse(gameState.isSeenStairs());
     }
 
     /**
@@ -375,11 +394,11 @@ public class GameStateTest extends RogueBaseTest {
      *   <li>The {@link GameState#roomIn(int, int)} method returns a {@link Passage}.</li>
      *   <li>The {@link GameState#floorAt()} method returns {@link SymbolType#PASSAGE} for the player's position.</li>
      * </ul>
-     * Uses a specific seed (693244198) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
+     * Uses a specific seed (1505455994) and level 20 to ensure the player starts in a maze, with {@code seeFloor = false}.
      */
     @Test
     void testFloorAtMaze() {
-        final long startInMazeSeed=693244198;
+        final long startInMazeSeed=1505455994;
         final Config config=new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
@@ -398,9 +417,6 @@ public class GameStateTest extends RogueBaseTest {
         // Starting in maze
         final Room maze = gameState.getCurrentLevel().findRoomAt(px,py);
         assertNotNull(maze);
-        if(maze.hasFlag(RoomFlag.MAZE)){
-            System.out.println(config.getSeed());
-        }
         assertTrue(maze.hasFlag(RoomFlag.MAZE));
 
         final Room room = gameState.getCurrentLevel().roomIn(px, py);

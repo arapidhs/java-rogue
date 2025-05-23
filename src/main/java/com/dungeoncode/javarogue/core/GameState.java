@@ -60,6 +60,7 @@ public class GameState {
     private Level currentLevel;
     private boolean playing;
     private CommandFactory commandFactory;
+    private boolean seenStairs;
 
     /**
      * Number of levels without food.
@@ -547,9 +548,7 @@ public class GameState {
         final Level level = levelGenerator.newLevel(levelNum);
         setCurrentLevel(level);
 
-        final Position pos = level.findFloor(null, 0, true);
-        assert pos != null;
-        player.setPosition(pos.getX(), pos.getY());
+        final Position pos = getPlayer().getPosition();
         enterRoom(pos.getX(), pos.getY());
         screen.putChar(pos.getX(), pos.getY(), SymbolMapper.getSymbol(player.getClass()));
         screen.refresh();
@@ -876,5 +875,13 @@ public class GameState {
 
     public void setNoFood(int noFood) {
         this.noFood = noFood;
+    }
+
+    public boolean isSeenStairs() {
+        return seenStairs;
+    }
+
+    public void setSeenStairs(boolean seenStairs) {
+        this.seenStairs = seenStairs;
     }
 }

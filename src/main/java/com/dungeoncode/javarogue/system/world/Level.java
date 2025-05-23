@@ -32,6 +32,7 @@ public class Level extends Entity {
     private final int maxWidth;
     private final int maxHeight;
     private final int levelNum;
+    private Position stairs;
 
     public Level(final int maxWidth, final int maxHeight, @Nonnull final RogueRandom rogueRandom) {
         this(maxWidth, maxHeight, rogueRandom, 0);
@@ -159,11 +160,11 @@ public class Level extends Entity {
 
             final Position pos = room.rndPos(rogueRandom);
             final Place place = getPlaceAt(pos.getX(), pos.getY());
-            final PlaceType expectedType = room.hasFlag(RoomFlag.MAZE) ? PlaceType.PASSAGE : PlaceType.FLOOR;
+            final SymbolType expectedType = room.hasFlag(RoomFlag.MAZE) ? SymbolType.PASSAGE : SymbolType.FLOOR;
             assert place != null;
             if (forCreature && place.isStepOk()) {
                 return pos;
-            } else if (place.isType(expectedType)) {
+            } else if (place.getSymbolType() == expectedType) {
                 return pos;
             }
         }
@@ -344,5 +345,13 @@ public class Level extends Entity {
 
     public int getLevelNum() {
         return levelNum;
+    }
+
+    public Position getStairs() {
+        return stairs;
+    }
+
+    public void setStairs(Position stairs) {
+        this.stairs = stairs;
     }
 }
