@@ -58,7 +58,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
 
     private LevelGenerator createLevelGenerator(final long seed) {
         final RogueRandom rogueRandom;
-        if (seed > 0) {
+        if (seed != 0) {
             rogueRandom = new RogueRandom(seed);
         } else {
             rogueRandom = new RogueRandom(config.getSeed());
@@ -406,6 +406,36 @@ public class LevelGeneratorTest extends RogueBaseTest {
                 }
             }
         }
+    }
+
+    /**
+     * This test tests level generation and specifically a seed
+     * where item placement was failing with an infinite loop,
+     * unable to find a correct place for the item due to bug
+     * in find floor logic.
+     */
+    @Test
+    void testLevelItemsPlacement() {
+        final long seed = 856821835;
+        final LevelGenerator levelGenerator = createLevelGenerator(seed);
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + 1;
+        final Level level = levelGenerator.newLevel(levelNum);
+        assertNotNull(level);
+    }
+
+    /**
+     * Specific scenario where monster placement in a maze treasure room
+     * fails after maxTries and placement has to proceed to the next monster placement.
+     */
+    @Test
+    void testTreasureRoomMonsterPlacement() {
+        final long seed =-420302098;
+        final LevelGenerator levelGenerator = createLevelGenerator(seed);
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + config.getAmuletLevel() / 2;
+        final Level level = levelGenerator.newLevel(levelNum);
+        assertNotNull(level);
     }
 
     @RepeatedTest(100)

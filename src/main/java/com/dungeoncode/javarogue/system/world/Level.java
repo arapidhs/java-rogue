@@ -148,13 +148,13 @@ public class Level extends Entity {
     @Nullable
     public Position findFloor(@Nullable Room room, final int limit, final boolean forCreature) {
         int attempts = limit;
-
+        boolean pickRoom = room == null;
         while (true) {
             if (limit > 0 && attempts-- == 0) {
                 return null;
             }
 
-            if (room == null) {
+            if (pickRoom) {
                 room = rndRoom();
             }
 

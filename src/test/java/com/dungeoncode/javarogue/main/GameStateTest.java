@@ -19,6 +19,7 @@ import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -271,7 +272,7 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testNewLevelStartingAtMaze() {
-        final long problematicSeed = -147134407;
+        final long problematicSeed = -1112342096;
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(problematicSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);

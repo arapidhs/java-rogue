@@ -537,6 +537,14 @@ public class GameState {
         return pickResult;
     }
 
+    /**
+     * Initializes a new dungeon level with the specified level number, equivalent to level creation logic
+     * in <code>new_level.c</code> from the original Rogue C source. Clears the screen, removes the player's
+     * held status, generates a new level, sets the player's position, renders the room, and updates the
+     * screen with the player's symbol. Handles special player states like monster detection and hallucination.
+     *
+     * @param levelNum The number of the level to generate.
+     */
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
@@ -546,10 +554,33 @@ public class GameState {
         setCurrentLevel(level);
 
         final Position pos = getPlayer().getPosition();
-        // TODO: continue with implementation of enter_room()
         enterRoom(pos.getX(), pos.getY());
+
         screen.putChar(pos.getX(), pos.getY(), SymbolMapper.getSymbol(player.getClass()));
-        //screen.refresh();
+
+        if (player.hasFlag(PlayerFlag.SEEMONST)) {
+            turnSee(false);
+        }
+        if (player.hasFlag(PlayerFlag.ISHALU)) {
+            visuals();
+        }
+    }
+
+    /**
+     * Equivalent to <code>void visuals()</code> in <code>daemons.c</code>.
+     */
+    // TODO implement visuals()
+    private void visuals() {
+
+    }
+
+    /**
+     * Put on or off seeing monsters on this level.
+     * Equivalent of <code>bool turn_see(bool turn_off)</code> in <code>potions.c</code>.
+     */
+    // TODO implement turnSee
+    private void turnSee(boolean turnOff) {
+
     }
 
     public Player getPlayer() {
