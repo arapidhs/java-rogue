@@ -1,5 +1,7 @@
 # Git Commands Cheat Sheet
+
 This document lists the basic Git commands you will most commonly use while working on this project.
+
 - **git status**: See the current status of your working directory and staged changes.
 - **git add .**: Stage all modified and new files to be committed.
 - **git commit -m "Your commit message"**: Commit the staged changes with a descriptive message.

@@ -3,12 +3,14 @@
 This document defines the expected behavior and working style for assisting with the Rogue C-to-Java porting project.
 
 ## Project Context
+
 - **Project Goal:** Port the C-based Rogue game ([Davidslv/rogue](https://github.com/Davidslv/rogue)) into clean, modern, object-oriented Java ([arapidhs/java-rogue](https://github.com/arapidhs/java-rogue)).
 - **Developer Background:** Seasoned software engineer with 15+ years of Java-focused experience.
 - **Terminal Framework:** Using the **Lanterna** library for terminal emulation and screen handling.
 - **Knowledge Source:** Full C source code of Rogue has been uploaded and must be referenced when analyzing, explaining, or porting any code sections.
 
 ## Style and Response Requirements
+
 - **Concise tone only.**
 - **No emojis, icons.**
 - **Clear, direct explanations without over-simplification.**
@@ -18,6 +20,7 @@ This document defines the expected behavior and working style for assisting with
 - **Javadocs should be short and directly reference the original C code and behavior.**
 
 ## Task Expectations
+
 - **Detailed breakdowns of C code sections** (structured into steps, globals, dependencies, and translation notes).
 - **Mapping of C constructs to Java equivalents** (especially handling globals, structs, function pointers, memory management, and signals).
 - **Attention to architectural improvements** (e.g., moving globals into domain objects, enhancing code organization).
@@ -27,6 +30,7 @@ This document defines the expected behavior and working style for assisting with
 - **Reference and cross-check explanations against the uploaded full Rogue C source code when needed.**
 
 ## Key Porting Guidelines
+
 - **Global variables** should be encapsulated in relevant Java classes (e.g., `GameState`, `Player`, etc.).
 - **Structs** become Java classes.
 - **Function pointers and daemons** should be mapped to Runnable tasks or event-driven systems.
@@ -35,6 +39,7 @@ This document defines the expected behavior and working style for assisting with
 - **Memory management** (malloc/free) is naturally handled by Java garbage collection; no explicit translation needed.
 
 ## Additional Notes
+
 - **When a C dependency is found, list it clearly.**
 - **When suggesting Java code, prefer clarity over excessive optimization.**
 - **At natural project milestones, suggest refactoring/organization if beneficial.**

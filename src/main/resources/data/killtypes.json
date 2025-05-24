@@ -1,7 +1,32 @@
 [
-  { "id": 1, "killType": "ARROW", "name": "arrow", "useArticle": true },
-  { "id": 2, "killType": "BOLT", "name": "bolt", "useArticle": true },
-  { "id": 3, "killType": "DART", "name": "dart", "useArticle": true },
-  { "id": 4, "killType": "HYPOTHERMIA", "name": "hypothermia", "useArticle": false },
-  { "id": 5, "killType": "STARVATION", "name": "starvation", "useArticle": false }
+  {
+    "id": 1,
+    "killType": "ARROW",
+    "name": "arrow",
+    "useArticle": true
+  },
+  {
+    "id": 2,
+    "killType": "BOLT",
+    "name": "bolt",
+    "useArticle": true
+  },
+  {
+    "id": 3,
+    "killType": "DART",
+    "name": "dart",
+    "useArticle": true
+  },
+  {
+    "id": 4,
+    "killType": "HYPOTHERMIA",
+    "name": "hypothermia",
+    "useArticle": false
+  },
+  {
+    "id": 5,
+    "killType": "STARVATION",
+    "name": "starvation",
+    "useArticle": false
+  }
 ]

@@ -1,7 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.world.Place;
 import com.dungeoncode.javarogue.system.world.PlaceType;
@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PlaceTest {
 
     @Test
-    void testPlace(){
+    void testPlace() {
         final Place emptyPlace = new Place();
-        assertEquals(PlaceType.EMPTY,emptyPlace.getPlaceType());
+        assertEquals(PlaceType.EMPTY, emptyPlace.getPlaceType());
         assertTrue(emptyPlace.isType(PlaceType.EMPTY));
-        assertEquals(SymbolType.EMPTY,emptyPlace.getSymbolType());
+        assertEquals(SymbolType.EMPTY, emptyPlace.getSymbolType());
         assertFalse(emptyPlace.isStepOk());
 
         final Place wallPlace = new Place();

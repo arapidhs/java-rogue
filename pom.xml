@@ -1,227 +1,227 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <!-- Standard POM metadata -->
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xmlns="http://maven.apache.org/POM/4.0.0"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<!-- Standard POM metadata -->
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.dungeoncode</groupId>
-    <artifactId>java-rogue</artifactId>
-    <version>1.0-SNAPSHOT</version>
+	<groupId>com.dungeoncode</groupId>
+	<artifactId>java-rogue</artifactId>
+	<version>1.0-SNAPSHOT</version>
 
-    <name>Java Rogue</name>
-    <description>Conversion of the original Rogue video game from C to Java.</description>
+	<name>Java Rogue</name>
+	<description>Conversion of the original Rogue video game from C to Java.</description>
 
-    <!-- Developer info -->
-    <developers>
-        <developer>
-            <id>arapidhs</id>
-            <name>Charalampos Arapidis</name>
-            <email>arapidhs@gmail.com</email>
-        </developer>
-    </developers>
+	<!-- Developer info -->
+	<developers>
+		<developer>
+			<id>arapidhs</id>
+			<name>Charalampos Arapidis</name>
+			<email>arapidhs@gmail.com</email>
+		</developer>
+	</developers>
 
-    <!-- Java version and encoding -->
-    <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+	<!-- Java version and encoding -->
+	<properties>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
-    <dependencies>
-        <!-- Terminal UI library -->
-        <dependency>
-            <groupId>com.googlecode.lanterna</groupId>
-            <artifactId>lanterna</artifactId>
-            <version>3.1.2</version>
-        </dependency>
+	<dependencies>
+		<!-- Terminal UI library -->
+		<dependency>
+			<groupId>com.googlecode.lanterna</groupId>
+			<artifactId>lanterna</artifactId>
+			<version>3.1.2</version>
+		</dependency>
 
-        <!-- Static analysis annotations -->
-        <dependency>
-            <groupId>com.github.spotbugs</groupId>
-            <artifactId>spotbugs-annotations</artifactId>
-            <version>4.2.0</version>
-        </dependency>
+		<!-- Static analysis annotations -->
+		<dependency>
+			<groupId>com.github.spotbugs</groupId>
+			<artifactId>spotbugs-annotations</artifactId>
+			<version>4.2.0</version>
+		</dependency>
 
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>1.5.18</version>
-        </dependency>
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>2.0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.5.18</version>
+		</dependency>
 
-        <!-- CLI parser -->
-        <dependency>
-            <groupId>info.picocli</groupId>
-            <artifactId>picocli</artifactId>
-            <version>4.7.5</version>
-        </dependency>
+		<!-- CLI parser -->
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.7.5</version>
+		</dependency>
 
-        <!-- Utilities -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
-        </dependency>
+		<!-- Utilities -->
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.15</version>
+		</dependency>
 
-        <!-- JSON support -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.15.2</version>
-        </dependency>
+		<!-- JSON support -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
 
-        <!-- Unit testing -->
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- Unit testing -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>5.11.0</version>
+			<scope>test</scope>
+		</dependency>
 
-        <!-- Mocks -->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+		<!-- Mocks -->
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>5.11.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>5.11.0</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
 
-    <profiles>
-        <!-- Enables optional tests marked as 'stress' -->
-        <profile>
-            <id>stress-tests</id>
-        </profile>
+	<profiles>
+		<!-- Enables optional tests marked as 'stress' -->
+		<profile>
+			<id>stress-tests</id>
+		</profile>
 
-        <!-- Default profile excludes 'stress' group -->
-        <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <excludedGroups>stress</excludedGroups>
-            </properties>
-        </profile>
+		<!-- Default profile excludes 'stress' group -->
+		<profile>
+			<id>default</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<excludedGroups>stress</excludedGroups>
+			</properties>
+		</profile>
 
-        <!-- Builds a fat/uber JAR only when this profile is active -->
-        <profile>
-            <id>fatjar</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <!-- Adds Main-Class to manifest -->
-                                    <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                            <mainClass>com.dungeoncode.javarogue.main.Rogue</mainClass>
-                                        </transformer>
-                                    </transformers>
-                                    <!-- Output file name -->
-                                    <finalName>java-rogue</finalName>
-                                    <!-- Prevents overwritten pom issues -->
-                                    <dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
-                                    <!-- Suppresses warnings and overlapping resource issues -->
-                                    <filters>
-                                        <filter>
-                                            <artifact>*:*</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/*.SF</exclude>
-                                                <exclude>META-INF/*.DSA</exclude>
-                                                <exclude>META-INF/*.RSA</exclude>
-                                                <exclude>META-INF/LICENSE</exclude>
-                                                <exclude>META-INF/LICENSE.txt</exclude>
-                                                <exclude>META-INF/NOTICE</exclude>
-                                                <exclude>META-INF/NOTICE.txt</exclude>
-                                                <exclude>META-INF/MANIFEST.MF</exclude>
-                                                <exclude>META-INF/versions/9/module-info.class</exclude>
-                                                <exclude>module-info.class</exclude>
-                                            </excludes>
-                                        </filter>
-                                    </filters>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+		<!-- Builds a fat/uber JAR only when this profile is active -->
+		<profile>
+			<id>fatjar</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-shade-plugin</artifactId>
+						<version>3.5.0</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>shade</goal>
+								</goals>
+								<configuration>
+									<!-- Adds Main-Class to manifest -->
+									<transformers>
+										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+											<mainClass>com.dungeoncode.javarogue.main.Rogue</mainClass>
+										</transformer>
+									</transformers>
+									<!-- Output file name -->
+									<finalName>java-rogue</finalName>
+									<!-- Prevents overwritten pom issues -->
+									<dependencyReducedPomLocation>${project.build.directory}/dependency-reduced-pom.xml</dependencyReducedPomLocation>
+									<!-- Suppresses warnings and overlapping resource issues -->
+									<filters>
+										<filter>
+											<artifact>*:*</artifact>
+											<excludes>
+												<exclude>META-INF/*.SF</exclude>
+												<exclude>META-INF/*.DSA</exclude>
+												<exclude>META-INF/*.RSA</exclude>
+												<exclude>META-INF/LICENSE</exclude>
+												<exclude>META-INF/LICENSE.txt</exclude>
+												<exclude>META-INF/NOTICE</exclude>
+												<exclude>META-INF/NOTICE.txt</exclude>
+												<exclude>META-INF/MANIFEST.MF</exclude>
+												<exclude>META-INF/versions/9/module-info.class</exclude>
+												<exclude>module-info.class</exclude>
+											</excludes>
+										</filter>
+									</filters>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
-    <build>
-        <plugins>
-            <!-- Copies .bat file to target dir -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-bat-file</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <!-- Absolute path to avoid conflict with shade -->
-                                    <directory>${project.basedir}/src/main/resources</directory>
-                                    <includes>
-                                        <include>java-rogue.bat</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+	<build>
+		<plugins>
+			<!-- Copies .bat file to target dir -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>3.3.1</version>
+				<executions>
+					<execution>
+						<id>copy-bat-file</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}</outputDirectory>
+							<resources>
+								<resource>
+									<!-- Absolute path to avoid conflict with shade -->
+									<directory>${project.basedir}/src/main/resources</directory>
+									<includes>
+										<include>java-rogue.bat</include>
+									</includes>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-            <!-- Java compilation -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.13.0</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
-            </plugin>
+			<!-- Java compilation -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.13.0</version>
+				<configuration>
+					<source>17</source>
+					<target>17</target>
+				</configuration>
+			</plugin>
 
-            <!-- JUnit test runner with stress group config -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>3.2.5</version>
-                <configuration>
-                    <!--suppress UnresolvedMavenProperty -->
-                    <groups>${groups}</groups>
-                    <excludedGroups>${excludedGroups}</excludedGroups>
-                    <argLine>-Xshare:off</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+			<!-- JUnit test runner with stress group config -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<!--suppress UnresolvedMavenProperty -->
+					<groups>${groups}</groups>
+					<excludedGroups>${excludedGroups}</excludedGroups>
+					<argLine>-Xshare:off</argLine>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

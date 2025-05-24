@@ -30,21 +30,33 @@ public class RogueFactoryTest {
      * Uses a fixed seed (428012268L) for reproducible results and tests 1000 iterations at random levels.
      */
     @Test
-    void testRndThing(){
-        final long amuletSeed=428012268L;
+    void testRndThing() {
+        final long amuletSeed = 428012268L;
         final RogueFactory rogueFactory = getRogueFactory();
         rogueFactory.getRogueRandom().reseed(amuletSeed);
 
-        final int amuletLevel=getRogueFactory().getConfig().getAmuletLevel();
+        final int amuletLevel = getRogueFactory().getConfig().getAmuletLevel();
         final ObjectType amuletObjectType = rogueFactory.rndThing(amuletLevel);
-        assertEquals(ObjectType.AMULET,amuletObjectType);
+        assertEquals(ObjectType.AMULET, amuletObjectType);
 
-        for(int i=0;i<1000;i++){
-            final int level=rogueFactory.getRogueRandom().rnd(amuletLevel);
-            final ObjectType objectType=rogueFactory.rndThing(level);
+        for (int i = 0; i < 1000; i++) {
+            final int level = rogueFactory.getRogueRandom().rnd(amuletLevel);
+            final ObjectType objectType = rogueFactory.rndThing(level);
             assertNotNull(objectType);
-            assertNotEquals(ObjectType.AMULET,objectType);
+            assertNotEquals(ObjectType.AMULET, objectType);
         }
+    }
+
+    /**
+     * Creates a {@link RogueFactory} for testing.
+     * Uses a default {@link Config} and {@link RogueRandom}.
+     *
+     * @return The initialized {@link RogueFactory}.
+     */
+    private RogueFactory getRogueFactory() {
+        final Config config = new Config();
+        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
+        return new RogueFactory(config, rogueRandom);
     }
 
     /**
@@ -55,10 +67,10 @@ public class RogueFactoryTest {
      * results.
      */
     @RepeatedTest(100)
-    void testPickOne(){
+    void testPickOne() {
         final RogueFactory rogueFactory = getRogueFactory();
 
-        ObjectType objectType=null;
+        ObjectType objectType = null;
         RogueFactory.PickResult pickResult = rogueFactory.pickOne(objectType);
         assertNotNull(pickResult);
         assertNotNull(pickResult.objectType());
@@ -67,18 +79,18 @@ public class RogueFactoryTest {
         assertNull(pickResult.badPickMessage());
         assertNull(pickResult.checkedTemplates());
 
-        objectType=ObjectType.ARMOR;
+        objectType = ObjectType.ARMOR;
         pickResult = rogueFactory.pickOne(objectType);
         assertNotNull(pickResult);
-        assertEquals(objectType,pickResult.objectType());
+        assertEquals(objectType, pickResult.objectType());
         assertNotNull(pickResult.itemSubType());
         assertFalse(pickResult.isBadPick());
         assertInstanceOf(ArmorType.class, pickResult.itemSubType());
 
-        objectType=ObjectType.POTION;
+        objectType = ObjectType.POTION;
         pickResult = rogueFactory.pickOne(objectType);
         assertNotNull(pickResult);
-        assertEquals(objectType,pickResult.objectType());
+        assertEquals(objectType, pickResult.objectType());
         assertNotNull(pickResult.itemSubType());
         assertFalse(pickResult.isBadPick());
         assertInstanceOf(PotionType.class, pickResult.itemSubType());
@@ -92,16 +104,16 @@ public class RogueFactoryTest {
      * the amulet level and a fixed seed for reproducibility.
      */
     @RepeatedTest(50)
-    void testRandMonster(){
+    void testRandMonster() {
         final RogueFactory rogueFactory = getRogueFactory();
 
-        boolean wander=false;
-        int level=rogueFactory.getRogueRandom().rnd(rogueFactory.getConfig().getAmuletLevel());
+        boolean wander = false;
+        int level = rogueFactory.getRogueRandom().rnd(rogueFactory.getConfig().getAmuletLevel());
         MonsterType monsterType = rogueFactory.randMonster(wander, level);
         assertNotNull(monsterType);
         assertTrue(RogueFactory.LVL_MONS.contains(monsterType));
 
-        wander=true;
+        wander = true;
         monsterType = rogueFactory.randMonster(wander, level);
         assertNotNull(monsterType);
         assertTrue(RogueFactory.WAND_MONS.contains(monsterType));
@@ -140,8 +152,8 @@ public class RogueFactoryTest {
      * Verifies fruit/non-fruit status with specific seeds.
      */
     @Test
-    void testFood(){
-        final RogueFactory rogueFactory=getRogueFactory();
+    void testFood() {
+        final RogueFactory rogueFactory = getRogueFactory();
         rogueFactory.getRogueRandom().reseed(1);
         Food food = rogueFactory.food();
         assertNotNull(food);
@@ -158,14 +170,14 @@ public class RogueFactoryTest {
      * Verifies subtype, count, and symbol type.
      */
     @Test
-    void testPotion(){
-        final RogueFactory rogueFactory=getRogueFactory();
-        final PotionType potionType=PotionType.HEALING;
+    void testPotion() {
+        final RogueFactory rogueFactory = getRogueFactory();
+        final PotionType potionType = PotionType.HEALING;
         Potion potion = rogueFactory.potion(potionType);
         assertNotNull(potion);
-        assertEquals(potionType,potion.getItemSubType());
-        assertEquals(1,potion.getCount());
-        assertEquals(SymbolType.POTION,potion.getSymbolType());
+        assertEquals(potionType, potion.getItemSubType());
+        assertEquals(1, potion.getCount());
+        assertEquals(SymbolType.POTION, potion.getSymbolType());
     }
 
     /**
@@ -173,14 +185,14 @@ public class RogueFactoryTest {
      * Verifies subtype, count, and symbol type.
      */
     @Test
-    void testScroll(){
-        final RogueFactory rogueFactory=getRogueFactory();
-        final ScrollType scrollType=ScrollType.IDENTIFY_SCROLL;
+    void testScroll() {
+        final RogueFactory rogueFactory = getRogueFactory();
+        final ScrollType scrollType = ScrollType.IDENTIFY_SCROLL;
         Scroll scroll = rogueFactory.scroll(scrollType);
         assertNotNull(scroll);
-        assertEquals(scrollType,scroll.getItemSubType());
-        assertEquals(1,scroll.getCount());
-        assertEquals(SymbolType.SCROLL,scroll.getSymbolType());
+        assertEquals(scrollType, scroll.getItemSubType());
+        assertEquals(1, scroll.getCount());
+        assertEquals(SymbolType.SCROLL, scroll.getSymbolType());
     }
 
     /**
@@ -188,21 +200,21 @@ public class RogueFactoryTest {
      * Verifies subtype, count, group, symbol type, and cursed status with specific seeds.
      */
     @Test
-    void testWeapon(){
-        final RogueFactory rogueFactory=getRogueFactory();
-        final long weaponSeed=60;
+    void testWeapon() {
+        final RogueFactory rogueFactory = getRogueFactory();
+        final long weaponSeed = 60;
         rogueFactory.getRogueRandom().reseed(weaponSeed);
 
-        final WeaponType weaponType=WeaponType.LONG_SWORD;
+        final WeaponType weaponType = WeaponType.LONG_SWORD;
         Weapon weapon = rogueFactory.weapon(weaponType);
         assertNotNull(weapon);
-        assertEquals(weaponType,weapon.getItemSubType());
-        assertEquals(1,weapon.getCount());
-        assertEquals(0,weapon.getGroup());
-        assertEquals(SymbolType.WEAPON,weapon.getSymbolType());
+        assertEquals(weaponType, weapon.getItemSubType());
+        assertEquals(1, weapon.getCount());
+        assertEquals(0, weapon.getGroup());
+        assertEquals(SymbolType.WEAPON, weapon.getSymbolType());
         assertFalse(weapon.hasFlag(ItemFlag.ISCURSED));
 
-        final long cursedWeaponSeed=10;
+        final long cursedWeaponSeed = 10;
         rogueFactory.getRogueRandom().reseed(cursedWeaponSeed);
         weapon = rogueFactory.weapon(weaponType);
         assertTrue(weapon.hasFlag(ItemFlag.ISCURSED));
@@ -215,21 +227,21 @@ public class RogueFactoryTest {
     @Test
     void testArmor() {
         final RogueFactory rogueFactory = getRogueFactory();
-        final long armorSeed=200;
+        final long armorSeed = 200;
         rogueFactory.getRogueRandom().reseed(armorSeed);
 
-        final ArmorType armorType=ArmorType.LEATHER;
-        Armor armor=rogueFactory.armor(armorType);
+        final ArmorType armorType = ArmorType.LEATHER;
+        Armor armor = rogueFactory.armor(armorType);
         assertNotNull(armor);
-        assertEquals(armorType,armor.getItemSubType());
-        assertEquals(1,armor.getCount());
-        assertEquals(0,armor.getGroup());
-        assertEquals(SymbolType.ARMOR,armor.getSymbolType());
+        assertEquals(armorType, armor.getItemSubType());
+        assertEquals(1, armor.getCount());
+        assertEquals(0, armor.getGroup());
+        assertEquals(SymbolType.ARMOR, armor.getSymbolType());
         assertFalse(armor.hasFlag(ItemFlag.ISCURSED));
 
-        final long cursedArmorSeed=10;
+        final long cursedArmorSeed = 10;
         rogueFactory.getRogueRandom().reseed(cursedArmorSeed);
-        armor=rogueFactory.armor(armorType);
+        armor = rogueFactory.armor(armorType);
         assertTrue(armor.hasFlag(ItemFlag.ISCURSED));
     }
 
@@ -240,12 +252,12 @@ public class RogueFactoryTest {
     @Test
     void testGold() {
         final RogueFactory rogueFactory = getRogueFactory();
-        final int goldValue=100;
-        final Gold gold =rogueFactory.gold(goldValue);
+        final int goldValue = 100;
+        final Gold gold = rogueFactory.gold(goldValue);
         assertNotNull(gold);
         assertNull(gold.getItemSubType());
-        assertEquals(goldValue,gold.getGoldValue());
-        assertEquals(SymbolType.GOLD,gold.getSymbolType());
+        assertEquals(goldValue, gold.getGoldValue());
+        assertEquals(SymbolType.GOLD, gold.getSymbolType());
     }
 
     /**
@@ -255,20 +267,20 @@ public class RogueFactoryTest {
     @Test
     void testRing() {
         final RogueFactory rogueFactory = getRogueFactory();
-        final long ringSeed=100;
+        final long ringSeed = 100;
         rogueFactory.getRogueRandom().reseed(ringSeed);
 
-        RingType ringType=RingType.R_ADDHIT;
-        Ring ring=rogueFactory.ring(ringType);
+        RingType ringType = RingType.R_ADDHIT;
+        Ring ring = rogueFactory.ring(ringType);
         assertNotNull(ring);
-        assertEquals(ringType,ring.getItemSubType());
-        assertEquals(1,ring.getCount());
-        assertEquals(0,ring.getGroup());
-        assertEquals(SymbolType.RING,ring.getSymbolType());
+        assertEquals(ringType, ring.getItemSubType());
+        assertEquals(1, ring.getCount());
+        assertEquals(0, ring.getGroup());
+        assertEquals(SymbolType.RING, ring.getSymbolType());
         assertFalse(ring.hasFlag(ItemFlag.ISCURSED));
 
-        ringType=RingType.R_AGGR;
-        ring=rogueFactory.ring(ringType);
+        ringType = RingType.R_AGGR;
+        ring = rogueFactory.ring(ringType);
         assertTrue(ring.hasFlag(ItemFlag.ISCURSED));
     }
 
@@ -280,19 +292,19 @@ public class RogueFactoryTest {
     void testRod() {
         final RogueFactory rogueFactory = getRogueFactory();
 
-        RodType rodType=RodType.WS_SLOW_M;
-        Rod rod=rogueFactory.rod(rodType);
+        RodType rodType = RodType.WS_SLOW_M;
+        Rod rod = rogueFactory.rod(rodType);
         assertNotNull(rod);
-        assertEquals(rodType,rod.getItemSubType());
-        assertEquals(1,rod.getCount());
-        assertEquals(0,rod.getGroup());
-        assertEquals(SymbolType.ROD,rod.getSymbolType());
-        assertTrue(rod.getCharges()<8);
+        assertEquals(rodType, rod.getItemSubType());
+        assertEquals(1, rod.getCount());
+        assertEquals(0, rod.getGroup());
+        assertEquals(SymbolType.ROD, rod.getSymbolType());
+        assertTrue(rod.getCharges() < 8);
 
-        rodType=RodType.WS_LIGHT;
-        rod=rogueFactory.rod(rodType);
-        assertTrue(rod.getCharges()>9);
-        assertTrue(rod.getCharges()<20);
+        rodType = RodType.WS_LIGHT;
+        rod = rogueFactory.rod(rodType);
+        assertTrue(rod.getCharges() > 9);
+        assertTrue(rod.getCharges() < 20);
     }
 
     /**
@@ -357,7 +369,7 @@ public class RogueFactoryTest {
         // BAT inventory should be null
         assertNull(bat.getInventory());
         // BAT should have no disguise, same as it is primary symbol
-        assertEquals(bat.getSymbolType(),bat.getDisguiseSymbolType());
+        assertEquals(bat.getSymbolType(), bat.getDisguiseSymbolType());
 
         // Test level adjustment (DRAGON, level 30, above amulet level)
         rogueFactory.getRogueRandom().reseed(seed); // Reset seed
@@ -393,7 +405,7 @@ public class RogueFactoryTest {
      */
     @Test
     void testInitializeRogueFactory() {
-        RogueFactory rogueFactory=getRogueFactory();
+        RogueFactory rogueFactory = getRogueFactory();
 
         // Verify all ScrollTypes have generated names
         Arrays.stream(ScrollType.values())
@@ -427,7 +439,7 @@ public class RogueFactoryTest {
      */
     @Test
     void testIsKnown() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         // Initial state: no subtypes are known
         assertFalse(rogueFactory.isKnown(ScrollType.HOLD_MONSTER));
@@ -452,7 +464,7 @@ public class RogueFactoryTest {
      */
     @Test
     void testGuessName() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         final String guessNameHoldMonster = "Hold Monster Scroll";
         final String guessNameDexterityRing = "Dexterity Ring";
@@ -481,7 +493,7 @@ public class RogueFactoryTest {
      */
     @RepeatedTest(50)
     void testInvNamePotion() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         // Test with lowercase initial for dropping items
         boolean dropCapital = true;
@@ -539,7 +551,7 @@ public class RogueFactoryTest {
      */
     @RepeatedTest(50)
     void testInvNameRod() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         // Test with lowercase initial for dropping items
         boolean dropCapital = true;
@@ -610,7 +622,7 @@ public class RogueFactoryTest {
      */
     @RepeatedTest(50)
     void testInvNameRing() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         // Test with lowercase initial for dropping items
         boolean dropCapital = true;
@@ -702,7 +714,7 @@ public class RogueFactoryTest {
      */
     @RepeatedTest(50)
     void testInvNameScroll() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         // Test with lowercase initial for dropping items
         boolean dropCapital = true;
@@ -759,8 +771,8 @@ public class RogueFactoryTest {
      */
     @Test
     void testInvNameFood() {
-        final RogueFactory rogueFactory=getRogueFactory();
-        final Config config=rogueFactory.getConfig();
+        final RogueFactory rogueFactory = getRogueFactory();
+        final Config config = rogueFactory.getConfig();
 
         // Test with uppercase initial for inventory listing
         boolean dropCapital = false;
@@ -794,8 +806,8 @@ public class RogueFactoryTest {
      */
     @Test
     void testInvNameWeapon() {
-        final RogueFactory rogueFactory=getRogueFactory();
-        final Config config=rogueFactory.getConfig();
+        final RogueFactory rogueFactory = getRogueFactory();
+        final Config config = rogueFactory.getConfig();
 
         // Test with uppercase initial for inventory listing
         boolean dropCapital = false;
@@ -843,8 +855,8 @@ public class RogueFactoryTest {
      */
     @Test
     void testInvNameArmor() {
-        final RogueFactory rogueFactory=getRogueFactory();
-        final Config config=rogueFactory.getConfig();
+        final RogueFactory rogueFactory = getRogueFactory();
+        final Config config = rogueFactory.getConfig();
 
         // Test with lowercase initial for dropping items
         boolean dropCapital = true;
@@ -886,7 +898,7 @@ public class RogueFactoryTest {
 
     @Test
     void testInvNameGold() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         boolean dropCapital = true;
         final int goldValue = 100;
@@ -898,7 +910,7 @@ public class RogueFactoryTest {
 
     @Test
     void testInvNameAmulet() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
         boolean dropCapital = false;
         final Item item = new Item(ObjectType.AMULET, null, 1);
@@ -916,37 +928,25 @@ public class RogueFactoryTest {
      */
     @RepeatedTest(50)
     void testFixStick() {
-        final RogueFactory rogueFactory=getRogueFactory();
+        final RogueFactory rogueFactory = getRogueFactory();
 
-        final String wieldDamage="1x1";
-        final String wieldDamageStaff="2x3";
-        final String throwDamage="1x1";
+        final String wieldDamage = "1x1";
+        final String wieldDamageStaff = "2x3";
+        final String throwDamage = "1x1";
 
         final Rod lightRod = new Rod(RodType.WS_LIGHT);
         rogueFactory.fixStick(lightRod);
-        assertTrue(lightRod.getCharges()>9);
-        assertEquals(throwDamage,lightRod.getThrowDamage());
-        assertTrue(Objects.equals(wieldDamage,lightRod.getWieldDamage()) ||
-                Objects.equals(wieldDamageStaff,lightRod.getWieldDamage()));
+        assertTrue(lightRod.getCharges() > 9);
+        assertEquals(throwDamage, lightRod.getThrowDamage());
+        assertTrue(Objects.equals(wieldDamage, lightRod.getWieldDamage()) ||
+                Objects.equals(wieldDamageStaff, lightRod.getWieldDamage()));
 
         final Rod slowRod = new Rod(RodType.WS_SLOW_M);
         rogueFactory.fixStick(slowRod);
-        assertTrue(slowRod.getCharges()<9);
-        assertEquals(throwDamage,slowRod.getThrowDamage());
-        assertTrue(Objects.equals(wieldDamage,slowRod.getWieldDamage()) ||
-                Objects.equals(wieldDamageStaff,slowRod.getWieldDamage()));
-    }
-
-    /**
-     * Creates a {@link RogueFactory} for testing.
-     * Uses a default {@link Config} and {@link RogueRandom}.
-     *
-     * @return The initialized {@link RogueFactory}.
-     */
-    private RogueFactory getRogueFactory() {
-        final Config config = new Config();
-        final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        return new RogueFactory(config,rogueRandom);
+        assertTrue(slowRod.getCharges() < 9);
+        assertEquals(throwDamage, slowRod.getThrowDamage());
+        assertTrue(Objects.equals(wieldDamage, slowRod.getWieldDamage()) ||
+                Objects.equals(wieldDamageStaff, slowRod.getWieldDamage()));
     }
 
 }

@@ -2,10 +2,10 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.Position;
-import com.dungeoncode.javarogue.system.entity.item.Item;
-import com.dungeoncode.javarogue.system.entity.item.Food;
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.item.Food;
+import com.dungeoncode.javarogue.system.entity.item.Item;
 import com.dungeoncode.javarogue.system.world.*;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,7 @@ public class LevelTest {
     @Test
     void testFindItemAt() {
 
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
         final Food food = new Food();
         final int foodX = 10;
         final int foodY = 5;
@@ -41,7 +41,7 @@ public class LevelTest {
 
     @Test
     void testPlace() {
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
         final int placeX = 2;
         final int placeY = 5;
         final SymbolType doorSymbolType = SymbolType.DOOR;
@@ -84,7 +84,7 @@ public class LevelTest {
 
     @Test
     void testRoom() {
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
         final int roomX = 5;
         final int roomY = 5;
         final int roomSizeX = 10;

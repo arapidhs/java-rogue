@@ -1,7 +1,7 @@
 /**
- * Executes the player pick-up action, equivalent to the pick-up command in <code>command.c</code> 
- * from the original Rogue C source. Attempts to pick up an item at the player's current position. 
- * If an item is found and the player is not levitating, processes the pick-up; otherwise, displays 
+ * Executes the player pick-up action, equivalent to the pick-up command in <code>command.c</code>
+ * from the original Rogue C source. Attempts to pick up an item at the player's current position.
+ * If an item is found and the player is not levitating, processes the pick-up; otherwise, displays
  * a message indicating nothing is present. Consumes a player move.
  */
 package com.dungeoncode.javarogue.command.action;

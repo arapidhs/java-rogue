@@ -58,12 +58,12 @@ public class LevelGenerator {
         /*
          * Place the traps
          */
-        if ( rnd(10) < getLevel().getLevelNum() ){
-            int ntraps = rnd(getLevel().getLevelNum()/2)+1;
-            if(ntraps>config.getMaxTraps()){
-                ntraps=config.getMaxTraps();
+        if (rnd(10) < getLevel().getLevelNum()) {
+            int ntraps = rnd(getLevel().getLevelNum() / 2) + 1;
+            if (ntraps > config.getMaxTraps()) {
+                ntraps = config.getMaxTraps();
             }
-            int i=ntraps;
+            int i = ntraps;
             while (i-- > 0) {
                 Position trapPos;
                 SymbolType symbolType;
@@ -339,7 +339,7 @@ public class LevelGenerator {
                 gameState.givePack(monster, gameState.getLevelNum(), gameState.getMaxLevel());
             }
 
-            for(Monster monster: getLevel().getMonsters()){
+            for (Monster monster : getLevel().getMonsters()) {
                 final Position pos = monster.getPosition();
                 final Room mroom = getLevel().roomIn(pos.getX(), pos.getY());
                 monster.setRoom(mroom);

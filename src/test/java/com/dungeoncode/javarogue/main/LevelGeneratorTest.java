@@ -2,15 +2,15 @@ package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.Position;
-import com.dungeoncode.javarogue.system.entity.item.Item;
-import com.dungeoncode.javarogue.system.entity.item.Gold;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
-import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
+import com.dungeoncode.javarogue.system.LevelGenerator;
 import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.entity.Position;
+import com.dungeoncode.javarogue.system.entity.item.Gold;
+import com.dungeoncode.javarogue.system.entity.item.Item;
+import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
-import com.dungeoncode.javarogue.system.LevelGenerator;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -29,27 +29,43 @@ public class LevelGeneratorTest extends RogueBaseTest {
      * positions are modified.
      */
     @Test
-    void testVert(){
+    void testVert() {
         final LevelGenerator levelGenerator = createLevelGenerator();
-        final int levelNum=1;
+        final int levelNum = 1;
         levelGenerator.initializeLevel(levelNum);
 
         final Room room = new Room();
-        final int roomX=5;
-        final int roomY=7;
-        final int roomSizeX=4;
-        final int roomSizeY=6;
+        final int roomX = 5;
+        final int roomY = 7;
+        final int roomSizeX = 4;
+        final int roomSizeY = 6;
         room.setPosition(roomX, roomY);
         room.setSize(roomSizeX, roomSizeY);
 
-        levelGenerator.vert(room,roomX);
+        levelGenerator.vert(room, roomX);
 
         for (int y = roomY + 1; y <= roomY + roomSizeY - 1; y++) {
             final Place place = levelGenerator.getLevel().getPlaceAt(roomX, y);
             assertNotNull(place);
             assertTrue(place.isType(PlaceType.WALL));
-            assertEquals(SymbolType.WALL_VERTICAL,place.getSymbolType());
+            assertEquals(SymbolType.WALL_VERTICAL, place.getSymbolType());
         }
+    }
+
+    private LevelGenerator createLevelGenerator() {
+        return createLevelGenerator(0);
+    }
+
+    private LevelGenerator createLevelGenerator(final long seed) {
+        final RogueRandom rogueRandom;
+        if (seed > 0) {
+            rogueRandom = new RogueRandom(seed);
+        } else {
+            rogueRandom = new RogueRandom(config.getSeed());
+        }
+        final MessageSystem messageSystem = new MessageSystem(screen);
+        final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
+        return new LevelGenerator(gameState);
     }
 
     /**
@@ -59,26 +75,26 @@ public class LevelGeneratorTest extends RogueBaseTest {
      * positions are modified.
      */
     @Test
-    void testHoriz(){
+    void testHoriz() {
         final LevelGenerator levelGenerator = createLevelGenerator();
-        final int levelNum=1;
+        final int levelNum = 1;
         levelGenerator.initializeLevel(levelNum);
 
         final Room room = new Room();
-        final int roomX=5;
-        final int roomY=7;
-        final int roomSizeX=4;
-        final int roomSizeY=6;
+        final int roomX = 5;
+        final int roomY = 7;
+        final int roomSizeX = 4;
+        final int roomSizeY = 6;
         room.setPosition(roomX, roomY);
         room.setSize(roomSizeX, roomSizeY);
 
-        levelGenerator.horiz(room,roomY);
+        levelGenerator.horiz(room, roomY);
 
         for (int x = roomX; x <= roomX + roomSizeX - 1; x++) {
             final Place place = levelGenerator.getLevel().getPlaceAt(x, roomY);
             assertNotNull(place);
             assertTrue(place.isType(PlaceType.WALL));
-            assertEquals(SymbolType.WALL_HORIZONTAL,place.getSymbolType());
+            assertEquals(SymbolType.WALL_HORIZONTAL, place.getSymbolType());
         }
     }
 
@@ -122,8 +138,8 @@ public class LevelGeneratorTest extends RogueBaseTest {
         } else {
             // Non-real place should have WALL_HORIZONTAL or WALL_VERTICAL flag
             assertTrue(place.isType(PlaceType.WALL));
-            assertTrue(Objects.equals(place.getSymbolType(),SymbolType.WALL_HORIZONTAL) ||
-                    Objects.equals(place.getSymbolType(),SymbolType.WALL_VERTICAL));
+            assertTrue(Objects.equals(place.getSymbolType(), SymbolType.WALL_HORIZONTAL) ||
+                    Objects.equals(place.getSymbolType(), SymbolType.WALL_VERTICAL));
         }
     }
 
@@ -239,9 +255,9 @@ public class LevelGeneratorTest extends RogueBaseTest {
      */
     @Test
     void testAddGold() {
-        final long seed=100;
+        final long seed = 100;
         final LevelGenerator levelGenerator = createLevelGenerator(seed);
-        final int levelNum=1;
+        final int levelNum = 1;
         final Level level = levelGenerator.newLevel(levelNum);
         final Room room = level.rndRoom();
         final Position goldPos = levelGenerator.addGold(room);
@@ -249,14 +265,14 @@ public class LevelGeneratorTest extends RogueBaseTest {
         final Item gold = level.findItemAt(goldPos.getX(), goldPos.getY());
         assertNotNull(gold);
         assertInstanceOf(Gold.class, gold);
-        assertEquals(goldPos,gold.getPosition());
-        assertEquals(goldPos,room.getGoldPosition());
-        assertTrue(gold.getGoldValue()>1);
-        assertEquals(gold.getGoldValue(),room.getGoldValue());
+        assertEquals(goldPos, gold.getPosition());
+        assertEquals(goldPos, room.getGoldPosition());
+        assertTrue(gold.getGoldValue() > 1);
+        assertEquals(gold.getGoldValue(), room.getGoldValue());
 
         final Place place = level.getPlaceAt(goldPos.getX(), goldPos.getY());
         assertNotNull(place);
-        assertEquals(SymbolType.GOLD,place.getSymbolType());
+        assertEquals(SymbolType.GOLD, place.getSymbolType());
 
     }
 
@@ -274,7 +290,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
         Arrays.setAll(rooms, k -> new Room());
 
         // Set some rooms as gone
-        for(int j=0;j<rogueRandom.rnd(rooms.length/2)+1;j++){
+        for (int j = 0; j < rogueRandom.rnd(rooms.length / 2) + 1; j++) {
             rooms[rogueRandom.rnd(rooms.length)].addFlag(RoomFlag.GONE);
         }
 
@@ -359,12 +375,12 @@ public class LevelGeneratorTest extends RogueBaseTest {
         levelGenerator.initializeLevel(rogueRandom.rnd(config.getAmuletLevel()));
         // Arrange: Set up maze parameters (room at (5,5), size 15x6, hardcoded start)
         final Room mazeRoom = new Room();
-        final int roomX=5;
-        final int roomY=8;
-        final Position position = new Position(roomX,roomY);
+        final int roomX = 5;
+        final int roomY = 8;
+        final Position position = new Position(roomX, roomY);
 
         // Execute the maze creation
-        levelGenerator.setMazeRoomDimensions(mazeRoom, levelGenerator.getMaxRoomX(), levelGenerator.getMaxRoomY(),position );
+        levelGenerator.setMazeRoomDimensions(mazeRoom, levelGenerator.getMaxRoomX(), levelGenerator.getMaxRoomY(), position);
         levelGenerator.doMaze(mazeRoom);
 
 
@@ -393,48 +409,32 @@ public class LevelGeneratorTest extends RogueBaseTest {
     }
 
     @RepeatedTest(100)
-    void testLevelGeneration(){
+    void testLevelGeneration() {
         final LevelGenerator levelGenerator = createLevelGenerator();
-        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
-        final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + 1;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
     }
 
     @Tag("stress")
     @RepeatedTest(5000)
-    void testLevelGenerationStressTest(){
+    void testLevelGenerationStressTest() {
         final LevelGenerator levelGenerator = createLevelGenerator();
-        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
-        final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+1;
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + 1;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
     }
 
     @Tag("stress")
     @RepeatedTest(5000)
-    void testLevelGenerationAtHighLevelsStressTest(){
+    void testLevelGenerationAtHighLevelsStressTest() {
         final LevelGenerator levelGenerator = createLevelGenerator();
-        final RogueRandom rogueRandom=levelGenerator.getRogueRandom();
-        final int levelNum = rogueRandom.rnd(config.getAmuletLevel())+config.getAmuletLevel()/2;
+        final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
+        final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + config.getAmuletLevel() / 2;
         final Level level = levelGenerator.newLevel(levelNum);
         assertNotNull(level);
-    }
-
-    private LevelGenerator createLevelGenerator() {
-        return createLevelGenerator(0);
-    }
-
-    private LevelGenerator createLevelGenerator(final long seed) {
-        final RogueRandom rogueRandom;
-        if(seed>0){
-            rogueRandom = new RogueRandom(seed);
-        }else{
-            rogueRandom=new RogueRandom(config.getSeed());
-        }
-        final MessageSystem messageSystem = new MessageSystem(screen);
-        final GameState gameState = new GameState(config,rogueRandom,screen,new DefaultInitializer(), messageSystem);
-        return new LevelGenerator(gameState);
     }
 
 }

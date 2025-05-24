@@ -22,6 +22,7 @@ import com.dungeoncode.javarogue.system.world.RoomFlag;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
+import com.googlecode.lanterna.SGR;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -536,7 +537,6 @@ public class GameState {
         return pickResult;
     }
 
-    // TODO newLevel is WIP
     public void newLevel(final int levelNum) {
         screen.clear();
         player.removeFlag(CreatureFlag.ISHELD);
@@ -549,23 +549,87 @@ public class GameState {
         // TODO: continue with implementation of enter_room()
         enterRoom(pos.getX(), pos.getY());
         screen.putChar(pos.getX(), pos.getY(), SymbolMapper.getSymbol(player.getClass()));
-        screen.refresh();
+        //screen.refresh();
     }
 
-    // TODO temp enterRoom testing method, this should be the equivalent of enter_room(coord *cp)
+    public Player getPlayer() {
+        return player;
+    }
+
+    /**
+     * Handles the player entering a room at the specified coordinates, equivalent to room entry logic
+     * in the original Rogue C source (e.g., <code>enter_room</code> in <code>rooms.c</code>). Updates
+     * the player's room, opens doors, and renders the room's contents (places, monsters, and symbols)
+     * on the screen, respecting visibility rules based on room darkness, player blindness, and monster
+     * detection abilities.
+     *
+     * @param posX The x-coordinate of the player's position.
+     * @param posY The y-coordinate of the player's position.
+     */
     public void enterRoom(final int posX, final int posY) {
         final Room room = roomIn(posX, posY);
+        assert room != null;
         player.setRoom(room);
-        if (room != null && !room.hasFlag(RoomFlag.DARK)) {
+
+        doorOpen(room);
+
+        if (!room.hasFlag(RoomFlag.DARK) && !player.hasFlag(CreatureFlag.ISBLIND)) {
             for (int y = room.getY(); y < room.getY() + room.getSize().getY(); y++) {
                 for (int x = room.getX(); x < room.getX() + room.getSize().getX(); x++) {
                     final Place place = currentLevel.getPlaceAt(x, y);
-                    if (place != null) {
-                        screen.putChar(x, y, SymbolMapper.getSymbol(place.getSymbolType()));
+                    assert place != null;
+                    final Monster monster = place.getMonster();
+                    final SymbolType symbolType = place.getSymbolType();
+                    if (monster == null) {
+                        screen.putChar(x, y, SymbolMapper.getSymbol(symbolType));
+                    } else {
+                        monster.setOldSymbolType(symbolType);
+                        if (!seeMonst(monster)) {
+                            if (player.hasFlag(PlayerFlag.SEEMONST)) {
+                                screen.enableModifiers(SGR.REVERSE);
+                                final char symbol = SymbolMapper.getSymbol(monster.getDisguiseSymbolType());
+                                screen.putChar(x, y, symbol);
+                                screen.disableModifiers(SGR.REVERSE);
+                            } else {
+                                screen.putChar(x, y, SymbolMapper.getSymbol(symbolType));
+                            }
+                        } else {
+                            final char symbol = SymbolMapper.getSymbol(monster.getDisguiseSymbolType());
+                            screen.putChar(x, y, symbol);
+                        }
                     }
                 }
             }
         }
+    }
+
+    /**
+     * Called to illuminate a room.  If it is dark, remove anything that might move.
+     * Equivalent to <code>void door_open(struct room * rp)</code> in <code>move.c</code>
+     *
+     * @param room the room the door belongs to
+     */
+    private void doorOpen(@Nonnull final Room room) {
+        if (!room.hasFlag(RoomFlag.GONE)) {
+            for (int y = room.getY(); y < room.getY() + room.getSize().getY(); y++) {
+                for (int x = room.getX(); x < room.getX() + room.getSize().getX(); x++) {
+                    final Place place = currentLevel.getPlaceAt(x, y);
+                    assert place != null;
+                    if (place.getMonster() != null) {
+                        wakeMonster(x, y);
+                    }
+                }
+            }
+        }
+    }
+
+    // TODO implement wakeMonster, equivalent to wake_monster in mosnters.
+    private void wakeMonster(int x, int y) {
+
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public int goldCalc(final int level) {
@@ -621,6 +685,7 @@ public class GameState {
      * invalid item types in master mode.
      * <p>
      * Equivalent to <code>void pick_up(char ch)</code> in <code>pack.c</code>.
+     *
      * @param objectType The type of object to pick up (e.g., {@link ObjectType#GOLD}, {@link ObjectType#POTION}).
      * @throws NullPointerException if {@code objectType} is null.
      */
@@ -683,23 +748,16 @@ public class GameState {
     /**
      * Print out the message if you are just moving onto an object.
      * Equivalent to <code>void move_msg(THING * obj)</code> in <code>pack.c</code>.
+     *
      * @param item item player moved on.
      */
-    private void moveMsg(@Nullable  Item item) {
-        if(item!=null) {
+    private void moveMsg(@Nullable Item item) {
+        if (item != null) {
             if (!config.isTerse()) {
                 messageSystem.addmssg("you ");
             }
             messageSystem.msg(String.format("moved ont %s", rogueFactory.invName(getPlayer(), item, true)));
         }
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     /**
@@ -720,26 +778,6 @@ public class GameState {
             messageSystem.msg(String.format("Non-object %d,%d", position.getY(), position.getX()));
         }
         return foundItem;
-    }
-
-    /**
-     * Returns the symbol type that should be rendered at the player's current position,
-     * based on the room type and visibility.
-     * <p>
-     * It is the equivalent of char floor_ch().
-     *
-     * <p>If the player is in a corridor or the floor should be shown (e.g., lit room or non-blind state),
-     * the actual room symbol type is returned. Otherwise, the fallback symbol for an empty room is used.</p>
-     *
-     * @return the character representing the floor or empty space at the player's position
-     */
-    public SymbolType floorCh() {
-        final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
-        if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
-            return room.getSymbolType();
-        } else {
-            return SymbolType.EMPTY;
-        }
     }
 
     /**
@@ -828,25 +866,6 @@ public class GameState {
     }
 
     /**
-     * Determines if the floor symbol in the player's current room should be rendered.
-     *
-     * <p>It is the equivalent of bool show_floor()
-     * <p>Only rooms that are not corridors and not dark, or if the player is not blind,
-     * will have their floor shown depending on the config flag {@code seeFloor}.</p>
-     *
-     * @return true if the floor should be shown in the current room, false otherwise
-     */
-    public boolean showFloor() {
-        final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
-        if (room != null && room.hasFlag(RoomFlag.DARK) &&
-                !room.hasFlag(RoomFlag.GONE) &&
-                !player.hasFlag(CreatureFlag.ISBLIND)) {
-            return config.isSeeFloor();
-        }
-        return true;
-    }
-
-    /**
      * Returns the symbol type to render at the player's current position, based on the place and room visibility.
      * <p>
      * Equivalent to C function <code>char floor_at()</code> in the Rogue source.
@@ -866,6 +885,45 @@ public class GameState {
             return place.getSymbolType();
         }
         return null;
+    }
+
+    /**
+     * Returns the symbol type that should be rendered at the player's current position,
+     * based on the room type and visibility.
+     * <p>
+     * It is the equivalent of char floor_ch().
+     *
+     * <p>If the player is in a corridor or the floor should be shown (e.g., lit room or non-blind state),
+     * the actual room symbol type is returned. Otherwise, the fallback symbol for an empty room is used.</p>
+     *
+     * @return the character representing the floor or empty space at the player's position
+     */
+    public SymbolType floorCh() {
+        final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
+        if (room != null && (room.hasFlag(RoomFlag.GONE) || showFloor())) {
+            return room.getSymbolType();
+        } else {
+            return SymbolType.EMPTY;
+        }
+    }
+
+    /**
+     * Determines if the floor symbol in the player's current room should be rendered.
+     *
+     * <p>It is the equivalent of bool show_floor()
+     * <p>Only rooms that are not corridors and not dark, or if the player is not blind,
+     * will have their floor shown depending on the config flag {@code seeFloor}.</p>
+     *
+     * @return true if the floor should be shown in the current room, false otherwise
+     */
+    public boolean showFloor() {
+        final Room room = currentLevel.findRoomAt(player.getPosition().getX(), player.getPosition().getY());
+        if (room != null && room.hasFlag(RoomFlag.DARK) &&
+                !room.hasFlag(RoomFlag.GONE) &&
+                !player.hasFlag(CreatureFlag.ISBLIND)) {
+            return config.isSeeFloor();
+        }
+        return true;
     }
 
     /**

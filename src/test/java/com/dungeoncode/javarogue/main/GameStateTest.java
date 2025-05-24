@@ -4,19 +4,21 @@ import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandFunctional;
 import com.dungeoncode.javarogue.command.core.CommandParameterizedTimed;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
-import com.dungeoncode.javarogue.core.*;
+import com.dungeoncode.javarogue.core.Config;
+import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.Phase;
+import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Monster;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
-import com.dungeoncode.javarogue.main.base.RogueBaseTest;
-import com.dungeoncode.javarogue.system.MessageSystem;
-import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -43,7 +45,7 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
 
         // Create level with configured dimensions
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
         gameState.setCurrentLevel(level);
 
         // Test adding Food item silently
@@ -114,7 +116,7 @@ public class GameStateTest extends RogueBaseTest {
         gameState.setPlayer(player);
 
         // Create level with configured dimensions
-        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(),rogueRandom);
+        final Level level = new Level(config.getLevelMaxWidth(), config.getLevelMaxHeight(), rogueRandom);
         gameState.setCurrentLevel(level);
 
         // Test picking up a Food item
@@ -319,13 +321,13 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testShowFloor() {
-        final Config config=new Config();
+        final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
         final Player player = new Player(config);
-        final int levelNum=1;
-        final boolean seeFloor=false;
+        final int levelNum = 1;
+        final boolean seeFloor = false;
         config.setSeeFloor(seeFloor);
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
@@ -340,7 +342,7 @@ public class GameStateTest extends RogueBaseTest {
         assertTrue(gameState.showFloor());
 
         room.addFlag(RoomFlag.DARK);
-        assertEquals(config.isSeeFloor(),gameState.showFloor());
+        assertEquals(config.isSeeFloor(), gameState.showFloor());
 
         player.addFlag(CreatureFlag.ISBLIND);
         assertTrue(gameState.showFloor());
@@ -357,13 +359,13 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testFloorCh() {
-        final Config config=new Config();
+        final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
         final Player player = new Player(config);
-        final int levelNum=1;
-        final boolean seeFloor=false;
+        final int levelNum = 1;
+        final boolean seeFloor = false;
         config.setSeeFloor(seeFloor);
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
@@ -376,14 +378,14 @@ public class GameStateTest extends RogueBaseTest {
         room.removeFlag(RoomFlag.GONE);
         player.removeFlag(CreatureFlag.ISBLIND);
         assertFalse(gameState.showFloor());
-        assertEquals(SymbolType.EMPTY,gameState.floorCh());
+        assertEquals(SymbolType.EMPTY, gameState.floorCh());
 
         room.addFlag(RoomFlag.GONE);
-        assertEquals(SymbolType.PASSAGE,gameState.floorCh());
+        assertEquals(SymbolType.PASSAGE, gameState.floorCh());
 
         room.removeFlag(RoomFlag.GONE);
         room.removeFlag(RoomFlag.DARK);
-        assertEquals(SymbolType.FLOOR,gameState.floorCh());
+        assertEquals(SymbolType.FLOOR, gameState.floorCh());
     }
 
     /**
@@ -398,31 +400,31 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testFloorAtMaze() {
-        final long startInMazeSeed=1505455994;
-        final Config config=new Config();
+        final long startInMazeSeed = 1505455994;
+        final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
 
         final Player player = new Player(config);
-        final int levelNum=20;
-        final boolean seeFloor=false;
+        final int levelNum = 20;
+        final boolean seeFloor = false;
         config.setSeeFloor(seeFloor);
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
 
-        final int px=gameState.getPlayer().getX();
-        final int py=gameState.getPlayer().getY();
+        final int px = gameState.getPlayer().getX();
+        final int py = gameState.getPlayer().getY();
 
         // Starting in maze
-        final Room maze = gameState.getCurrentLevel().findRoomAt(px,py);
+        final Room maze = gameState.getCurrentLevel().findRoomAt(px, py);
         assertNotNull(maze);
         assertTrue(maze.hasFlag(RoomFlag.MAZE));
 
         final Room room = gameState.getCurrentLevel().roomIn(px, py);
         assertNotNull(room);
         assertInstanceOf(Passage.class, room);
-        assertEquals(SymbolType.PASSAGE,gameState.floorAt());
+        assertEquals(SymbolType.PASSAGE, gameState.floorAt());
     }
 
     /**
@@ -437,23 +439,23 @@ public class GameStateTest extends RogueBaseTest {
      */
     @Test
     void testFloorAtNormalRoom() {
-        final long startInMazeSeed=100;
-        final Config config=new Config();
+        final long startInMazeSeed = 100;
+        final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(startInMazeSeed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, null, messageSystem);
         final Player player = new Player(config);
-        final int levelNum=1;
-        final boolean seeFloor=false;
+        final int levelNum = 1;
+        final boolean seeFloor = false;
         config.setSeeFloor(seeFloor);
         gameState.setPlayer(player);
         gameState.newLevel(levelNum);
 
-        final int px=gameState.getPlayer().getX();
-        final int py=gameState.getPlayer().getY();
+        final int px = gameState.getPlayer().getX();
+        final int py = gameState.getPlayer().getY();
 
         // Starting in a normal non-maze non-gone room
-        final Room normalRoom = gameState.getCurrentLevel().findRoomAt(px,py);
+        final Room normalRoom = gameState.getCurrentLevel().findRoomAt(px, py);
         assertNotNull(normalRoom);
         assertFalse(normalRoom.hasFlag(RoomFlag.MAZE));
         assertFalse(normalRoom.hasFlag(RoomFlag.GONE));
@@ -461,7 +463,7 @@ public class GameStateTest extends RogueBaseTest {
         final Room room = gameState.getCurrentLevel().roomIn(px, py);
         assertNotNull(room);
         assertFalse(room instanceof Passage);
-        assertEquals(SymbolType.FLOOR,gameState.floorAt());
+        assertEquals(SymbolType.FLOOR, gameState.floorAt());
     }
 
     /**
@@ -472,15 +474,15 @@ public class GameStateTest extends RogueBaseTest {
      * or in the same non-dark room, using a fixed seed (100) for reproducible results.
      */
     @Test
-    void testSeeMonst(){
-        final long seed=100;
+    void testSeeMonst() {
+        final long seed = 100;
         final RogueRandom rogueRandom = new RogueRandom(seed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
 
-        final Player player=gameState.getPlayer();
-        final int px=player.getX();
-        final int py=player.getY();
+        final Player player = gameState.getPlayer();
+        final int px = player.getX();
+        final int py = player.getY();
         final Monster monster = new Monster(MonsterType.ICE_MONSTER);
 
         player.addFlag(CreatureFlag.ISBLIND);
@@ -491,33 +493,33 @@ public class GameStateTest extends RogueBaseTest {
         assertFalse(gameState.seeMonst(monster));
 
         player.addFlag(CreatureFlag.CANSEE);
-        int dx=2;
-        int dy=0;// monster is two squares away horizontally, not in the same room
-        monster.setPosition(px+dx,py+dy);
+        int dx = 2;
+        int dy = 0;// monster is two squares away horizontally, not in the same room
+        monster.setPosition(px + dx, py + dy);
         assertFalse(gameState.seeMonst(monster));
 
-        dx=1; // monster is adjacent to the player and in different room
-        monster.setPosition(px+dx,py+dy);
+        dx = 1; // monster is adjacent to the player and in different room
+        monster.setPosition(px + dx, py + dy);
         assertTrue(gameState.seeMonst(monster));
 
-        dy=1; // adjacent diagonally
-        monster.setPosition(px+dx,py+dy);
+        dy = 1; // adjacent diagonally
+        monster.setPosition(px + dx, py + dy);
         assertTrue(gameState.seeMonst(monster));
 
-        dx=2; // monster is distant but in the same room
-        dy=2;
+        dx = 2; // monster is distant but in the same room
+        dy = 2;
         monster.setRoom(player.getRoom());
-        monster.setPosition(px+dx,py+dy);
+        monster.setPosition(px + dx, py + dy);
         assertTrue(gameState.seeMonst(monster));
 
         // room is dark and monster not adjacent
         player.getRoom().addFlag(RoomFlag.DARK);
         assertFalse(gameState.seeMonst(monster));
 
-        dx=1; // room is dark and monster is adjacent
-        dy=1;
+        dx = 1; // room is dark and monster is adjacent
+        dy = 1;
         monster.setRoom(player.getRoom());
-        monster.setPosition(px+dx,py+dy);
+        monster.setPosition(px + dx, py + dy);
         assertTrue(gameState.seeMonst(monster));
     }
 
@@ -535,52 +537,52 @@ public class GameStateTest extends RogueBaseTest {
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
         final Player player = gameState.getPlayer();
-        final int px=player.getPosition().getX();
-        final int py=player.getPosition().getY();
+        final int px = player.getPosition().getX();
+        final int py = player.getPosition().getY();
 
         // monster has 0 carry probability
         Monster monster = new Monster(MonsterType.AQUATOR);
-        Position dest=gameState.findDest(monster);
-        assertEquals(player.getPosition(),dest);
+        Position dest = gameState.findDest(monster);
+        assertEquals(player.getPosition(), dest);
 
         // monster has >0 carry probability (100), but is in same room as player
-        monster=new Monster(MonsterType.DRAGON);
+        monster = new Monster(MonsterType.DRAGON);
         monster.setRoom(player.getRoom());
-        dest=gameState.findDest(monster);
-        assertEquals(player.getPosition(),dest);
+        dest = gameState.findDest(monster);
+        assertEquals(player.getPosition(), dest);
 
         // monster in another room but adjacent to player (player can see it)
-        int dx=1;
-        int dy=1;
+        int dx = 1;
+        int dy = 1;
         monster.setRoom(null);
-        monster.setPosition(px+dx,py+dy);
-        dest=gameState.findDest(monster);
-        assertEquals(player.getPosition(),dest);
+        monster.setPosition(px + dx, py + dy);
+        dest = gameState.findDest(monster);
+        assertEquals(player.getPosition(), dest);
 
         // player cannot see the monster so the monster does not normally target it
         // but since there is no item in monster's room it targets player anyway
         player.addFlag(CreatureFlag.ISBLIND);
-        dest=gameState.findDest(monster);
-        assertEquals(player.getPosition(),dest);
+        dest = gameState.findDest(monster);
+        assertEquals(player.getPosition(), dest);
 
         // monster in same room with item (item not targeted by other monsters), targets the item
-        final Item item=gameState.getCurrentLevel().getItems().get(0);
+        final Item item = gameState.getCurrentLevel().getItems().get(0);
         final Room itemRoom = gameState.roomIn(item.getPosition().getX(), item.getPosition().getY());
         monster.setRoom(itemRoom);
-        for(Monster m: gameState.getCurrentLevel().getMonsters()){
-            if(Objects.equals(m.getDestination(),item.getPosition())){
+        for (Monster m : gameState.getCurrentLevel().getMonsters()) {
+            if (Objects.equals(m.getDestination(), item.getPosition())) {
                 m.setDestination(null);
             }
         }
-        dest=gameState.findDest(monster);
-        assertEquals(item.getPosition(),dest);
+        dest = gameState.findDest(monster);
+        assertEquals(item.getPosition(), dest);
 
         // item already targeted by another monster, target selection falls back to player
         final Monster iceMonster = new Monster(MonsterType.ICE_MONSTER);
         gameState.getCurrentLevel().getMonsters().add(iceMonster);
         iceMonster.setDestination(item.getPosition());
-        dest=gameState.findDest(monster);
-        assertEquals(player.getPosition(),dest);
+        dest = gameState.findDest(monster);
+        assertEquals(player.getPosition(), dest);
 
     }
 
@@ -596,14 +598,14 @@ public class GameStateTest extends RogueBaseTest {
         final RogueRandom rogueRandom = new RogueRandom(seed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
-        final int px=gameState.getPlayer().getX();
-        final int py=gameState.getPlayer().getY();
+        final int px = gameState.getPlayer().getX();
+        final int py = gameState.getPlayer().getY();
 
         // create and place the monster close to the player
-        final Monster monster=new Monster(MonsterType.ICE_MONSTER);
-        final int dx=1;
-        final int dy=1;
-        monster.setPosition(px+dx,py+dy);
+        final Monster monster = new Monster(MonsterType.ICE_MONSTER);
+        final int dx = 1;
+        final int dy = 1;
+        monster.setPosition(px + dx, py + dy);
         monster.setRoom(gameState.getPlayer().getRoom());
 
         final Place place = gameState.getCurrentLevel().getPlaceAt(monster.getX(), monster.getY());
@@ -612,7 +614,7 @@ public class GameStateTest extends RogueBaseTest {
 
         // assert monster runs to player
         gameState.runTo(monster.getPosition());
-        assertEquals(monster.getDestination(),gameState.getPlayer().getPosition());
+        assertEquals(monster.getDestination(), gameState.getPlayer().getPosition());
         assertTrue(monster.hasFlag(CreatureFlag.ISRUN));
         assertFalse(monster.hasFlag(CreatureFlag.ISHELD));
     }
@@ -629,18 +631,18 @@ public class GameStateTest extends RogueBaseTest {
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
 
-        final int noFood=5;
+        final int noFood = 5;
         gameState.setNoFood(noFood);
         Item item = gameState.newThing();
         assertNotNull(item);
         assertInstanceOf(Food.class, item);
-        assertEquals(0,gameState.getNoFood());
+        assertEquals(0, gameState.getNoFood());
 
-        rogueRandom.reseed(seed*3);
+        rogueRandom.reseed(seed * 3);
         item = gameState.newThing();
         assertInstanceOf(Potion.class, item);
 
-        rogueRandom.reseed(seed*4);
+        rogueRandom.reseed(seed * 4);
         item = gameState.newThing();
         assertInstanceOf(Scroll.class, item);
     }
@@ -657,23 +659,23 @@ public class GameStateTest extends RogueBaseTest {
         final RogueRandom rogueRandom = new RogueRandom(seed);
         final MessageSystem messageSystem = new MessageSystem(screen);
         final GameState gameState = new GameState(config, rogueRandom, screen, new DefaultInitializer(), messageSystem);
-        int level=1;
-        int maxLevel=2;
+        int level = 1;
+        int maxLevel = 2;
 
         gameState.setLevelNum(level);
         gameState.setMaxLevel(maxLevel);
 
         // Nymph has 100% chance of carrying but because level<maxLevel does not get any item
         final Monster monster = new Monster(MonsterType.NYMPH);
-        gameState.givePack(monster,level,maxLevel);
+        gameState.givePack(monster, level, maxLevel);
         assertNull(monster.getInventory());
 
         // maxLevel is equal to level and Nymph gets an item
-        maxLevel=level;
+        maxLevel = level;
         gameState.setMaxLevel(maxLevel);
-        gameState.givePack(monster,level,maxLevel);
+        gameState.givePack(monster, level, maxLevel);
         assertNotNull(monster.getInventory());
-        assertEquals(1,monster.getInventory().getItems().size());
+        assertEquals(1, monster.getInventory().getItems().size());
     }
 
     private static class CommandParameterizedTimedTest extends CommandParameterizedTimed<Integer> {
@@ -693,13 +695,13 @@ public class GameStateTest extends RogueBaseTest {
         }
 
         @Override
-        public int getTurnsRemaining() {
-            return mainTimer.get();
+        public void decrementTimer() {
+            mainTimer.decrementAndGet();
         }
 
         @Override
-        public void decrementTimer() {
-            mainTimer.decrementAndGet();
+        public int getTurnsRemaining() {
+            return mainTimer.get();
         }
 
         @Override

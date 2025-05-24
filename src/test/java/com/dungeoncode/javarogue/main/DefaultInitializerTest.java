@@ -4,22 +4,12 @@ import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.Phase;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
+import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.MessageSystem;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.Player;
-import com.dungeoncode.javarogue.system.entity.item.Inventory;
-import com.dungeoncode.javarogue.system.entity.item.Item;
-import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
-import com.dungeoncode.javarogue.system.entity.item.Armor;
-import com.dungeoncode.javarogue.system.entity.item.ArmorType;
-import com.dungeoncode.javarogue.system.entity.item.PotionType;
-import com.dungeoncode.javarogue.system.entity.item.RingType;
-import com.dungeoncode.javarogue.system.entity.item.RodType;
-import com.dungeoncode.javarogue.system.entity.item.ScrollType;
-import com.dungeoncode.javarogue.system.entity.item.Weapon;
-import com.dungeoncode.javarogue.system.entity.item.WeaponType;
-import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
-import com.dungeoncode.javarogue.system.MessageSystem;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -85,10 +75,10 @@ public class DefaultInitializerTest extends RogueBaseTest {
 
         assertNull(gameState.getGameEndReason());
         assertNull(gameState.getDeathSource());
-        assertEquals(0,gameState.getPlayer().getGoldAmount());
+        assertEquals(0, gameState.getPlayer().getGoldAmount());
 
         // assert 0 levels without food
-        assertEquals(1,gameState.getNoFood());
+        assertEquals(1, gameState.getNoFood());
 
     }
 
@@ -100,7 +90,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
         final DefaultInitializer initializer = new DefaultInitializer();
 
         final GameState gameState = new GameState(config, rogueRandom, screen, initializer, messageSystem);
-        final RogueFactory rogueFactory=gameState.getRogueFactory();
+        final RogueFactory rogueFactory = gameState.getRogueFactory();
 
         Arrays.stream(ScrollType.values())
                 .forEach(scrollType -> assertNotNull(
@@ -135,7 +125,7 @@ public class DefaultInitializerTest extends RogueBaseTest {
         assertEquals(startLevel, gameState.getLevelNum());
         assertEquals(startLevel, gameState.getCurrentLevel().getLevelNum());
         assertEquals(startLevel, gameState.getMaxLevel());
-        assertEquals(startLevel,gameState.getPlayer().getCurrentLevel());
+        assertEquals(startLevel, gameState.getPlayer().getCurrentLevel());
         assertFalse(gameState.getPlayer().hasFlag(CreatureFlag.ISHELD));
         assertFalse(gameState.isSeenStairs());
 

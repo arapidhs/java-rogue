@@ -1,20 +1,128 @@
 [
-  { "id": 1,  "scrollType": "MONSTER_CONFUSION",           "name": "monster confusion",            "probability": 7,  "worth": 140 },
-  { "id": 2,  "scrollType": "MAGIC_MAPPING",               "name": "magic mapping",                "probability": 4,  "worth": 150 },
-  { "id": 3,  "scrollType": "HOLD_MONSTER",                "name": "hold monster",                 "probability": 2,  "worth": 180 },
-  { "id": 4,  "scrollType": "SLEEP",                       "name": "sleep",                        "probability": 3,  "worth": 5 },
-  { "id": 5,  "scrollType": "ENCHANT_ARMOR",               "name": "enchant armor",                "probability": 7,  "worth": 160 },
-  { "id": 6,  "scrollType": "IDENTIFY_POTION",             "name": "identify potion",              "probability": 10, "worth": 80 },
-  { "id": 7,  "scrollType": "IDENTIFY_SCROLL",             "name": "identify scroll",              "probability": 10, "worth": 80 },
-  { "id": 8,  "scrollType": "IDENTIFY_WEAPON",             "name": "identify weapon",              "probability": 6,  "worth": 80 },
-  { "id": 9,  "scrollType": "IDENTIFY_ARMOR",              "name": "identify armor",               "probability": 7,  "worth": 100 },
-  { "id": 10, "scrollType": "IDENTIFY_RING_WAND_OR_STAFF", "name": "identify ring, wand or staff", "probability": 10, "worth": 115 },
-  { "id": 11, "scrollType": "SCARE_MONSTER",               "name": "scare monster",                "probability": 3,  "worth": 200 },
-  { "id": 12, "scrollType": "FOOD_DETECTION",              "name": "food detection",               "probability": 2,  "worth": 60 },
-  { "id": 13, "scrollType": "TELEPORTATION",               "name": "teleportation",                "probability": 5,  "worth": 165 },
-  { "id": 14, "scrollType": "ENCHANT_WEAPON",              "name": "enchant weapon",               "probability": 8,  "worth": 150 },
-  { "id": 15, "scrollType": "CREATE_MONSTER",              "name": "create monster",               "probability": 4,  "worth": 75 },
-  { "id": 16, "scrollType": "REMOVE_CURSE",                "name": "remove curse",                 "probability": 7,  "worth": 105 },
-  { "id": 17, "scrollType": "AGGRAVATE_MONSTERS",          "name": "aggravate monsters",           "probability": 3,  "worth": 20 },
-  { "id": 18, "scrollType": "PROTECT_ARMOR",               "name": "protect armor",                "probability": 2,  "worth": 250 }
+  {
+    "id": 1,
+    "scrollType": "MONSTER_CONFUSION",
+    "name": "monster confusion",
+    "probability": 7,
+    "worth": 140
+  },
+  {
+    "id": 2,
+    "scrollType": "MAGIC_MAPPING",
+    "name": "magic mapping",
+    "probability": 4,
+    "worth": 150
+  },
+  {
+    "id": 3,
+    "scrollType": "HOLD_MONSTER",
+    "name": "hold monster",
+    "probability": 2,
+    "worth": 180
+  },
+  {
+    "id": 4,
+    "scrollType": "SLEEP",
+    "name": "sleep",
+    "probability": 3,
+    "worth": 5
+  },
+  {
+    "id": 5,
+    "scrollType": "ENCHANT_ARMOR",
+    "name": "enchant armor",
+    "probability": 7,
+    "worth": 160
+  },
+  {
+    "id": 6,
+    "scrollType": "IDENTIFY_POTION",
+    "name": "identify potion",
+    "probability": 10,
+    "worth": 80
+  },
+  {
+    "id": 7,
+    "scrollType": "IDENTIFY_SCROLL",
+    "name": "identify scroll",
+    "probability": 10,
+    "worth": 80
+  },
+  {
+    "id": 8,
+    "scrollType": "IDENTIFY_WEAPON",
+    "name": "identify weapon",
+    "probability": 6,
+    "worth": 80
+  },
+  {
+    "id": 9,
+    "scrollType": "IDENTIFY_ARMOR",
+    "name": "identify armor",
+    "probability": 7,
+    "worth": 100
+  },
+  {
+    "id": 10,
+    "scrollType": "IDENTIFY_RING_WAND_OR_STAFF",
+    "name": "identify ring, wand or staff",
+    "probability": 10,
+    "worth": 115
+  },
+  {
+    "id": 11,
+    "scrollType": "SCARE_MONSTER",
+    "name": "scare monster",
+    "probability": 3,
+    "worth": 200
+  },
+  {
+    "id": 12,
+    "scrollType": "FOOD_DETECTION",
+    "name": "food detection",
+    "probability": 2,
+    "worth": 60
+  },
+  {
+    "id": 13,
+    "scrollType": "TELEPORTATION",
+    "name": "teleportation",
+    "probability": 5,
+    "worth": 165
+  },
+  {
+    "id": 14,
+    "scrollType": "ENCHANT_WEAPON",
+    "name": "enchant weapon",
+    "probability": 8,
+    "worth": 150
+  },
+  {
+    "id": 15,
+    "scrollType": "CREATE_MONSTER",
+    "name": "create monster",
+    "probability": 4,
+    "worth": 75
+  },
+  {
+    "id": 16,
+    "scrollType": "REMOVE_CURSE",
+    "name": "remove curse",
+    "probability": 7,
+    "worth": 105
+  },
+  {
+    "id": 17,
+    "scrollType": "AGGRAVATE_MONSTERS",
+    "name": "aggravate monsters",
+    "probability": 3,
+    "worth": 20
+  },
+  {
+    "id": 18,
+    "scrollType": "PROTECT_ARMOR",
+    "name": "protect armor",
+    "probability": 2,
+    "worth": 250
+  }
 ]

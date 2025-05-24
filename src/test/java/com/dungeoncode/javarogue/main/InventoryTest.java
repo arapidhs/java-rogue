@@ -3,8 +3,8 @@ package com.dungeoncode.javarogue.main;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.RogueFactory;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.entity.item.*;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class InventoryTest {
         // Initialize dependencies for test setup
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
-        final RogueFactory rogueFactory = new RogueFactory(config,rogueRandom);
+        final RogueFactory rogueFactory = new RogueFactory(config, rogueRandom);
 
         // Initialize inventory with max pack size from config
         final Inventory inventory = new Inventory(config.getMaxPack());

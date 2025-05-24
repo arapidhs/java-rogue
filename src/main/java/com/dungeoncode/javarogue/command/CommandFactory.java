@@ -1,7 +1,7 @@
 /**
- * Factory for creating command instances based on user input keystrokes, equivalent to command 
- * dispatching logic in <code>command.c</code> from the original Rogue C source. Maps keystrokes 
- * to specific commands for player movement, item pick-up, UI actions, or system operations, 
+ * Factory for creating command instances based on user input keystrokes, equivalent to command
+ * dispatching logic in <code>command.c</code> from the original Rogue C source. Maps keystrokes
+ * to specific commands for player movement, item pick-up, UI actions, or system operations,
  * handling both regular and wizard-mode commands.
  */
 package com.dungeoncode.javarogue.command;

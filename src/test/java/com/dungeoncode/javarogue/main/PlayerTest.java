@@ -12,10 +12,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class PlayerTest {
 
     @Test
-    void testStatus(){
+    void testStatus() {
         final Config config = new Config();
         final Player player = new Player(config);
-        final int currentLevel=1;
+        final int currentLevel = 1;
         player.setCurrentLevel(currentLevel);
 
         final String statusLine = player.status();

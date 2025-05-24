@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.system.entity.item.Rod;
 import com.dungeoncode.javarogue.system.entity.item.RodType;
-import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -26,7 +26,7 @@ public class RodTest {
         final String verboseCharges = " [15 charges]";
         assertEquals(verboseCharges, rod.chargeStr(false));
 
-        assertEquals(SymbolType.ROD,rod.getSymbolType());
+        assertEquals(SymbolType.ROD, rod.getSymbolType());
     }
 
 }

@@ -1,7 +1,7 @@
 package com.dungeoncode.javarogue.main;
 
-import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
+import com.dungeoncode.javarogue.system.ScoreManager;
 import com.dungeoncode.javarogue.system.death.GameEndReason;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

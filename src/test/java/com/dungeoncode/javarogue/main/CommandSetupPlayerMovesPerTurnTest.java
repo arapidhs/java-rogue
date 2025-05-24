@@ -4,10 +4,10 @@ import com.dungeoncode.javarogue.command.status.CommandSetupPlayerMovesPerTurn;
 import com.dungeoncode.javarogue.core.Config;
 import com.dungeoncode.javarogue.core.GameState;
 import com.dungeoncode.javarogue.core.RogueRandom;
-import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
-import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.main.base.RogueBaseTest;
 import com.dungeoncode.javarogue.system.MessageSystem;
+import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
+import com.dungeoncode.javarogue.system.entity.creature.Player;
 import org.junit.jupiter.api.Test;
 
 import static com.dungeoncode.javarogue.command.status.CommandSetupPlayerMovesPerTurn.INITIAL_MOVES_PER_TURN;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class CommandSetupPlayerMovesPerTurnTest extends RogueBaseTest {
 
     @Test
-    void testExecute(){
+    void testExecute() {
         final Config config = new Config();
         final RogueRandom rogueRandom = new RogueRandom(config.getSeed());
         final MessageSystem messageSystem = new MessageSystem(screen);
@@ -33,7 +33,7 @@ public class CommandSetupPlayerMovesPerTurnTest extends RogueBaseTest {
 
         player.addFlag(CreatureFlag.ISHASTE);
         command.execute(gameState);
-        assertEquals(INITIAL_MOVES_PER_TURN+1, player.getNtimes());
+        assertEquals(INITIAL_MOVES_PER_TURN + 1, player.getNtimes());
 
     }
 

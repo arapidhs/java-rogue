@@ -1,16 +1,10 @@
 package com.dungeoncode.javarogue.main;
 
 import com.dungeoncode.javarogue.system.SymbolType;
+import com.dungeoncode.javarogue.system.death.KillType;
 import com.dungeoncode.javarogue.system.entity.creature.CreatureFlag;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.*;
-import com.dungeoncode.javarogue.template.ArmorInfoTemplate;
-import com.dungeoncode.javarogue.template.PotionInfoTemplate;
-import com.dungeoncode.javarogue.template.RingInfoTemplate;
-import com.dungeoncode.javarogue.template.RodInfoTemplate;
-import com.dungeoncode.javarogue.template.ScrollInfoTemplate;
-import com.dungeoncode.javarogue.template.WeaponInfoTemplate;
-import com.dungeoncode.javarogue.system.death.KillType;
 import com.dungeoncode.javarogue.template.*;
 import org.junit.jupiter.api.Test;
 
@@ -51,7 +45,7 @@ public class TemplatesTest {
         final String griffinName = "griffin";
         final int griffinExperience = 2000;
         final int griffinCarryProbability = 20;
-        final SymbolType griffinSymbolType=SymbolType.MONSTER_GRIFFIN;
+        final SymbolType griffinSymbolType = SymbolType.MONSTER_GRIFFIN;
         final EnumSet<CreatureFlag> griffinCreatureFlags = EnumSet.of(
                 CreatureFlag.ISMEAN,
                 CreatureFlag.ISFLY,
@@ -66,7 +60,7 @@ public class TemplatesTest {
         assertEquals(griffinExperience, griffinTemplate.getStats().getExperience());
         assertEquals(griffinCreatureFlags, griffinTemplate.getCreatureFlags());
         assertEquals(griffinCarryProbability, griffinTemplate.getCarryProbability());
-        assertEquals(griffinSymbolType,griffinTemplate.getSymbolType());
+        assertEquals(griffinSymbolType, griffinTemplate.getSymbolType());
     }
 
     /**
@@ -313,22 +307,22 @@ public class TemplatesTest {
     }
 
     @Test
-    void testGetTemplates(){
+    void testGetTemplates() {
         final Set<ObjectInfoTemplate> objectInfoTemplates = Templates.getTemplates(ObjectInfoTemplate.class);
-        final int objectInfoTemplatesCount=9;
-        assertEquals(objectInfoTemplatesCount,objectInfoTemplates.size());
+        final int objectInfoTemplatesCount = 9;
+        assertEquals(objectInfoTemplatesCount, objectInfoTemplates.size());
 
         final Set<ArmorInfoTemplate> armorTemplates = Templates.getTemplates(ArmorInfoTemplate.class);
-        final int armorTemplatesCount=8;
-        assertEquals(armorTemplatesCount,armorTemplates.size());
+        final int armorTemplatesCount = 8;
+        assertEquals(armorTemplatesCount, armorTemplates.size());
 
-        ObjectType objectType=null;
+        ObjectType objectType = null;
         Set<Template> templates = Templates.getTemplates(objectType);
-        assertEquals(objectInfoTemplatesCount,templates.size());
+        assertEquals(objectInfoTemplatesCount, templates.size());
 
-        objectType=ObjectType.ARMOR;
+        objectType = ObjectType.ARMOR;
         templates = Templates.getTemplates(objectType);
-        assertEquals(armorTemplatesCount,templates.size());
+        assertEquals(armorTemplatesCount, templates.size());
     }
 
     /**

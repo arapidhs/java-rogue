@@ -1,9 +1,9 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.item.ItemFlag;
 import com.dungeoncode.javarogue.system.entity.item.Ring;
 import com.dungeoncode.javarogue.system.entity.item.RingType;
-import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -29,7 +29,7 @@ public class RingTest {
         adornmentRing.addFlag(ItemFlag.ISKNOW);
         assertTrue(adornmentRing.num().isEmpty());
 
-        assertEquals(SymbolType.RING,ring.getSymbolType());
+        assertEquals(SymbolType.RING, ring.getSymbolType());
     }
 
 }

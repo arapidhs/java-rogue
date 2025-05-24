@@ -1,8 +1,8 @@
 package com.dungeoncode.javarogue.main;
 
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.item.Armor;
 import com.dungeoncode.javarogue.system.entity.item.ArmorType;
-import com.dungeoncode.javarogue.system.SymbolType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +27,7 @@ public class ArmorTest {
         numArmorClass = "+1";
         assertEquals(numArmorClass, armor.num());
 
-        assertEquals(SymbolType.ARMOR,armor.getSymbolType());
+        assertEquals(SymbolType.ARMOR, armor.getSymbolType());
     }
 
 }
