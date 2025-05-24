@@ -120,6 +120,18 @@ public class RogueRandom {
     }
 
     /**
+     * Generates a random number within a spread around the given value, with a range of +/- 20%.
+     * Replicates the <code>spread</code> function from the Rogue C source, producing a value
+     * between <code>nm - nm/20</code> and <code>nm - nm/20 + nm/10</code>.
+     *
+     * @param nm The base number to spread around.
+     * @return A random integer within the calculated spread.
+     */
+    public int spread(int nm) {
+        return nm - nm / 20 + rnd(nm / 10);
+    }
+
+    /**
      * Rolls a specified number of dice, each with a given number of sides, and returns the sum.
      * Each die roll generates a random value from 1 to sides (inclusive).
      * <p>

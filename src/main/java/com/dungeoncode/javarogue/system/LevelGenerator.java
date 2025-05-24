@@ -1093,7 +1093,7 @@ public class LevelGenerator {
         while (nm-- > 0) {
             final int level = getLevel().getLevelNum() + 1;
             final Position pos = getLevel().findFloor(room, config.getMaxTriesFindFloor(), true);
-            if ( pos != null ) {
+            if (pos != null) {
                 final MonsterType monsterType = gameState.getRogueFactory().randMonster(false, level);
                 final Monster monster = gameState.getRogueFactory().monster(monsterType, level);
                 monster.setPosition(pos.getX(), pos.getY());

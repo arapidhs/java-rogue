@@ -36,4 +36,9 @@ public class CommandShowPlayerStatus implements CommandEternal {
     public Phase getPhase() {
         return Phase.UPKEEP_TURN;
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

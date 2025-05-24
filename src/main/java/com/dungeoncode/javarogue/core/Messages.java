@@ -26,7 +26,7 @@ public class Messages {
     public static final String ERROR_NO_SYMBOL_FOR_CLASS = "No symbol mapped for class: ";
     public static final String ERROR_NO_SYMBOL_FOR_OBJECT_TYPE = "No symbol mapped for object type: ";
     public static final String ERROR_NO_SYMBOL_FOR_TYPE = "No symbol mapped for type: ";
-
+    public static final String ERROR_NO_MONSTER_TYPE_FOR_SYMBOL = "No monster type mapped for symbol: ";
 
     public static final String MSG_TEMPLATE_ARMOR = "armor";
     public static final String MSG_TEMPLATE_POTION = "potions";
@@ -37,5 +37,4 @@ public class Messages {
     public static final String MSG_TEMPLATE_WEAPON = "weapons";
 
     public static final String MSG_SYSTEM_MORE = "--More--";
-
 }

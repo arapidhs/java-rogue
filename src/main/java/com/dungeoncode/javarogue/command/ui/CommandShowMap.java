@@ -69,4 +69,9 @@ public class CommandShowMap implements Command {
     public Phase getPhase() {
         return Phase.MAIN_TURN;
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

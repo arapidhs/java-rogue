@@ -76,4 +76,13 @@ public enum SymbolType {
             MONSTER_WRAITH, MONSTER_XEROC, MONSTER_YETI, MONSTER_ZOMBIE
     );
 
+    /**
+     * Checks if this symbol type represents a monster.
+     *
+     * @return {@code true} if this symbol type is a monster symbol, {@code false} otherwise.
+     */
+    public boolean isMonsterSymbol() {
+        return MONSTER_SYMBOLS.contains(this);
+    }
+
 }

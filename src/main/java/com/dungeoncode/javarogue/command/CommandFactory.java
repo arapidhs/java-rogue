@@ -36,9 +36,9 @@ public class CommandFactory {
     }
 
     /**
-     * Creates a command instance based on the provided keystroke. Maps character keys, control-modified 
-     * keys, and arrow keys to specific commands such as movement, pick-up, or UI actions. Supports 
-     * wizard-mode commands (e.g., level change, map display) if master and wizard modes are enabled. 
+     * Creates a command instance based on the provided keystroke. Maps character keys, control-modified
+     * keys, and arrow keys to specific commands such as movement, pick-up, or UI actions. Supports
+     * wizard-mode commands (e.g., level change, map display) if master and wizard modes are enabled.
      * Returns a {@link CommandIllegal} for unrecognized or invalid keystrokes.
      *
      * @param keyStroke The keystroke input from the player.

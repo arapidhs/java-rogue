@@ -24,7 +24,7 @@ public abstract class CommandParameterized<T> extends AbstractCommand {
      * @param phase  The phase in which the command executes (e.g., START_TURN, MAIN_TURN).
      */
     protected CommandParameterized(T params, Phase phase) {
-        super(phase);
+        super(phase, null);
         this.params = params;
     }
 

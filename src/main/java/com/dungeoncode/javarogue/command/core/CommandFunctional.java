@@ -33,7 +33,7 @@ public class CommandFunctional extends AbstractCommand {
      * @param phase  The phase in which the command executes (e.g., START_TURN, MAIN_TURN).
      */
     public CommandFunctional(Predicate<GameState> action, Phase phase) {
-        super(phase);
+        super(phase, null);
         this.action = action;
     }
 

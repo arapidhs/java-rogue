@@ -430,7 +430,7 @@ public class LevelGeneratorTest extends RogueBaseTest {
      */
     @Test
     void testTreasureRoomMonsterPlacement() {
-        final long seed =-420302098;
+        final long seed = -420302098;
         final LevelGenerator levelGenerator = createLevelGenerator(seed);
         final RogueRandom rogueRandom = levelGenerator.getRogueRandom();
         final int levelNum = rogueRandom.rnd(config.getAmuletLevel()) + config.getAmuletLevel() / 2;

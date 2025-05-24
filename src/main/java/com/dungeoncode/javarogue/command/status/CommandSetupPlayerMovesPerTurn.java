@@ -34,4 +34,9 @@ public class CommandSetupPlayerMovesPerTurn implements CommandEternal {
     public Phase getPhase() {
         return Phase.START_TURN;
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

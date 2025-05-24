@@ -25,4 +25,9 @@ public class CommandClearMessage implements CommandEternal {
     public Phase getPhase() {
         return INPUT_CLEANUP_TURN;
     }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }

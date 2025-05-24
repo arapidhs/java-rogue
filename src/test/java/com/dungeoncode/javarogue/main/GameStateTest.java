@@ -19,7 +19,6 @@ import com.dungeoncode.javarogue.system.entity.creature.Player;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.DefaultInitializer;
 import com.dungeoncode.javarogue.system.world.*;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -223,6 +222,11 @@ public class GameStateTest extends RogueBaseTest {
             @Override
             public Phase getPhase() {
                 return phase;
+            }
+
+            @Override
+            public String getName() {
+                return null;
             }
         }
         gameState.addCommand(new TestCommandEternal(endEternalExecutions, Phase.END_TURN));

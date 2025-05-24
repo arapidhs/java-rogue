@@ -47,6 +47,20 @@ public class Player extends Creature {
      */
     private int ntimes;
 
+    /**
+     * True if player is running.
+     * <p>
+     * Equivalent to <code>bool running = FALSE;</code> in <code>extern.c</code>.
+     */
+    private boolean running;
+
+    /**
+     * Show running as series of jumps.
+     * <p>
+     * Equivalent to <code>bool jump = FALSE;</code> in <code>extern.c</code>.
+     */
+    private boolean jump;
+
     public Player(@Nonnull final Config config) {
         super();
         Objects.requireNonNull(config);
@@ -123,6 +137,16 @@ public class Player extends Creature {
         this.leftRing = leftRing;
     }
 
+    public void addFlag(@Nonnull final PlayerFlag playerFlag) {
+        Objects.requireNonNull(playerFlag);
+        playerFlags.add(playerFlag);
+    }
+
+    public void removeFlag(@Nonnull final PlayerFlag playerFlag) {
+        Objects.requireNonNull(playerFlag);
+        playerFlags.remove(playerFlag);
+    }
+
     public boolean hasFlag(@Nonnull final PlayerFlag playerFlag) {
         return playerFlags.contains(playerFlag);
     }
@@ -192,6 +216,28 @@ public class Player extends Creature {
 
     public void setMoveOn(boolean moveOn) {
         this.moveOn = moveOn;
+    }
+
+    /**
+     * @return true if player is running.
+     */
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
+    }
+
+    /**
+     * @return true if player is jumping during running.
+     */
+    public boolean isJump() {
+        return jump;
+    }
+
+    public void setJump(boolean jump) {
+        this.jump = jump;
     }
 
     public enum HungryState {

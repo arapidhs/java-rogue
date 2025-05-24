@@ -1,8 +1,3 @@
-package com.dungeoncode.javarogue.command;
-
-import com.dungeoncode.javarogue.core.GameState;
-import com.dungeoncode.javarogue.core.Phase;
-
 /**
  * Represents a game command that modifies the game state in the Rogue game.
  * Commands encapsulate player actions (e.g., movement, item use) and system actions
@@ -11,9 +6,14 @@ import com.dungeoncode.javarogue.core.Phase;
  * <p>
  * Inspired by the command-driven structure of the C Rogue source (e.g., command.c),
  * where inputs and events trigger actions like movement (move.c) or item usage (things.c).
- * Implementations must define the action and its execution phase.
+ * Implementations must define the action, its execution phase, and a name for identification.
  * </p>
  */
+package com.dungeoncode.javarogue.command;
+
+import com.dungeoncode.javarogue.core.GameState;
+import com.dungeoncode.javarogue.core.Phase;
+
 public interface Command {
     /**
      * Executes the command, modifying the provided game state.
@@ -34,4 +34,12 @@ public interface Command {
      * @return The execution phase of the command.
      */
     Phase getPhase();
+
+    /**
+     * Returns the name of the command for identification and logging purposes.
+     * Provides a human-readable string to describe the command (e.g., "MoveLeft", "PickUp").
+     *
+     * @return The name of the command.
+     */
+    String getName();
 }

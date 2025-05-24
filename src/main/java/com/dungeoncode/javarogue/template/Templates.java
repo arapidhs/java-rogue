@@ -1,6 +1,7 @@
 package com.dungeoncode.javarogue.template;
 
 import com.dungeoncode.javarogue.core.Messages;
+import com.dungeoncode.javarogue.system.SymbolType;
 import com.dungeoncode.javarogue.system.entity.creature.MonsterType;
 import com.dungeoncode.javarogue.system.entity.item.ItemSubtype;
 import com.dungeoncode.javarogue.system.entity.item.ObjectType;
@@ -205,6 +206,28 @@ public class Templates {
                 .filter(t -> t instanceof MonsterTemplate)
                 .map(t -> (MonsterTemplate) t)
                 .filter(t -> t.getMonsterType() == monsterType)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Retrieves the {@link MonsterTemplate} corresponding to the specified {@link SymbolType}.
+     *
+     * @param symbolType The {@link SymbolType} to match, expected to be a monster symbol (e.g., {@link SymbolType#MONSTER_ORC}).
+     * @return The matching {@link MonsterTemplate}, or null if not found.
+     * @throws NullPointerException     if symbolType is null.
+     * @throws IllegalArgumentException if symbolType is not a monster symbol.
+     */
+    @Nullable
+    public static MonsterTemplate getMonsterTemplate(@Nonnull SymbolType symbolType) {
+        Objects.requireNonNull(symbolType);
+        if (!symbolType.isMonsterSymbol()) {
+            throw new IllegalArgumentException(Messages.ERROR_NO_MONSTER_TYPE_FOR_SYMBOL + symbolType);
+        }
+        return TEMPLATES_ALL.stream()
+                .filter(t -> t instanceof MonsterTemplate)
+                .map(t -> (MonsterTemplate) t)
+                .filter(t -> t.getSymbolType() == symbolType)
                 .findFirst()
                 .orElse(null);
     }

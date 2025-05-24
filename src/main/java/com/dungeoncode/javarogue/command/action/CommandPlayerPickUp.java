@@ -24,12 +24,12 @@ public class CommandPlayerPickUp extends AbstractCommand {
      * Equivalent to the pickup command logic in <code>command.c</code>.
      */
     public CommandPlayerPickUp() {
-        super(Phase.MAIN_TURN);
+        super(Phase.MAIN_TURN, null);
     }
 
     /**
-     * Executes the pick-up command. Checks for an item at the player's position and, if found 
-     * and the player is not levitating, triggers the pick-up logic. If no item is present, 
+     * Executes the pick-up command. Checks for an item at the player's position and, if found
+     * and the player is not levitating, triggers the pick-up logic. If no item is present,
      * displays a message based on the terse setting. Always consumes a player move.
      *
      * @param gameState The current game state, providing access to the level, player, and message system.

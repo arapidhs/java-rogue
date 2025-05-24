@@ -5,6 +5,7 @@ import com.dungeoncode.javarogue.command.CommandFactory;
 import com.dungeoncode.javarogue.command.core.CommandEternal;
 import com.dungeoncode.javarogue.command.core.CommandTimed;
 import com.dungeoncode.javarogue.command.status.CommandSetupPlayerMovesPerTurn;
+import com.dungeoncode.javarogue.command.status.CommandUnconfuse;
 import com.dungeoncode.javarogue.command.system.CommandQuit;
 import com.dungeoncode.javarogue.command.ui.CommandClearMessage;
 import com.dungeoncode.javarogue.command.ui.CommandShowPlayerStatus;
@@ -15,10 +16,7 @@ import com.dungeoncode.javarogue.system.entity.Position;
 import com.dungeoncode.javarogue.system.entity.creature.*;
 import com.dungeoncode.javarogue.system.entity.item.*;
 import com.dungeoncode.javarogue.system.initializer.Initializer;
-import com.dungeoncode.javarogue.system.world.Level;
-import com.dungeoncode.javarogue.system.world.Place;
-import com.dungeoncode.javarogue.system.world.Room;
-import com.dungeoncode.javarogue.system.world.RoomFlag;
+import com.dungeoncode.javarogue.system.world.*;
 import com.dungeoncode.javarogue.template.MonsterTemplate;
 import com.dungeoncode.javarogue.template.ObjectInfoTemplate;
 import com.dungeoncode.javarogue.template.Templates;
@@ -36,6 +34,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static com.dungeoncode.javarogue.system.SymbolType.MONSTER_SYMBOLS;
 
 public class GameState {
 
@@ -235,6 +235,33 @@ public class GameState {
             return new KeyStroke(KeyType.Escape);
         }
         return keyStroke;
+    }
+
+    /**
+     * Finds the first command in the command queue with the specified name.
+     *
+     * @param name The name of the command to find.
+     * @return The first matching {@link Command} or {@code null} if no command with the given name is found.
+     * @throws NullPointerException if {@code name} is null.
+     */
+    public Command findCommandByName(@Nonnull String name) {
+        Objects.requireNonNull(name);
+        return commandQueue.stream()
+                .filter(command -> name.equals(command.getName()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Choose the first or second string depending on whether the player is tripping.
+     * Equivalent to <code>char * choose_str</code> in <code>misc.c</code>.
+     *
+     * @param value1 value of the first string
+     * @param value2 value of the second string
+     * @return the selected string
+     */
+    public String chooseStr(String value1, String value2) {
+        return player.hasFlag(PlayerFlag.ISHALU) ? value1 : value2;
     }
 
     public Monster newMonster(@Nonnull final MonsterType monsterType, @Nonnull Position monsterPosition) {
@@ -567,24 +594,141 @@ public class GameState {
     }
 
     /**
-     * Equivalent to <code>void visuals()</code> in <code>daemons.c</code>.
+     * Alters the visual representation of items, stairs, and monsters on the current level when the player
+     * is hallucinating, equivalent to <code>void visuals()</code> in <code>daemons.c</code> from the original
+     * Rogue C source. Randomly changes the display symbols for visible items, stairs (if not seen), and
+     * monsters, reflecting the player's altered perception. Skips execution during the END_TURN phase or
+     * if the player is running or jumping. Uses random object types for items and stairs, and random monster
+     * types for monsters, with special handling for Xeroc monsters and the {@link PlayerFlag#SEEMONST} flag.
      */
-    // TODO implement visuals()
-    private void visuals() {
+    public void visuals() {
+        if (isPhaseActivated(Phase.END_TURN) || (!player.isRunning() && !player.isJump())) {
+            // Change items to random object symbols
+            for (Item item : currentLevel.getItems()) {
+                if (canSee(item.getX(), item.getY())) {
+                    final ObjectType objectType = rogueFactory.rndThing(currentLevel.getLevelNum());
+                    final SymbolType symbolType = SymbolMapper.getSymbolType(objectType);
+                    screen.putChar(item.getX(), item.getY(), SymbolMapper.getSymbol(symbolType));
+                }
+            }
 
+            // Change stairs to a random object symbol if not seen
+            final Position stairs = currentLevel.getStairs();
+            if (!seenStairs && canSee(stairs.getX(), stairs.getY())) {
+                final ObjectType objectType = rogueFactory.rndThing(currentLevel.getLevelNum());
+                final SymbolType symbolType = SymbolMapper.getSymbolType(objectType);
+                screen.putChar(stairs.getX(), stairs.getY(), SymbolMapper.getSymbol(symbolType));
+            }
+
+            // Change monster symbols based on visibility and SEEMONST flag
+            boolean seeMonst = player.hasFlag(PlayerFlag.SEEMONST);
+            for (Monster monster : currentLevel.getMonsters()) {
+                if (seeMonst(monster)) {
+                    if (monster.getMonsterType() == MonsterType.XEROC &&
+                            monster.getDisguiseSymbolType() != SymbolType.MONSTER_XEROC) {
+                        final ObjectType objectType = rogueFactory.rndThing(currentLevel.getLevelNum());
+                        final SymbolType symbolType = SymbolMapper.getSymbolType(objectType);
+                        screen.putChar(monster.getX(), monster.getY(), SymbolMapper.getSymbol(symbolType));
+                    } else {
+                        final MonsterType monsterType = randomMonsterType();
+                        final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(monsterType);
+                        assert monsterTemplate != null;
+                        final SymbolType symbolType = monsterTemplate.getSymbolType();
+                        screen.putChar(monster.getX(), monster.getY(), SymbolMapper.getSymbol(symbolType));
+                    }
+                } else if (seeMonst) {
+                    screen.enableModifiers(SGR.REVERSE);
+                    final MonsterType monsterType = randomMonsterType();
+                    final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(monsterType);
+                    assert monsterTemplate != null;
+                    final SymbolType symbolType = monsterTemplate.getSymbolType();
+                    screen.putChar(monster.getX(), monster.getY(), SymbolMapper.getSymbol(symbolType));
+                    screen.disableModifiers(SGR.REVERSE);
+                }
+            }
+        }
     }
 
     /**
-     * Put on or off seeing monsters on this level.
-     * Equivalent of <code>bool turn_see(bool turn_off)</code> in <code>potions.c</code>.
+     * Determines if the player can see a specific coordinate on the current level, equivalent to
+     * <code>bool cansee(int y, int x)</code> in <code>chase.c</code> from the original Rogue C source.
+     * Returns {@code false} if the player is blind. Checks visibility based on proximity (within lamp
+     * distance) and room conditions. For coordinates within lamp distance, ensures passage tiles are
+     * accessible if not in the same row or column. For coordinates outside lamp distance, checks if
+     * the coordinate is in the same lit room as the player.
+     *
+     * @param x The x-coordinate to check.
+     * @param y The y-coordinate to check.
+     * @return {@code true} if the player can see the coordinate, {@code false} otherwise.
      */
-    // TODO implement turnSee
-    private void turnSee(boolean turnOff) {
-
+    public boolean canSee(int x, int y) {
+        if (player.hasFlag(CreatureFlag.ISBLIND)) {
+            return false;
+        }
+        if (RogueUtils.dist(x, y, player.getX(), player.getY()) < config.getLampDist()) {
+            final Place place = currentLevel.getPlaceAt(x, y);
+            assert place != null;
+            if (place.isType(PlaceType.PASSAGE)) {
+                final Place placepm = currentLevel.getPlaceAt(player.getX(), y);
+                final Place placemp = currentLevel.getPlaceAt(x, player.getY());
+                assert placepm != null;
+                assert placemp != null;
+                return x == player.getX() || y == player.getY() ||
+                        placepm.isStepOk() || placemp.isStepOk();
+            }
+            return true;
+        }
+        /*
+         * We can only see if the hero in the same room as
+         * the coordinate and the room is lit or if it is close.
+         */
+        final Room room = roomIn(x, y);
+        return player.getRoom().equals(room) && !room.hasFlag(RoomFlag.DARK);
     }
 
-    public Player getPlayer() {
-        return player;
+    /**
+     * Enables or disables the player's ability to see monsters on the current level, equivalent to
+     * <code>bool turn_see(bool turn_off)</code> in <code>potions.c</code> from the original Rogue C source.
+     * Updates the screen to reflect monster visibility based on the player's state (e.g., hallucination) and
+     * toggles the {@link PlayerFlag#SEEMONST} flag. When enabling visibility, newly visible monsters are
+     * highlighted and counted.
+     *
+     * @param turnOff If {@code true}, disables monster visibility; if {@code false}, enables it.
+     * @return {@code true} if new monsters became visible during the operation, {@code false} otherwise.
+     */
+    public boolean turnSee(boolean turnOff) {
+        boolean addNew = false;
+        boolean canSee = false;
+        for (Monster monster : currentLevel.getMonsters()) {
+            canSee = seeMonst(monster);
+            if (turnOff) {
+                if (!canSee) {
+                    char symbol = SymbolMapper.getSymbol(monster.getOldSymbolType());
+                    screen.putChar(monster.getX(), monster.getY(), symbol);
+                }
+            } else {
+                if (!canSee) {
+                    screen.enableModifiers(SGR.REVERSE);
+                }
+                if (!player.hasFlag(PlayerFlag.ISHALU)) {
+                    final char symbol = SymbolMapper.getSymbol(monster.getSymbolType());
+                    screen.putChar(monster.getX(), monster.getY(), symbol);
+                } else {
+                    final SymbolType symbolType = randomMonsterSymbolType();
+                    screen.putChar(monster.getX(), monster.getY(), SymbolMapper.getSymbol(symbolType));
+                }
+                if (!canSee) {
+                    screen.disableModifiers(SGR.REVERSE);
+                    addNew = true;
+                }
+            }
+        }
+        if (turnOff) {
+            player.removeFlag(PlayerFlag.SEEMONST);
+        } else {
+            player.addFlag(PlayerFlag.SEEMONST);
+        }
+        return addNew;
     }
 
     /**
@@ -654,13 +798,180 @@ public class GameState {
         }
     }
 
-    // TODO implement wakeMonster, equivalent to wake_monster in mosnters.
-    private void wakeMonster(int x, int y) {
+    /**
+     * Handles the behavior when the player steps next to a monster, equivalent to <code>wake_monster</code>
+     * in <code>monsters.c</code> from the original Rogue C source. Activates the monster at the specified
+     * coordinates, potentially causing it to chase the player, guard gold, or confuse the player (e.g., Medusa's gaze).
+     * Checks for various conditions like monster flags, player states, and room properties to determine actions.
+     *
+     * @param x The x-coordinate of the monster's position.
+     * @param y The y-coordinate of the monster's position.
+     */
+    private void wakeMonster(final int x, final int y) {
+        final Place place = currentLevel.getPlaceAt(x, y);
+        assert place != null;
+        final Monster monster = place.getMonster();
 
+        if (monster == null && config.isMaster()) {
+            messageSystem.msg("can't find monster in wake_monster");
+        } else if (monster == null) {
+            abort();
+        }
+
+        assert monster != null;
+        final MonsterType monsterType = monster.getMonsterType();
+
+        // Mean monsters may start chasing the player
+        if (rogueRandom.rnd(3) != 0 && !monster.hasFlag(CreatureFlag.ISRUN) &&
+                monster.hasFlag(CreatureFlag.ISMEAN) && !monster.hasFlag(CreatureFlag.ISHELD) &&
+                !player.isWearing(RingType.R_STEALTH) && !player.hasFlag(PlayerFlag.ISLEVIT)) {
+            monster.setDestination(player.getPosition());
+            monster.addFlag(CreatureFlag.ISRUN);
+        }
+
+        // Medusa's gaze may confuse the player
+        if (monsterType == MonsterType.MEDUSA && !player.hasFlag(CreatureFlag.ISBLIND) &&
+                !player.hasFlag(PlayerFlag.ISHALU) && !monster.hasFlag(CreatureFlag.ISFOUND) &&
+                monster.hasFlag(CreatureFlag.ISRUN)) {
+            final Room room = player.getRoom();
+            if (room != null && !room.hasFlag(RoomFlag.DARK) ||
+                    RogueUtils.dist(x, y, player.getX(), player.getY()) < config.getLampDist()) {
+                monster.addFlag(CreatureFlag.ISFOUND);
+                if (!save(SaveType.VS_MAGIC)) {
+                    if (player.hasFlag(CreatureFlag.ISHUH)) {
+                        final CommandTimed unconfusedCmd = (CommandTimed) findCommandByName(Constants.CMD_NAME_UNCONFUSE);
+                        unconfusedCmd.lengthen(rogueRandom.spread(config.getConfuseDuration()));
+                    } else {
+                        addCommand(new CommandUnconfuse(rogueRandom.spread(config.getConfuseDuration())));
+                    }
+                    player.addFlag(CreatureFlag.ISHUH);
+                    final String mname = setMname(monster);
+                    messageSystem.addmssg(String.format("%s", mname));
+                    if (!mname.equals("it")) {
+                        messageSystem.addmssg("'");
+                    }
+                    messageSystem.msg("s gaze has confused you");
+                }
+            }
+        }
+
+        // Greedy monsters guard gold or chase the player
+        if (monster.hasFlag(CreatureFlag.ISGREED) && !monster.hasFlag(CreatureFlag.ISRUN)) {
+            monster.addFlag(CreatureFlag.ISRUN);
+            final Room room = player.getRoom();
+            if (room.getGoldValue() > 0) {
+                monster.setDestination(room.getGoldPosition());
+            } else {
+                monster.setDestination(player.getPosition());
+            }
+        }
     }
 
-    public void setPlayer(Player player) {
-        this.player = player;
+    /**
+     * Determines the display name for a given monster, equivalent to <code>set_mname</code> in
+     * the original Rogue C source (<code>fight.c</code>). Returns a name prefixed with "the "
+     * based on visibility, player state, and hallucination status. If the monster is not visible and
+     * the player lacks the {@link PlayerFlag#SEEMONST} flag, returns "it" (terse mode) or "something".
+     * If the player is hallucinating ({@link PlayerFlag#ISHALU}), selects a random or symbol-based
+     * monster name. Otherwise, uses the monster's actual name from its template.
+     *
+     * @param monster The monster for which to determine the name.
+     * @return A string representing the monster's display name, prefixed with "the ".
+     * @throws NullPointerException if {@code monster} is null.
+     */
+    public String setMname(@Nonnull final Monster monster) {
+        Objects.requireNonNull(monster);
+        final StringBuilder sb = new StringBuilder();
+        final String name;
+        sb.append("the ");
+        if (!seeMonst(monster) && !player.hasFlag(PlayerFlag.SEEMONST)) {
+            return config.isTerse() ? "it" : "something";
+        } else if (player.hasFlag(PlayerFlag.ISHALU)) {
+            final Place place = currentLevel.getPlaceAt(monster.getX(), monster.getY());
+            assert place != null;
+            final SymbolType symbolType = place.getSymbolType();
+            if (!symbolType.isMonsterSymbol()) {
+                final MonsterType monsterType = randomMonsterType();
+                final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(monsterType);
+                assert monsterTemplate != null;
+                name = monsterTemplate.getName();
+            } else {
+                final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(symbolType);
+                assert monsterTemplate != null;
+                name = monsterTemplate.getName();
+            }
+        } else {
+            final MonsterTemplate monsterTemplate = Templates.getMonsterTemplate(monster.getMonsterType());
+            assert monsterTemplate != null;
+            name = monsterTemplate.getName();
+        }
+        sb.append(name);
+        return sb.toString();
+    }
+
+    /**
+     * See if a creature save against something
+     * <p>
+     * Equivalent to <code>int save_throw()/code> in <code>monsters.c</code>.
+     *
+     * @param savingThrow the saving throw leve to roll against
+     * @param creature    the creature that performs the saving throw.
+     * @return true if saving throw is successful.
+     */
+    public boolean saveThrow(final int savingThrow, @Nonnull Creature creature) {
+        Objects.requireNonNull(creature);
+        int need = 14 + savingThrow - creature.getStats().getLevel() / 2;
+        return rogueRandom.roll(1, 20) >= need;
+    }
+
+    /**
+     * Determines if the player successfully saves against various effects, equivalent to
+     * <code>int save(int which)</code> in <code>monsters.c</code> from the original Rogue C source.
+     * Adjusts the saving throw modifier for magic saves based on equipped protection rings and
+     * delegates to the <code>saveThrow</code> method to compute the result.
+     *
+     * @param saveType The type of saving throw to attempt (e.g., {@link SaveType#VS_MAGIC}).
+     * @return {@code true} if the saving throw is successful, {@code false} otherwise.
+     * @throws NullPointerException if {@code saveType} is null.
+     */
+    public boolean save(@Nonnull SaveType saveType) {
+        int savingThrow = saveType.getBaseValue();
+        if (saveType == SaveType.VS_MAGIC) {
+            if (player.isWearing(RingType.R_PROTECT)) {
+                if (player.getLeftRing() != null && player.getLeftRing().getItemSubType() == RingType.R_PROTECT) {
+                    savingThrow -= player.getLeftRing().getArmorClass();
+                }
+                if (player.getRightRing() != null && player.getRightRing().getItemSubType() == RingType.R_PROTECT) {
+                    savingThrow -= player.getRightRing().getArmorClass();
+                }
+            }
+        }
+        return saveThrow(savingThrow, player);
+    }
+
+    /**
+     * Selects a random monster type from the available monster types.
+     *
+     * @return A randomly selected {@link MonsterType}.
+     * @throws IllegalStateException if no monster types are available.
+     */
+    public MonsterType randomMonsterType() {
+        MonsterType[] types = MonsterType.values();
+        if (types.length == 0) {
+            throw new IllegalStateException("No monster types available");
+        }
+        return types[rogueRandom.rnd(types.length)];
+    }
+
+    /**
+     * Selects a random monster symbol type from the set of monster symbols.
+     *
+     * @return A randomly selected {@link SymbolType} representing a monster.
+     * @throws IllegalStateException if no monster symbols are available.
+     */
+    public SymbolType randomMonsterSymbolType() {
+        int index = rogueRandom.rnd(MONSTER_SYMBOLS.size());
+        return MONSTER_SYMBOLS.toArray(new SymbolType[0])[index];
     }
 
     public int goldCalc(final int level) {
@@ -976,7 +1287,19 @@ public class GameState {
      */
     public void disablePhase(@Nonnull final Phase phase) {
         Objects.requireNonNull(phase);
-        phaseActivity.put(phase, false);
+        phaseActivity.remove(phase, false);
+    }
+
+    /**
+     * Checks if the specified phase is activated, allowing its commands to be processed in the game loop.
+     *
+     * @param phase The phase to check (e.g., START_TURN, MAIN_TURN, END_TURN).
+     * @return {@code true} if the phase is activated, {@code false} otherwise.
+     * @throws NullPointerException if {@code phase} is null.
+     */
+    public boolean isPhaseActivated(@Nonnull final Phase phase) {
+        Objects.requireNonNull(phase);
+        return phaseActivity.getOrDefault(phase, false);
     }
 
     public void death() {
@@ -987,6 +1310,14 @@ public class GameState {
 
     public void look(final boolean wakeUp) {
         //TODO: implement look(final boolean wakeUp)
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public Config getConfig() {

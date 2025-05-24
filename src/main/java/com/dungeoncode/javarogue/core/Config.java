@@ -65,29 +65,40 @@ public class Config {
      * <pre>char *release = "5.4.4"; vers.c</pre>
      */
     private static final String RELEASE_VERSION = "5.4.4";
+
     /**
      * Equivalent of <code>#define TREAS_ROOM</code> in <code>new_level.c</code>.
      */
     private static final int DEFAULT_TREAS_ROOM_CHANCE = 20;
+
     /**
      * Equivalent of <code>##define MINTREAS</code> in <code>new_level.c</code>.
      */
     private static final int DEFAULT_MIN_TREAS = 2;
+
     /**
      * Equivalent of <code>##define MAXTREAS</code> in <code>new_level.c</code>.
      */
     private static final int DEFAULT_MAX_TREAS = 10;
+
     /**
      * Default max tries to find a valid floor spot in a room.
      * Equivalent of <code>#define MAXTRIES</code> in <code>new_level.c</code>.
      */
     private static final int DEFAULT_MAX_TRIES_FIND_FLOOR = 10;
+
     /**
      * Default maximum number of tries to place items in a level.
      * Equivalent of <code>#define MAXOBJ</code> in <code>rogue.h</code>.
      */
     private static final int DEFAULT_MAX_OBJ_TRIES = 9;
     private static final int DEFAULT_MAX_TRAPS = 10;
+
+    /**
+     * Default duration in turns that player remains confused.
+     * Equivalent to <code>#define HUHDURATION</code> in <code>rogue.h</code>.
+     */
+    private static final int DEFAULT_CONFUSE_DURATION = 20;
 
     private final int maxStringLength;
     private final String javaRogueDirName;
@@ -173,6 +184,11 @@ public class Config {
      * Mirrors the <code>LAMPDIST</code> constant in the C Rogue source (set to 3).
      */
     private final int lampDist;
+    /**
+     * Duration in turns that player remains confused.
+     * Equivalent to <code>#define HUHDURATION</code> in <code>rogue.h</code>.
+     */
+    private final int confuseDuration;
     private boolean messageSave;
     private boolean master;
     private boolean wizard;
@@ -249,6 +265,7 @@ public class Config {
         this.maxTriesFindFloor = DEFAULT_MAX_TRIES_FIND_FLOOR;
         this.maxObjTries = DEFAULT_MAX_OBJ_TRIES;
         this.maxTraps = DEFAULT_MAX_TRAPS;
+        this.confuseDuration = DEFAULT_CONFUSE_DURATION;
     }
 
     private Stats loadInitialPlayerStats() {
@@ -536,6 +553,10 @@ public class Config {
 
     public int getMaxTraps() {
         return maxTraps;
+    }
+
+    public int getConfuseDuration() {
+        return confuseDuration;
     }
 
 }
